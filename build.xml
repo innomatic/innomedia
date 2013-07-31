@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  =======================================================================
+
+   Portal Server build file
+
+   Copyright (c) 2008-2013 Innoteam S.r.l. All rights reserved.
+
+  =======================================================================
+-->
+<project name="Portal Server" default="build">
+
+	<property name="name" value="portalserver" />
+	<property name="version" value="1.1" />
+
+    <target name="init" depends="initdir">
+    </target>
+	
+	<target name="initdir">
+        <!-- Create the source directory -->
+        <mkdir dir="source" />
+
+        <!-- Create the different build directories -->
+        <mkdir dir="build" />
+	</target>
+
+	<target name="clean">
+		<!-- Remove old builds -->
+		<delete>
+			<fileset dir="${basedir}/build" includes="**.*" />
+		</delete>
+	</target>
+
+	<target name="package" depends="initdir,clean">
+		<tar destfile="${basedir}/build/${name}-${version}.tgz" compression="gzip">
+			<tarfileset dir="${basedir}/source" prefix="${name}">
+				<exclude name="**/.cvsignore" />
+				<exclude name="**/.svn/**" />
+				<exclude name="build/**" />
+				<exclude name="nbproject/**" />
+				<exclude name="innomatic.iss" />
+				<exclude name="project.index" />
+				<exclude name=".project" />
+				<exclude name=".settings/**" />
+				<exclude name=".cache/**" />
+				<exclude name="build.xml" />
+				<exclude name="insticon.ico" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	 <!--
+    The default build target for this project. It simply depends on all sub tasks
+    that perform the project build. The sub targets are executed in the listed
+    order.
+    -->
+	<target name="build" depends="init,clean,package" />
+
+	<target name="dev">
+		<!-- Remove old files -->
+	    <mkdir dir="dev" />
+		<delete>
+			<fileset dir="${basedir}/dev" includes="**.*" />
+		</delete>
+	    <mkdir dir="dev" />
+        <copy todir="${basedir}/dev">
+            <fileset dir="${basedir}/source">
+                <include name="**" />
+                <exclude name="**/.svn" />
+                <exclude name="**/.git" />
+            </fileset>
+        </copy>
+	</target>
+
+</project>

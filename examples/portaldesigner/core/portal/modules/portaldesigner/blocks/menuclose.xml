@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<block>
+	<class></class>
+	<template>menuclose.tpl.php</template>
+</block>

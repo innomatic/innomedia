@@ -1,0 +1,330 @@
+BODY, FORM, INPUT, DIV, SPAN, IMG, UL, LI, DL, DT, A, H1, H2, H3, H4, TABLE, TH, TD, TR, P {
+	margin: 0;
+	padding: 0;
+	border: none 0px;
+	text-decoration: none;
+	font: normal 10px Verdana, Helvetica, sans-serif;
+	color: #444444;
+}
+
+A { color: #ff6600; font-style: normal; text-decoration: none; }
+A:link { color: #ff6600; text-decoration: none; }
+A:visited { color: #ff6600; text-decoration: none; }
+A:active { color: #ff6600; text-decoration: underline; }
+A:hover { color: #ff6600; text-decoration: underline; }
+
+body { margin: 0px; background: white; background-image: url("/images/header/header_bg.png"); background-repeat: repeat-x; }
+
+p { margin: 0.5em 0em; }
+
+#marketsMenu { position: absolute; left: 189px; top: 90px; width: 174px; z-index: 10; visibility: hidden }
+#customersMenu { position: absolute; left: 369px; top: 90px; width: 174px; z-index: 10; visibility: hidden }
+#contactsMenu { position: absolute; left: 589px; top: 90px; width: 174px; z-index: 10; visibility: hidden }
+
+.menuoff { background-color: #d15300; padding: 4px 4px 3px 4px; font-size: 11px; line-height:14px; color: #FFFFFF; text-decoration: none }
+.menuon { background-color: #ff6600; padding: 4px 4px 3px 4px; font-size: 11px; line-height:14px; color: #FFFFFF; text-decoration: none }
+.menuback { background-color: #d15300; padding: 2px }
+
+@media screen {
+#content-left {
+	width: 200px;
+	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
+}
+}
+
+@media print {
+#content-left { visibility: hidden; }
+}
+
+#content-center {
+	width: 600px;
+	margin: 0px;
+	padding: 0px;
+	border-right: solid 1px #cccccc;
+	border-left: solid 1px #cccccc;
+}
+
+#content-bottom {
+	margin: 7px;
+	margin-top: 10px;
+	padding: 5px;
+	border-bottom: solid 6px #CCCCCC;
+}
+
+@media screen {
+#header-center {
+	width: 800px;
+	margin: 0px;
+	padding: 0px;
+}
+}
+
+@media print {
+#header-center { visibility: hidden; }
+}
+
+#nav-menu {
+	width: 200px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#content-left p.menutitle a {
+	color: #444444;
+	font-size: 10px;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#content-left p.menusection a {
+	color: #444444;
+	font-size: 10px;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#content-left p.submenu a {
+	color: #444444;
+	font-size: 10px;
+	text-decoration: none;
+}
+
+p.menufeature {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+p.menutitle {
+	width: 157px;
+	margin: 37px 0px 10px 20px;
+	padding: 10px 0px 10px 0px;
+	border-bottom: solid 1px #D8D8D8;
+	font-weight: bold;
+	color: white;
+}
+
+p.menusection {
+	width: 157px;
+	margin: 0px 0px 0px 20px;
+	padding: 10px 0px 10px 0px;
+	border-bottom: solid 1px #D8D8D8;
+	font-weight: bold;
+	color: white;
+}
+
+p.submenu {
+	width: 157px;
+	margin: 0px 0px 0px 20px;
+	padding: 4px 0px 4px 0px;
+	border-bottom: solid 1px #D8D8D8;
+	color: #003399;
+	font-weight: normal;
+}
+
+div.sidebarfloat {
+	float: right;
+	width: 165px;
+	padding: 0px;
+	margin: 0px 5px 22px 30px;
+}
+
+.sidebarcontent {
+	background-color: #F7F7F7;
+	padding: 10px;
+	border: 1px solid #D9D9D9;
+	font-size: 11px;
+	color: #666666;
+	line-height: 14px;
+	text-align: center;
+}
+
+td.newsdate {
+	color: #ff6600;
+	white-space: nowrap;
+	vertical-align: top;
+	padding: 3px;
+	font-size: 11px;
+}
+
+td.newslink {
+	vertical-align: top;
+	padding: 3px;
+}
+
+td.newslink a { font-size: 11px; }
+
+#content {
+	width: 100%;
+	margin: 30px 0px 30px 0px;
+}
+
+#content h1 {
+	margin: 0px 0px 10px 10px;
+	padding: 10px 10px 10px 0px;
+	color: #ff6600;
+	font-size: 17px;
+	line-height: 21px;
+}
+
+#content h2 {
+	margin: 2px 0px 0px 10px;
+	line-height: 18px;
+	padding: 10px 10px 10px 0px;
+	padding-bottom: 5px;
+	color: #ff6600;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#content h3 {
+	margin: 0px 0px 0px 10px;
+	line-height: 14px;
+	padding: 10px 10px 10px 0px;
+	padding-bottom: 5px;
+	color: #ff6600;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+#content p  {
+	margin: 0px 10px 0px 10px;
+	line-height: 17px;
+	font-size: 11px;
+	color: #444444;
+	padding: 10px 10px 10px 0px;
+	padding-bottom: 5px;
+}
+
+#content p.summary {
+	font-size: 13px;
+	line-height: 20px;
+}
+
+#content a {
+	font-size: 11px;
+	font-weight: normal;
+}
+
+#content ul {
+	margin: 5px 10px 5px 10px;
+	padding: 0px 10px 0px 10px;
+}
+
+#content li {
+	margin: 0px 0px 0px 10px;
+	font-size: 11px;
+	color: #444444;
+	padding: 1px;
+	line-height: 17px;
+}
+
+#content i { color: #444444; }
+
+#content table {}
+
+#content table td {
+	line-height: 17px;
+	padding: 5px;
+	margin: 0px;
+	font-size: 11px;
+	color: #636563;
+	vertical-align: top;
+}
+
+#content .sidebarheadgrey { padding:0px 2px 1px 2px; font-size: 11px; letter-spacing: 1px; color:#808080; text-align:left }
+#content .sidebarheadblue { padding:0px 2px 1px 2px; font-size: 11px; letter-spacing: 1px; color:#1D57A5; text-align:left }
+#content .sidebarheadorange { padding:0px 2px 1px 2px; font-size: 11px; letter-spacing: 1px; color:#ED9F17; text-align:left }
+#content .sidebarheadred { padding:0px 2px 1px 2px; font-size: 11px; letter-spacing: 1px; color:#A00000; text-align:left }
+#content .sidebarheadgreen { padding:0px 2px 1px 2px; font-size: 11px; letter-spacing: 1px; color:#3F8B2D; text-align:left }
+
+#content .sidebar { 
+	font-size: 11px;
+	color: #333333;
+	line-height: 14px
+}
+
+#content .sidebartitle {
+	font-size: 14px;
+	color: #000000;
+	font-weight: bold;
+	line-height: 15px
+}
+
+#content .sidebarquote {
+	font-size: 11px;
+	line-height: 15px;
+	color: #171717
+}
+
+ul.arrow {
+	list-style-image: url("/images/arrow.gif")
+}
+
+#content table.tqm {
+	border: solid 1px #cccccc;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#content table.tqm td {
+	line-height: 14px;
+	padding: 3px;
+	font-size: 10px;
+	vertical-align: top;
+}
+
+#content table.tqm td a {
+	line-height: 14px;
+	font-size: 10px;
+}
+
+#content table.tqm td.mainheader {
+	line-height: 18px;
+	background-color: #ff6600;
+	font-weight: bold;
+	color: white;
+	font-size: 12px;
+	vertical-align: top;
+	text-align: center;
+}
+
+#content table.tqm td.sectionheader {
+	font-weight: bold;
+	line-height: 16px;
+	background-color: #cccccc;
+	vertical-align: top;
+	text-align: center;
+}
+
+#content table.tqm td.columnheader {
+	font-weight: bold;
+	line-height: 14px;
+	background-color: #dddddd;
+	vertical-align: top;
+	text-align: center;
+}
+
+#footer {
+	clear: both;
+	display: block;
+	background-color: white;
+	padding: 0px;
+	margin: 0px;
+}
+
+#footer p {
+	margin: 0px;
+	padding: 8px;
+	color: #8C8C8C;
+	font-size: 9px;
+}
+
+#footer a {
+	font-size: 9px;
+	font-weight: normal;
+	text-decoration: none;
+	color: #8C8C8C;
+}

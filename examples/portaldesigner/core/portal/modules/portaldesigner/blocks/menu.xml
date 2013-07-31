@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<block>
+	<class>pdesigner/PortalDesignerMenu.php</class>
+	<template>menu.tpl.php</template>
+</block>
