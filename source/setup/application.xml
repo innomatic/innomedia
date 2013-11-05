@@ -2,21 +2,21 @@
 <application>
 
 	<definition>
-		<idname>portalserver</idname>
+		<idname>innomedia</idname>
 		<release>
 			<version>1.1</version>
 			<date>2013/07/31</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
-		<description>Portal server</description>
+		<description>InnoMedia CMF - Content Management Framework</description>
 		<category>innomatic</category>
 		<legal>
 			<author>
-				<name>Innoteam S.r.l.</name>
+				<name>Innoteam Srl</name>
 				<email>info@innoteam.it</email>
 				<web>http://www.innoteam.it/</web>
 			</author>
-			<copyright>Copyright (C) 2009-2013 Innoteam S.r.l.</copyright>
+			<copyright>Copyright (C) 2009-2013 Innoteam Srl</copyright>
 			<license>New BSD</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
@@ -32,23 +32,18 @@
 
 	<components>
 
-		<class name="portal/PortalBlock.php" />
-		<class name="portal/PortalContext.php" />
-		<class name="portal/PortalEmptyBlock.php" />
-		<class name="portal/PortalGrid.php" />
-		<class name="portal/PortalModule.php" />
-		<class name="portal/PortalPage.php" />
-		<class name="portal/PortalWebAppHandler.php" />
-		<catalog name="portal" />		
-		<webappskeleton name="portal" catalog="portal::misc" />
-		<webapphandler name="portal"
-			class="portal/PortalWebAppHandler.php"
-			urlpattern="/portal/*" listings="false" />
-
-
-<!-- 
-		<shared name="innomatic_logo.png" />
- -->
+		<class name="innomedia/InnomediaBlock.php" />
+		<class name="innomedia/InnomediaContext.php" />
+		<class name="innomedia/InnomediaEmptyBlock.php" />
+		<class name="innomedia/InnomediaGrid.php" />
+		<class name="innomedia/InnomediaModule.php" />
+		<class name="innomedia/InnomediaPage.php" />
+		<class name="innomedia/InnomediaWebAppHandler.php" />
+		<catalog name="innomedia" />		
+		<webappskeleton name="innomedia" catalog="innomedia::misc" />
+		<webapphandler name="innomedia"
+			class="innomedia/InnomediaWebAppHandler.php"
+			urlpattern="/innomedia/*" listings="false" />
 		
 	</components>
 </application>

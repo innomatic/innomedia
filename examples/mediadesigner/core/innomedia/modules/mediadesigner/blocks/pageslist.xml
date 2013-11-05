@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<block>
+	<class>mediadesigner/MediaDesignerPagesList.php</class>
+	<template>pageslist.tpl.php</template>
+</block>

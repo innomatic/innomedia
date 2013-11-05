@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>pdesigner/PortalDesignerAddBlock.php</class>
-	<template>addblock.tpl.php</template>
-</block>

@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>pdesigner/PortalDesignerRightMenu.php</class>
-	<template>rightmenu.tpl.php</template>
-</block>

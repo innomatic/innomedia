@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<block>
+	<class>mediadesigner/MediaDesignerIndex.php</class>
+	<template>index.tpl.php</template>
+</block>

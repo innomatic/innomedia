@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>pdesigner/PortalDesignerGridEditor.php</class>
-	<template>grideditor.tpl.php</template>
-</block>
