@@ -42,9 +42,11 @@ class InnomediaWebAppHandler extends WebAppHandler {
 
     public function doGet(WebAppRequest $req, WebAppResponse $res) {
 		$location = explode('/', $req->getPathInfo());
+		$module_name = isset($location[1]) ? $location[1] : '';
+		$page_name = isset($location[2]) ? $location[2] : '';
 		$home = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome();
 		$context = InnomediaContext::instance('InnomediaContext', $home, $req, $res);
-		$page = new InnomediaPage($context, $req, $res, $location[1], $location[2]);
+		$page = new InnomediaPage($context, $req, $res, $module_name, $page_name);
 		$page->build();
     }
 
