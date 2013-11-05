@@ -113,7 +113,6 @@ P
 	#header-right {
 		width: 160px;
 		height: 120px;
-	/*	background-color: #ffffd6;*/
 		background-color: #f7f7f7;
 		margin: 0px;
 		padding: 0px;
@@ -141,15 +140,12 @@ P
 @media screen {
 	#content-left {
 		width: 160px;
-	/*	height: 1200px;*/
 		overflow: hidden;
 		margin: 0px;
 		padding: 0px;
 		float: left;
 		position: relative;
-	/*	background-color: #edf1f6;*/
-	/*	background-color: #f7f7f7;*/
-		background-color: #999999;
+		background-color: #c0c0c0;
 	}
 }
 
@@ -170,11 +166,6 @@ P
 	#content-right {
 		width: 160px;
 		height: inherit;
-	/*	background-color: #ffffd6;*/
-	/*	background-color: #edf1f6;*/
-	/*	background-color: #e5e5ff;*/
-	/*	background-color: #AFCD6F;*/
-	/*	background-color: #f7f7f7;*/
 		background-color: #e6e6e6;
 		margin: 0px;
 		padding: 0px;
@@ -196,7 +187,6 @@ P
 	padding: 0px;
 	margin: 0px;
 	height: 60px;
-	/*border-bottom: dotted 1px #e0e0e0;*/
 }
 
 #logo img
@@ -240,7 +230,7 @@ P
 @media screen {
 #language
 {
-	background-color: #999999;
+	background-color: #c0c0c0;
 	padding: 0px;
 	margin: 0px;
 	height: 30px;
@@ -270,10 +260,7 @@ P
 
 #top-menu
 {
-/*	background-color: #edf1f6;*/
-/*	background-color: #e5e5ff;*/
-/*	background-color: #AFCD6F;*/
-	background-color: #c90016;
+	background-color: #2b6991;
 	padding: 0px;
 	margin: 0px;
 	height: 30px;
@@ -318,7 +305,7 @@ P
 
 #contacts
 {
-	background-color: #c90016;
+	background-color: #2b6991;
 	padding: 0px;
 	margin-top: 60px;
 	height: 30px;
@@ -348,7 +335,7 @@ P
 
 #search
 {
-	background-color: #999999;
+	background-color: #c0c0c0;
 	margin: 0px;
 	height: 30px;
 	text-align: center;
@@ -406,9 +393,6 @@ P
 
 #topborder
 {
-/*	background-color: #AFCD6F;*/
-/*	background-color: #ffffd6;*/
-/*	background-color: #999999;*/
 	background-color: #d6d6d6;
 	color: #333333;
 	padding: 0px;
@@ -420,9 +404,6 @@ P
 
 #nav-menu
 {
-/*	background-color: #f7f7f7;*/
-/*	background-color: #ffffd6;*/
-/*	background-color: white;*/
 	white-space: nowrap;
     width: 160px;
     float: left;
@@ -433,7 +414,7 @@ P
 
 p.titlemenusection
 {
-	background-color: #c90016;
+	background-color: #2b6991;
 	font-weight: bold;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -453,12 +434,7 @@ p.titlemenusection a
 
 p.menusection
 {
-/*	background-color: #edf1f6;*/
-/*	background-color: #e5e5ff;*/
-/*	background-color: #AFCD6F;*/
-/*	background-color: #d9d8d8;*/
-/*	background-color: #e5e5ff;*/
-	background-color: #999999;
+	background-color: #c0c0c0;
 	font-weight: bold;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -477,9 +453,7 @@ p.menusection
 
 p.submenu
 {
-/*	background-color: #f7f7f7;*/
 	background-color: #d6d6d6;
-	/*	background-color: #ffffd6;*/
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-top: 4px;
@@ -505,7 +479,7 @@ p.submenu
 .gridtable {
 	margin: 2px;
 	padding: 0px;
-	border: solid 2px #999999;
+	border: solid 2px #c0c0c0;
 }
 
 .gridtable td {
@@ -564,7 +538,7 @@ p.submenu
 	margin: 0px;
 	padding: 2px;
 	padding-bottom: 5px;
-	color: #999999;
+	color: #c0c0c0;
 }
 
 #content > ul
@@ -628,13 +602,10 @@ p.submenu
 	margin: 0px;
 	padding: 10px;
 	background-color: #d6d6d6;
-	/*	border-bottom: solid 1px white;*/
 }
 
 #legend-box p
 {
-/*	background-color: #f7f7f7;*/
-/*	background-color: #ffffd6;*/
 	color: #333333;
 }
 
@@ -650,8 +621,6 @@ p.submenu
 }
 #legend-box td
 {
-/*	background-color: #f7f7f7;*/
-/*	background-color: #ffffd6;*/
    margin: 0px;
    padding: 1px;
 	color: #333333;
@@ -664,7 +633,7 @@ p.submenu
 	clear: both;
    display: block;
 	height: 30px;
-	background-color: #c90016;
+	background-color: #2b6991;
 	padding: 0px;
 	padding-left: 0px;
 	margin: 0px;
