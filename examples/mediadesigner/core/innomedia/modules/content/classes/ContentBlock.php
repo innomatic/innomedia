@@ -24,14 +24,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 require_once('innomedia/InnomediaBlock.php');
-require_once('core/webapp/classes/WebAppContainer.php');
+require_once('innomatic/webapp/WebAppContainer.php');
 
 class ContentBlock extends InnomediaBlock {
 	private $pages_root;
 
 	public function run(WebAppRequest $request, WebAppResponse $response) {
 		$page = $request->getParameter('content_page');
-		$this->pages_root = $this->context->getHome().'core/content/';
+		$this->pages_root = $this->context->getHome().'core/innomedia/content/';
 		// If no page has been given, it is set to the default one
 		if (!strlen($page)) {
 			$page = 'home/index.html';
@@ -81,7 +81,7 @@ class ContentBlock extends InnomediaBlock {
 	}
 
 	public function getPage($page) {
-		$pages_root = $this->context->getHome().'core/content/';
+		$pages_root = $this->context->getHome().'core/innomedia/content/';
 		$locales = $this->context->getLocales();
 		foreach ($locales as $locale) {
 			if (file_exists($this->pages_root.$locale.'/'.$page)) {
