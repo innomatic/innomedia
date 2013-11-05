@@ -9,7 +9,10 @@
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>InnoMedia CMF - Content Management Framework</description>
-		<category>innomatic</category>
+		<category>web</category>
+		<dependencies>
+			<dependency>innomatic[6.1]</dependency>
+		</dependencies>
 		<legal>
 			<author>
 				<name>Innoteam Srl</name>
