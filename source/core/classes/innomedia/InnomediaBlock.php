@@ -23,7 +23,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/php/PHPTemplate.php');
+require_once('innomedia/InnomediaTemplate.php');
 require_once('innomedia/InnomediaContext.php');
 require_once('innomedia/InnomediaGrid.php');
 require_once('innomatic/webapp/WebAppContainer.php');
@@ -35,7 +35,7 @@ require_once('innomatic/webapp/WebAppResponse.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-abstract class InnomediaBlock extends PHPTemplate {
+abstract class InnomediaBlock extends InnomediaTemplate {
     protected $context;
     protected $grid;
     protected $show = true;

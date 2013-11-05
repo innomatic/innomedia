@@ -38,6 +38,7 @@
 		<class name="innomedia/InnomediaGrid.php" />
 		<class name="innomedia/InnomediaModule.php" />
 		<class name="innomedia/InnomediaPage.php" />
+		<class name="innomedia/InnomediaTemplate.php" />
 		<class name="innomedia/InnomediaWebAppHandler.php" />
 		<catalog name="innomedia" />		
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />

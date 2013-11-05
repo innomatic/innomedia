@@ -23,7 +23,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/php/PHPTemplate.php');
+require_once('innomedia/InnomediaTemplate.php');
 require_once('innomedia/InnomediaBlock.php');
 
 /**
@@ -31,7 +31,7 @@ require_once('innomedia/InnomediaBlock.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaGrid extends PHPTemplate {
+class InnomediaGrid extends InnomediaTemplate {
     protected $page;
     protected $blocks;
 
