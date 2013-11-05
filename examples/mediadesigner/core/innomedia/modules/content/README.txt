@@ -1,16 +1,15 @@
-Creare la directory pages nella root della webapp.
+Creare la directory content nella cartella core/innomedia della webapp.
 
-Es. webapp/pages
+Es. webapp/core/innomedia/content
 
-All'interno immagazzinare, anche eventualmente con subdirectory, le pagine
-del sito da utilizzare.
+Creare la struttura delle pagine, anche divise in sottocartelle.
 
-Le pagine vengono richiamate quando � presente il modulo content aggiungendo
+Le pagine sono lette quando è presente il modulo content aggiungendo
 nella query il parametro "content_page".
 
 Es. "?content_page=home/index.html"
 
-Di base prevede l'esistenza della pagina "common/404.html", che viene
+E' prevista di base l'esistenza della pagina "common/404.html", che viene
 richiamata quando si richiede una pagina non esistente. Un controllo di
 sicurezza previene il richiamo di pagine al di fuori del contesto della
 directory delle pagine.
