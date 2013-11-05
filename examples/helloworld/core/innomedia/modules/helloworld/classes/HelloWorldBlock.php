@@ -16,7 +16,7 @@
  *
  * The Initial Developer of the Original Code is
  * Alex Pagnoni.
- * Portions created by the Initial Developer are Copyright (C) 2008
+ * Portions created by the Initial Developer are Copyright (C) 2008-2013
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
