@@ -36,9 +36,8 @@ class InnomediaGrid extends InnomediaTemplate {
     protected $blocks;
 
     public function InnomediaGrid(InnomediaPage $page) {
-        $this->page = $page;
+    	$this->page = $page;
         $this->blocks = array ();
-        $this->setArray('blocks', $this->blocks);
 
 		$tpl = $this->page->getContext()->getThemesHome().$this->page->getTheme().'/grid.tpl.php';
         if (!file_exists($tpl)) {
@@ -47,8 +46,9 @@ class InnomediaGrid extends InnomediaTemplate {
         if (!file_exists($tpl)) {
         	$this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
 		}
-		$this->setPredefinedTags();
 		parent::__construct($tpl);
+		$this->setPredefinedTags();
+        $this->setArray('blocks', $this->blocks);
 	}
 
     public function setPredefinedTags() {
