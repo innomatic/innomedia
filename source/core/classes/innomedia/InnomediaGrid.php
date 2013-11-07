@@ -56,6 +56,7 @@ class InnomediaGrid extends InnomediaTemplate {
         $this->set('baseurl', $this->page->getRequest()->getUrlPath(false).'/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
+        $this->set('xajax_js', 'shared/javascript/xajax.js');
     }
 
     public function addBlock(InnomediaBlock $block, $row, $column, $position) {
