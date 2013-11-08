@@ -59,7 +59,7 @@ class InnomediaGrid extends InnomediaTemplate {
 
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
-        $xajax = Xajax::instance('Xajax');
+        $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false).'/ajax/');
         
         // Set debug mode
         if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
