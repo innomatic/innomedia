@@ -41,28 +41,37 @@ class InnomediaWebAppHandler extends WebAppHandler {
     }
 
     public function doGet(WebAppRequest $req, WebAppResponse $res) {
-    	// Start Innomatic and Domain
+    	// Start Innomatic
     	require_once('innomatic/core/InnomaticContainer.php');
     	require_once('innomatic/core/RootContainer.php');
-    	    	
+
     	$innomatic = InnomaticContainer::instance('innomaticcontainer');
     	$innomatic->setInterface(InnomaticContainer::INTERFACE_EXTERNAL);
     	$root = RootContainer::instance('rootcontainer');
     	$innomatic_home = $root->getHome().'innomatic/';
     	$innomatic->bootstrap($innomatic_home, $innomatic_home.'core/conf/innomatic.ini');
+    	
+    	// Start Innomatic domain
     	InnomaticContainer::instance('innomaticcontainer')->startDomain(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getName());
     	
-    	// Start Innomedia page
+    	// Innomedia page
+    	
+    	// Get module and page name
 		$location = explode('/', $req->getPathInfo());
 		$module_name = isset($location[1]) ? $location[1] : '';
 		$page_name = isset($location[2]) ? $location[2] : '';
+		
+		// Define Innomatic context
 		$home = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome();
 		$context = InnomediaContext::instance('InnomediaContext', $home, $req, $res);
+		
+		// Build Innomedia page
 		$page = new InnomediaPage($context, $req, $res, $module_name, $page_name);
 		$page->build();
     }
 
     public function doPost(WebAppRequest $req, WebAppResponse $res) {
+    	// We do get instead
 		$this->doGet($req, $res);
     }
 
