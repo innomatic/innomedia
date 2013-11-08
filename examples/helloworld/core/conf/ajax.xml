@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ajax>
+	<function>
+		<name>helloworld</name>
+		<classname>AjaxHelloWorld</classname>
+		<method>printHelloWorld</method>
+		<classfile>ajax/helloworld/AjaxHelloWorld.php</classfile>
+	</function>
+</ajax>
