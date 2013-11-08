@@ -60,14 +60,29 @@ class InnomediaGrid extends InnomediaTemplate {
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
         $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false).'/ajax/');
+        $xajax->ajaxLoader = false;
+        $xajax->setLogFile($this->page->getContext()->getHome().'core/log/ajax.log');
         
         // Set debug mode
         if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
         	$xajax->debugOn();
         }
 
-        $xajax_js = $xajax->getJavascript($this->page->getRequest()->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
+        // Register Ajax calls parsing the ajax.xml configuration file      
+        require_once ('innomatic/ajax/XajaxConfig.php');
+        $cfg = XajaxConfig :: getInstance(
+        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp(),
+        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml');
         
+        if (isset($cfg->functions)) {
+        	foreach($cfg->functions as $name => $functionData) {
+        		$xajax->registerExternalFunction(array($name, $functionData['classname'], $functionData['method']), $functionData['classfile']);
+        	}
+        }
+        
+        // Build the base javascript for ajax
+        $xajax_js = $xajax->getJavascript($this->page->getRequest()->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
+
         // Setup calls.
         if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
         	$setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
