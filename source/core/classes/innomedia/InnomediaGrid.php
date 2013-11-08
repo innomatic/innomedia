@@ -68,16 +68,18 @@ class InnomediaGrid extends InnomediaTemplate {
         	$xajax->debugOn();
         }
 
-        // Register Ajax calls parsing the ajax.xml configuration file      
-        require_once ('innomatic/ajax/XajaxConfig.php');
-        $cfg = XajaxConfig :: getInstance(
-        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp(),
-        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml');
-        
-        if (isset($cfg->functions)) {
-        	foreach($cfg->functions as $name => $functionData) {
-        		$xajax->registerExternalFunction(array($name, $functionData['classname'], $functionData['method']), $functionData['classfile']);
-        	}
+        // Register Ajax calls parsing the ajax.xml configuration file  
+        if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml')) {    
+	        require_once ('innomatic/ajax/XajaxConfig.php');
+	        $cfg = XajaxConfig :: getInstance(
+	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp(),
+	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml');
+	        
+	        if (isset($cfg->functions)) {
+	        	foreach($cfg->functions as $name => $functionData) {
+	        		$xajax->registerExternalFunction(array($name, $functionData['classname'], $functionData['method']), $functionData['classfile']);
+	        	}
+	        }
         }
         
         // Build the base javascript for ajax
