@@ -39,8 +39,10 @@ class InnomediaContext extends Singleton {
     protected $response;
     //protected $user;
     protected $session;
-    protected $locales = array ();
-
+    protected $locales = array();
+    protected $registeredAjaxCalls = array();
+    protected $registeredAjaxSetupCalls = array();
+    
     public function ___construct($home, WebAppRequest $request, WebAppResponse $response) {
         $this->home = realpath($home).'/';
         $this->request = $request;
@@ -167,6 +169,48 @@ class InnomediaContext extends Singleton {
         
         // Adds the locales supported by the web agent
         $this->locales = array_merge($this->locales, $this->request->getLocales());
+    }
+    
+    public function registerAjaxCall($callName)
+    {
+    	$this->registeredAjaxCalls[$callName] = true;
+    }
+    
+    public function getRegisteredAjaxCalls()
+    {
+    	return $this->registeredAjaxCalls;
+    }
+    
+    public function isRegisteredAjaxCall($callName)
+    {
+    	return isset($this->registeredAjaxCalls[$callName]);
+    }
+    
+    public function unregisterAjaxCall($callName)
+    {
+    	if (isset($this->registeredAjaxCalls[$callName])) {
+    		unset($this->registeredAjaxCalls[$callName]);
+    	}
+    }
+    
+    public function countRegisteredAjaxCalls()
+    {
+    	return count($this->registeredAjaxCalls);
+    }
+    
+    public function registerAjaxSetupCall($call)
+    {
+    	$this->registeredAjaxSetupCalls[] = $call;
+    }
+    
+    public function getRegisteredAjaxSetupCalls()
+    {
+    	return $this->registeredAjaxSetupCalls;
+    }
+    
+    public function countRegisteredAjaxSetupCalls()
+    {
+    	return count($this->registeredAjaxSetupCalls);
     }
 }
 

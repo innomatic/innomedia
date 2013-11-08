@@ -56,7 +56,29 @@ class InnomediaGrid extends InnomediaTemplate {
         $this->set('baseurl', $this->page->getRequest()->getUrlPath(false).'/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
-        $this->set('xajax_js', 'shared/javascript/xajax.js');
+
+        // Ajax support
+        require_once ('innomatic/ajax/Xajax.php');
+        $xajax = Xajax::instance('Xajax');
+        
+        // Set debug mode
+        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+        	$xajax->debugOn();
+        }
+
+        $xajax_js = $xajax->getJavascript($this->page->getRequest()->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
+        
+        // Setup calls.
+        if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
+        	$setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
+        	$xajax_js .= '<script type="text/javascript">' . "\n";
+        	foreach ($setup_calls as $call) {
+        		$xajax_js .= $call . ";\n";
+        	}
+        	$xajax_js .= '</script>' . "\n";
+        }
+
+        $this->set('xajax_js', $xajax_js);
     }
 
     public function addBlock(InnomediaBlock $block, $row, $column, $position) {
