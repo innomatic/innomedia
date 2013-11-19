@@ -59,32 +59,15 @@ class InnomediaGrid extends InnomediaTemplate {
 
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
-        $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false).'/ajax/');
-        $xajax->ajaxLoader = false;
-        $xajax->setLogFile($this->page->getContext()->getHome().'core/log/ajax.log');
+        $xajax = Xajax::instance('Xajax');
         
         // Set debug mode
         if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
         	$xajax->debugOn();
         }
 
-        // Register Ajax calls parsing the ajax.xml configuration file  
-        if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml')) {    
-	        require_once ('innomatic/ajax/XajaxConfig.php');
-	        $cfg = XajaxConfig :: getInstance(
-	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp(),
-	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml');
-	        
-	        if (isset($cfg->functions)) {
-	        	foreach($cfg->functions as $name => $functionData) {
-	        		$xajax->registerExternalFunction(array($name, $functionData['classname'], $functionData['method']), $functionData['classfile']);
-	        	}
-	        }
-        }
-        
-        // Build the base javascript for ajax
         $xajax_js = $xajax->getJavascript($this->page->getRequest()->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
-
+        
         // Setup calls.
         if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
         	$setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
@@ -112,6 +95,10 @@ class InnomediaGrid extends InnomediaTemplate {
         $block_name = 'block_'.$row.'_'.$column.'_'.$position;
         $this->set($block_name, $block);
         $this->blocks[$row][$column][$position] = $block_name;
+    }
+    
+    public function getGrid() {
+    	return $this;
     }
 }
 

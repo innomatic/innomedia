@@ -97,14 +97,24 @@ abstract class InnomediaBlock extends InnomediaTemplate {
                 $tpl_file = $tpl_root."$def->template";
             }
         }
+        
+        // Find block class
 		$class = substr($fqcn, strrpos($fqcn, '/') ? strrpos($fqcn, '/') + 1 : 0, -4);
 		if (!class_exists($class)) {
 			$context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class '.$fqcn);
 			return;
 		}
+		
+		// Build block
         $obj = new $class($tpl_file);
         $obj->setContext($context);
         $obj->setGrid($grid);
+        
+        // Get all grid tags and set them in the block tags
+        $grid_tags = $grid->getTags();
+        foreach($grid_tags as $tag) {
+        	$obj->set($tag, $grid->get($tag));
+        }
         return $obj;
     }
 
