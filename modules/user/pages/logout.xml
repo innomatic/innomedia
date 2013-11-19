@@ -5,7 +5,7 @@
 		<module>user</module>
 		<name>logout</name>
 		<row>1</row>
-		<column>1</column>
+		<column>2</column>
 		<position>1</position>
 	</block>
 </page>
