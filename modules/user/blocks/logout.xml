@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<block>
+	<class>UserLogoutBlock.php</class>
+	<template>logout.tpl.php</template>
+</block>

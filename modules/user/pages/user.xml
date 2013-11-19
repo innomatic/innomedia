@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page>
+	<theme>default</theme>
+	<block>
+		<module>user</module>
+		<name>user</name>
+		<row>1</row>
+		<column>1</column>
+		<position>1</position>
+	</block>
+</page>

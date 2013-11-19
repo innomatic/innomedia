@@ -1,0 +1,1 @@
+Hai effettuato correttamente il logout.
