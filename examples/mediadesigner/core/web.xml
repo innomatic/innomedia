@@ -21,20 +21,8 @@
             <paramvalue>false</paramvalue>
         </initparam>
     </handler>
-	<handler>
-		<handlername>xajax</handlername>
-		<handlerclass>innomatic/ajax/XajaxWebAppHandler.php</handlerclass>
-		<initparam>
-			<paramname>listings</paramname>
-			<paramvalue>false</paramvalue>
-		</initparam>
-	</handler>
-
+	
     <!-- Handler Mappings -->
-    <handlermapping>
-        <handlername>xajax</handlername>
-        <urlpattern>/ajax/*</urlpattern>
-    </handlermapping>
     <handlermapping>
         <handlername>default</handlername>
         <urlpattern>/*</urlpattern>

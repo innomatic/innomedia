@@ -1,0 +1,26 @@
+1.1 - 2013/11/28
+----------------
+CHANGES:
+- Renamed Portal Server to InnoMedia. 
+- Changed old "WEB-INF" to "core". Moved "pages" to "content". 
+- Removed warnings 
+- Decoupled the template engine from the template implementation. 
+
+NEW FEATURES:
+- Added Innomatic and domain bootstrapping 
+- Added Xajax support 
+- Added classes and modules directories to webapp skeleton. 
+- Support for registering ajax functions and setup calls 
+- Added check for existance of ajax.xml file 
+- Grid tags are now automatically added to each block. 
+- Added user module 
+- Added home module with index page. 
+
+
+
+New version template:
+SECURITY:
+FIXES:
+CHANGES:
+NEW FEATURES:
+DEPRECATED:
