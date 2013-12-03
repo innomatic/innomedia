@@ -1,0 +1,33 @@
+1.
+----------------
+NEW FEATURES:
+- Added LICENSE file. (Alex Pagnoni)
+
+
+
+1.1 - 2013/11/28
+----------------
+CHANGES:
+- Renamed Portal Server to InnoMedia. (Alex Pagnoni) 
+- Changed old "WEB-INF" to "core". Moved "pages" to "content". (Alex Pagnoni) 
+- Removed warnings. (Alex Pagnoni)
+- Decoupled the template engine from the template implementation. (Alex Pagnoni) 
+
+NEW FEATURES:
+- Added Innomatic and domain bootstrapping. (Alex Pagnoni)
+- Added Xajax support. (Alex Pagnoni)
+- Added classes and modules directories to webapp skeleton. (Alex Pagnoni) 
+- Support for registering ajax functions and setup calls. (Alex Pagnoni)
+- Added check for existance of ajax.xml file. (Alex Pagnoni)
+- Grid tags are now automatically added to each block.  (Alex Pagnoni)
+- Added user module. (Alex Pagnoni)
+- Added home module with index page. (Alex Pagnoni) 
+
+
+
+New version template:
+SECURITY:
+FIXES:
+CHANGES:
+NEW FEATURES:
+DEPRECATED:

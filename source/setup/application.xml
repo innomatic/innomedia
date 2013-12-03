@@ -4,8 +4,8 @@
 	<definition>
 		<idname>innomedia</idname>
 		<release>
-			<version>1.1</version>
-			<date>2013/07/31</date>
+			<version>1.2</version>
+			<date>2013/11/28</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>InnoMedia CMF - Content Management Framework</description>

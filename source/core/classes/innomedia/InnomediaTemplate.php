@@ -30,7 +30,7 @@ require_once('innomatic/tpl/Template.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */
-class InnomediaTemplate implements Template {
+abstract class InnomediaTemplate implements Template {
 	protected $tplEngine;
 	
 	public function __construct($file) {
@@ -44,7 +44,11 @@ class InnomediaTemplate implements Template {
 	
 	public function get($name)
 	{
-		return $this->tplEngine->get($name);
+		$value = $this->tplEngine->get($name);
+		if ($value === false and !($this instanceof InnomaticGrid)) {
+			$value = $this->getGrid()->get($name);
+		}
+		return $value;
 	}
 	
 	public function setArray($name, &$value)
@@ -69,4 +73,10 @@ class InnomediaTemplate implements Template {
 	{
 		return $this->tplEngine->parse();
 	}
+	
+	public function getTags() {
+		return $this->tplEngine->getTags();
+	}
+	
+	public abstract function getGrid();
 }
