@@ -49,8 +49,16 @@ class InnomediaContext extends Singleton {
         $this->response = $response;
         $this->session = new PHPSession();
         $this->session->start();
+        
+        // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value 
+     	// defined by the 'sessionLifetime' parameter in web.xml
+        $lifetime = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
+        if ($lifetime !== false) {
+        	$this->session->setLifeTime($lifetime);
+        }
+        
+        // Process the request
         $this->process();
-        $this->setSessionLifetime();
     }
 
     public function getHome() {
@@ -212,21 +220,6 @@ class InnomediaContext extends Singleton {
     public function countRegisteredAjaxSetupCalls()
     {
     	return count($this->registeredAjaxSetupCalls);
-    }
-    
-    /**
-     * Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value 
-     * defined by the 'sessionLifetime' parameter in web.xml
-     *
-     * @return void
-     * @author Salvatore Pollaci <salvatore.pollaci@innoteam.it>
-     */
-    protected function setSessionLifetime(){
-    	$lifetime = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
-    	
-    	if ($lifetime !== false) {
-    		$this->session->setLifeTime($lifetime);
-    	}
     }
 }
 

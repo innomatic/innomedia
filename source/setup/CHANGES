@@ -2,6 +2,7 @@
 ----------------
 NEW FEATURES:
 - Added LICENSE file. (Alex Pagnoni)
+- Added sessionLifetime parameter in web.xml. (Salvatore Pollaci)
 
 
 
