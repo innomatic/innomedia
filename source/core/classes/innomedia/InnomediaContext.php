@@ -33,7 +33,8 @@ require_once('innomatic/php/PHPSession.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaContext extends Singleton {
+class InnomediaContext extends Singleton
+{
     protected $home;
     protected $request;
     protected $response;
@@ -43,7 +44,8 @@ class InnomediaContext extends Singleton {
     protected $registeredAjaxCalls = array();
     protected $registeredAjaxSetupCalls = array();
     
-    public function ___construct($home, WebAppRequest $request, WebAppResponse $response) {
+    public function ___construct($home, WebAppRequest $request, WebAppResponse $response)
+    {
         $this->home = realpath($home).'/';
         $this->request = $request;
         $this->response = $response;
@@ -61,23 +63,28 @@ class InnomediaContext extends Singleton {
         $this->process();
     }
 
-    public function getHome() {
+    public function getHome()
+    {
         return $this->home;
     }
 
-    public function getThemesHome() {
+    public function getThemesHome()
+    {
         return $this->home.'shared/themes/';
     }
 
-    public function getModulesHome() {
+    public function getModulesHome()
+    {
         return $this->home.'core/innomedia/modules/';
     }
 
-    public function getBlocksHome($module) {
+    public function getBlocksHome($module)
+    {
         return $this->home.'core/innomedia/modules/'.$module.'/blocks/';
     }
 
-    public function getPagesHome($module) {
+    public function getPagesHome($module)
+    {
         return $this->home.'core/innomedia/modules/'.$module.'/pages/';
     }
 
@@ -87,7 +94,8 @@ class InnomediaContext extends Singleton {
      * @return WebAppRequest
      * @since 5.1
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -97,11 +105,13 @@ class InnomediaContext extends Singleton {
      * @return WebAppResponse
      * @since 5.1
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
-    public function getSession() {
+    public function getSession()
+    {
         return $this->session;
     }
 
@@ -113,11 +123,13 @@ class InnomediaContext extends Singleton {
      * @return array
      * @since 5.1
      */
-    public function getLocales() {
+    public function getLocales()
+    {
         return $this->locales;
     }
 
-    public function getModulesList() {
+    public function getModulesList()
+    {
         $list = array ();
         if ($dh = opendir($this->home.'core/innomedia/modules')) {
             while (($file = readdir($dh)) !== false) {
@@ -130,7 +142,8 @@ class InnomediaContext extends Singleton {
         return $list;
     }
 
-    public function getThemesList() {
+    public function getThemesList()
+    {
         $list = array();
         if ($dh = opendir($this->home.'shared/themes')) {
             while (($file = readdir($dh)) !== false) {
@@ -152,7 +165,8 @@ class InnomediaContext extends Singleton {
      * @return void
      * @since 5.1
      */
-    public function importModule($module) {
+    public function importModule($module)
+    {
         if (is_dir($this->getModulesHome().$module.'/classes/')) {
         	set_include_path(get_include_path().':'.$this->getModulesHome().$module.'/classes/');
         }
@@ -164,7 +178,8 @@ class InnomediaContext extends Singleton {
      * @return void
      * @since 5.1
      */
-    private function process() {
+    private function process()
+    {
         // Checks if the locale has been passed as parameter
         if ($this->request->parameterExists('innomedia_setlocale')) {
             // Stores the locale into the session

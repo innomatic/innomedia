@@ -30,32 +30,39 @@ require_once('innomedia/InnomediaContext.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaModule {
+class InnomediaModule
+{
     protected $context;
     protected $name;
     
-    public function __construct(InnomediaContext $context, $moduleName) {
+    public function __construct(InnomediaContext $context, $moduleName)
+    {
         $this->context = $context;
         $this->name = $moduleName;
     }
     
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
     
-    public function getHome() {
+    public function getHome()
+    {
         return $this->context->getHome().'core/innomedia/modules/'.$this->name.'/';
     }
     
-    public function hasPages() {
+    public function hasPages()
+    {
         return file_exists($this->getHome().'pages');
     }
     
-    public function hasBlocks() {
+    public function hasBlocks()
+    {
         return file_exists($this->getHome().'blocks');
     }
     
-    public function getPagesList() {
+    public function getPagesList()
+    {
         $list = array ();
         if (!$this->hasPages()) {
             return $list;
@@ -71,7 +78,8 @@ class InnomediaModule {
         return $list;
     }
     
-    public function getBlocksList() {
+    public function getBlocksList()
+    {
         $list = array ();
         if (!$this->hasBlocks()) {
             return $list;

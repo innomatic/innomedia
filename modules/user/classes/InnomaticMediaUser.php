@@ -2,7 +2,8 @@
 
 require_once('innomedia/InnomediaContext.php');
 
-class InnomaticMediaUser {
+class InnomaticMediaUser
+{
 	// Login responses
 	
 	const RESPONSE_USERNAME_NOT_FOUND = 1;
@@ -31,7 +32,8 @@ class InnomaticMediaUser {
 	 * @author Alex Pagnoni
 	 * @since 1.0
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		// Stub users
 		$this->users['alex.pagnoni@innoteam.it'] = array('id' => 1, 'point_id' => '23', 'password' => '123', 'activated' => true);
 		$this->users['paolo.guanciarossa@innoteam.it'] = array('id' => 2, 'point_id' => '35','password' => 'abc', 'activated' => false);
@@ -42,8 +44,9 @@ class InnomaticMediaUser {
 		$this->id = self::isLoggedIn();		
 	}
 	
-	public function getUserById($id) {
-		foreach($this->users as $email => $user) {
+	public function getUserById($id)
+	{
+		foreach ($this->users as $email => $user) {
 			if ($user['id'] == $id) {
 				return array_merge(array('username' => $email), $this->users[$email]);
 			}
@@ -59,7 +62,8 @@ class InnomaticMediaUser {
 	 * @since 1.0
 	 * @return integer User id.
 	 */
-	public function getId() {
+	public function getId()
+	{
 		return $this->id;
 	}
 	
@@ -70,7 +74,8 @@ class InnomaticMediaUser {
 	 * @since 1.0
 	 * @return mixed Array with user data, or false if the user is not set.
 	 */
-	public function getData() {
+	public function getData()
+	{
 		if ($this->id != false) {
 			return $this->getUserById($this->id);
 		}
@@ -86,10 +91,13 @@ class InnomaticMediaUser {
 	 * @since 1.0
 	 * @return integer Id of the logged user, or false if not set.
 	 */
-	public function isLoggedIn() {
+	public function isLoggedIn()
+	{
 		$session = InnomediaContext::instance('innomediacontext')->getSession();
 		
-		if ($session->isValid('userid')) return $session->get('userid');
+		if ($session->isValid('userid')) {
+			return $session->get('userid');
+		}
 		return false;
 	}
 	
@@ -110,7 +118,8 @@ class InnomaticMediaUser {
 	 * @param string $password
 	 * @return integer Response code.
 	 */
-	public function login($username, $password) {		
+	public function login($username, $password)
+	{
 		if (!isset($this->users[$username])) {
 			return self::RESPONSE_USERNAME_NOT_FOUND;
 		}
@@ -139,7 +148,8 @@ class InnomaticMediaUser {
 	 * @param unknown $old
 	 * @param unknown $new
 	 */
-	public function changePassword($username = '', $old, $new_a, $new_b) {
+	public function changePassword($username = '', $old, $new_a, $new_b)
+	{
 		if (strlen($username)) {
 			if (!isset($this->users[$username])) {
 				return self::RESPONSE_USERNAME_NOT_FOUND;
@@ -182,10 +192,13 @@ class InnomaticMediaUser {
 	 * @since 1.0
 	 * @return integer Always InnomaticMediaUser::RESPONSE_LOGOUT_OK
 	 */
-	public function logout() {
+	public function logout()
+	{
 		$session = InnomediaContext::instance('innomediacontext')->getSession();
 		
-		if ($session->isValid('userid')) $session->remove('userid');
+		if ($session->isValid('userid')) {
+			$session->remove('userid');
+		}
 		
 		return self::RESPONSE_LOGOUT_OK;
 	}

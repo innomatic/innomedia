@@ -34,7 +34,8 @@ require_once('innomatic/webapp/WebAppResponse.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaPage {
+class InnomediaPage
+{
 	protected $context;
 	protected $request;
 	protected $response;
@@ -44,7 +45,8 @@ class InnomediaPage {
 	protected $theme;
 	protected $grid;
 
-	public function __construct(InnomediaContext $context, WebAppRequest $request, WebAppResponse $response, $module, $page) {
+	public function __construct(InnomediaContext $context, WebAppRequest $request, WebAppResponse $response, $module, $page)
+	{
 		$this->context = $context;
 		$this->request = $request;
 		$this->response = $response;
@@ -56,7 +58,8 @@ class InnomediaPage {
 		$this->parsePage();
 	}
 
-	protected function parsePage() {
+	protected function parsePage()
+	{
 		if (!file_exists($this->pageDefFile)) {
 			return false;
 		}
@@ -76,31 +79,38 @@ class InnomediaPage {
 		}
 	}
 
-	public function getContext() {
+	public function getContext()
+	{
 		return $this->context;
 	}
 
-	public function getTheme() {
+	public function getTheme()
+	{
 		return $this->theme;
 	}
 
-	public function getRequest() {
+	public function getRequest()
+	{
 		return $this->request;
 	}
 
-	public function getResponse() {
+	public function getResponse()
+	{
 		return $this->response;
 	}
 
-	public function getModule() {
+	public function getModule()
+	{
 		return $this->module;
 	}
 
-	public function getPage() {
+	public function getPage()
+	{
 		return $this->page;
 	}
 
-	public function build() {
+	public function build()
+	{
 		if (is_object($this->grid)) {
 			echo $this->grid->parse();
 		} else {

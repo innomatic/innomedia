@@ -3,8 +3,10 @@
 require_once('innomedia/InnomediaBlock.php');
 require_once('InnomaticMediaUser.php');
 
-class UserLoginBlock extends InnomediaBlock {
-    public function run(WebAppRequest $request, WebAppResponse $response) {
+class UserLoginBlock extends InnomediaBlock
+{
+    public function run(WebAppRequest $request, WebAppResponse $response)
+    {
     	$user = new InnomaticMediaUser();
     	
     	// Check the dologin parameter
@@ -13,7 +15,6 @@ class UserLoginBlock extends InnomediaBlock {
     		$this->set('username', $request->getParameter('username'));
     		$this->set('password', $request->getParameter('password'));
     		
-
     		// Check the login response
     		
     		switch ($user->login($request->getParameter('username'), $request->getParameter('password'))) {

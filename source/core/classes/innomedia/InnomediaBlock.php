@@ -35,24 +35,29 @@ require_once('innomatic/webapp/WebAppResponse.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-abstract class InnomediaBlock extends InnomediaTemplate {
+abstract class InnomediaBlock extends InnomediaTemplate
+{
     protected $context;
     protected $grid;
     protected $show = true;
 
-    public function __construct($file) {
+    public function __construct($file)
+    {
         parent::__construct($file);
     }
 
-    public function setContext(InnomediaContext $context) {
+    public function setContext(InnomediaContext $context)
+    {
 		$this->context = $context;
     }
     
-    public function setGrid(InnomediaGrid $grid) {
+    public function setGrid(InnomediaGrid $grid)
+    {
 		$this->grid = $grid;
     }
     
-    public static function load(InnomediaContext $context, InnomediaGrid $grid, $module, $name) {
+    public static function load(InnomediaContext $context, InnomediaGrid $grid, $module, $name)
+    {
 		if (!strlen($module)) {
 			return;
 		}
@@ -112,13 +117,14 @@ abstract class InnomediaBlock extends InnomediaTemplate {
         
         // Get all grid tags and set them in the block tags
         $grid_tags = $grid->getTags();
-        foreach($grid_tags as $tag) {
+        foreach ($grid_tags as $tag) {
         	$obj->set($tag, $grid->get($tag));
         }
         return $obj;
     }
 
-    private function getTemplateFile($page) {
+    private function getTemplateFile($page)
+    {
         $locales = $this->context->getLocales();
         foreach ($locales as $locale) {
             if (file_exists($pages_root.$locale.'/'.$page)) {
@@ -139,19 +145,23 @@ abstract class InnomediaBlock extends InnomediaTemplate {
         return false;
     }
 
-    public function setShow($show) {
+    public function setShow($show)
+    {
         $this->show = $show;
     }
 
-    public function getShow() {
+    public function getShow()
+    {
         return $this->show;
     }
 
-    public function getContext() {
+    public function getContext()
+    {
         return $this->context;
     }
 
-    public function getGrid() {
+    public function getGrid()
+    {
         return $this->grid;
     }
 

@@ -32,8 +32,10 @@ require_once('innomatic/webapp/WebAppResponse.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaEmptyBlock extends InnomediaBlock {
-    public function run(WebAppRequest $request, WebAppResponse $response) {
+class InnomediaEmptyBlock extends InnomediaBlock
+{
+    public function run(WebAppRequest $request, WebAppResponse $response)
+    {
     }
 }
 

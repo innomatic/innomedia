@@ -30,15 +30,18 @@ require_once('innomatic/tpl/Template.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */
-abstract class InnomediaTemplate implements Template {
+abstract class InnomediaTemplate implements Template
+{
 	protected $tplEngine;
 	
-	public function __construct($file) {
+	public function __construct($file)
+	{
 		require_once('innomatic/php/PHPTemplate.php');
 		$this->tplEngine = new PHPTemplate($file);
 	}
 	
-	public function set($name, $value) {
+	public function set($name, $value)
+	{
 		$this->tplEngine->set($name, $value);
 	}
 	

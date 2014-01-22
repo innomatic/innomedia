@@ -31,11 +31,13 @@ require_once('innomedia/InnomediaBlock.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaGrid extends InnomediaTemplate {
+class InnomediaGrid extends InnomediaTemplate
+{
     protected $page;
     protected $blocks;
 
-    public function InnomediaGrid(InnomediaPage $page) {
+    public function InnomediaGrid(InnomediaPage $page)
+    {
     	$this->page = $page;
         $this->blocks = array ();
 
@@ -51,7 +53,8 @@ class InnomediaGrid extends InnomediaTemplate {
         $this->setArray('blocks', $this->blocks);
 	}
 
-    public function setPredefinedTags() {
+    public function setPredefinedTags()
+    {
         $this->set('receiver', $this->page->getRequest()->getUrlPath(true));
         $this->set('baseurl', $this->page->getRequest()->getUrlPath(false).'/');
         $this->set('module', $this->page->getModule());
@@ -98,8 +101,9 @@ class InnomediaGrid extends InnomediaTemplate {
         $this->set('xajax_js', $xajax_js);
     }
 
-    public function addBlock(InnomediaBlock $block, $row, $column, $position) {
-        $block->Run($this->page->getRequest(), $this->page->getResponse());
+    public function addBlock(InnomediaBlock $block, $row, $column, $position)
+    {
+        $block->run($this->page->getRequest(), $this->page->getResponse());
         if (!$row) {
             $row = 1;
         }
@@ -114,7 +118,8 @@ class InnomediaGrid extends InnomediaTemplate {
         $this->blocks[$row][$column][$position] = $block_name;
     }
     
-    public function getGrid() {
+    public function getGrid()
+    {
     	return $this;
     }
 }

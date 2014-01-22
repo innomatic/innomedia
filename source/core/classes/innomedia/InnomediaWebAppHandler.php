@@ -33,14 +33,17 @@ require_once('innomedia/InnomediaPage.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaWebAppHandler extends WebAppHandler {
+class InnomediaWebAppHandler extends WebAppHandler
+{
     /**
      * Inits the webapp handler.
      */
-    public function init() {
+    public function init()
+    {
     }
 
-    public function doGet(WebAppRequest $req, WebAppResponse $res) {
+    public function doGet(WebAppRequest $req, WebAppResponse $res)
+    {
     	// Start Innomatic
     	require_once('innomatic/core/InnomaticContainer.php');
     	require_once('innomatic/core/RootContainer.php');
@@ -70,7 +73,8 @@ class InnomediaWebAppHandler extends WebAppHandler {
 		$page->build();
     }
 
-    public function doPost(WebAppRequest $req, WebAppResponse $res) {
+    public function doPost(WebAppRequest $req, WebAppResponse $res)
+    {
     	// We do get instead
 		$this->doGet($req, $res);
     }
@@ -78,7 +82,8 @@ class InnomediaWebAppHandler extends WebAppHandler {
     /**
      * Destroys the webapp handler.
      */
-    public function destroy() {
+    public function destroy()
+    {
     }
 }
 
