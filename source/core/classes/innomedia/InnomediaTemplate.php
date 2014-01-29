@@ -23,21 +23,19 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/tpl/Template.php');
 
 /**
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */
-abstract class InnomediaTemplate implements Template
+abstract class InnomediaTemplate implements \Innomatic\Tpl\Template
 {
 	protected $tplEngine;
 	
 	public function __construct($file)
 	{
-		require_once('innomatic/php/PHPTemplate.php');
-		$this->tplEngine = new PHPTemplate($file);
+		$this->tplEngine = new \Innomatic\Php\PHPTemplate($file);
 	}
 	
 	public function set($name, $value)
