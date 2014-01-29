@@ -22,11 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomedia/InnomediaContext.php');
-require_once ('innomedia/InnomediaGrid.php');
-require_once ('innomedia/InnomediaBlock.php');
-require_once ('innomatic/webapp/WebAppRequest.php');
-require_once ('innomatic/webapp/WebAppResponse.php');
+namespace Innomedia;
 
 /**
  *
@@ -53,7 +49,7 @@ class InnomediaPage
 
     protected $grid;
 
-    public function __construct(InnomediaContext $context, WebAppRequest $request, WebAppResponse $response, $module, $page)
+    public function __construct(InnomediaContext $context, \Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response, $module, $page)
     {
         $this->context = $context;
         $this->request = $request;
@@ -122,7 +118,7 @@ class InnomediaPage
         if (is_object($this->grid)) {
             echo $this->grid->parse();
         } else {
-            $this->response->sendError(WebAppResponse::SC_NOT_FOUND, $this->request->getRequestURI());
+            $this->response->sendError(\Innomatic\Webapp\WebAppResponse::SC_NOT_FOUND, $this->request->getRequestURI());
         }
     }
 }

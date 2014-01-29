@@ -22,12 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomedia/InnomediaTemplate.php');
-require_once ('innomedia/InnomediaContext.php');
-require_once ('innomedia/InnomediaGrid.php');
-require_once ('innomatic/webapp/WebAppContainer.php');
-require_once ('innomatic/webapp/WebAppRequest.php');
-require_once ('innomatic/webapp/WebAppResponse.php');
+namespace Innomedia;
 
 /**
  *
@@ -70,7 +65,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
         
         $block_xml_file = $context->getBlocksHome($module) . $name . '.xml';
         if (! file_exists($block_xml_file)) {
-            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.xml');
+            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.xml');
             return;
         }
         // Imports block's class and return an instance of it.
@@ -80,9 +75,10 @@ abstract class InnomediaBlock extends InnomediaTemplate
             $fqcn = 'innomedia/InnomediaEmptyBlock.php';
         }
         
+        // @todo convert to new namespace convention
         $included = @include_once ($fqcn);
         if (! $included) {
-            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
+            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
         }
         
@@ -97,9 +93,9 @@ abstract class InnomediaBlock extends InnomediaTemplate
             }
         }
         if (! strlen($tpl_file)) {
-            if (file_exists($tpl_root . WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template")) {
+            if (file_exists($tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template")) {
                 // Page for default language exists
-                $tpl_file = $tpl_root . WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template";
+                $tpl_file = $tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template";
             } else {
                 // Page for no specific language exists
                 $tpl_file = $tpl_root . "$def->template";
@@ -109,7 +105,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
         // Find block class
         $class = substr($fqcn, strrpos($fqcn, '/') ? strrpos($fqcn, '/') + 1 : 0, - 4);
         if (! class_exists($class)) {
-            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
+            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
             return;
         }
         
@@ -170,7 +166,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
         return $this->grid;
     }
 
-    abstract public function run(WebAppRequest $request, WebAppResponse $response);
+    abstract public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response);
 }
 
 ?>

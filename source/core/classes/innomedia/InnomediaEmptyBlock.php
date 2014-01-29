@@ -22,9 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomedia/InnomediaBlock.php');
-require_once ('innomatic/webapp/WebAppRequest.php');
-require_once ('innomatic/webapp/WebAppResponse.php');
+namespace Innomedia;
 
 /**
  *
@@ -35,7 +33,7 @@ require_once ('innomatic/webapp/WebAppResponse.php');
 class InnomediaEmptyBlock extends InnomediaBlock
 {
 
-    public function run(WebAppRequest $request, WebAppResponse $response)
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {}
 }
 

@@ -22,6 +22,8 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
+namespace Innomedia;
+
 require_once ('innomedia/InnomediaContext.php');
 
 /**

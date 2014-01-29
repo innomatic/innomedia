@@ -22,10 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomatic/util/Singleton.php');
-require_once ('innomatic/webapp/WebAppRequest.php');
-require_once ('innomatic/webapp/WebAppResponse.php');
-require_once ('innomatic/php/PHPSession.php');
+namespace Innomedia;
 
 /**
  *
@@ -33,7 +30,7 @@ require_once ('innomatic/php/PHPSession.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaContext extends Singleton
+class InnomediaContext extends \Innomatic\Util\Singleton
 {
 
     protected $home;
@@ -50,17 +47,17 @@ class InnomediaContext extends Singleton
 
     protected $registeredAjaxSetupCalls = array();
 
-    public function ___construct($home, WebAppRequest $request, WebAppResponse $response)
+    public function ___construct($home, \Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
         $this->home = realpath($home) . '/';
         $this->request = $request;
         $this->response = $response;
-        $this->session = new PHPSession();
+        $this->session = new \Innomatic\Php\PHPSession();
         $this->session->start();
         
         // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
         // defined by the 'sessionLifetime' parameter in web.xml
-        $lifetime = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
+        $lifetime = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
         if ($lifetime !== false) {
             $this->session->setLifeTime($lifetime);
         }

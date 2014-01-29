@@ -22,10 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomatic/webapp/WebAppContainer.php');
-require_once ('innomatic/webapp/WebAppHandler.php');
-require_once ('innomedia/InnomediaContext.php');
-require_once ('innomedia/InnomediaPage.php');
+namespace Innomedia;
 
 /**
  *
@@ -33,7 +30,7 @@ require_once ('innomedia/InnomediaPage.php');
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaWebAppHandler extends WebAppHandler
+class InnomediaWebAppHandler extends \Innomatic\Webapp\WebAppHandler
 {
 
     /**
@@ -42,20 +39,18 @@ class InnomediaWebAppHandler extends WebAppHandler
     public function init()
     {}
 
-    public function doGet(WebAppRequest $req, WebAppResponse $res)
+    public function doGet(\Innomatic\Webapp\WebAppRequest $req, \Innomatic\Webapp\WebAppResponse $res)
     {
         // Start Innomatic
-        require_once ('innomatic/core/InnomaticContainer.php');
-        require_once ('innomatic/core/RootContainer.php');
         
-        $innomatic = InnomaticContainer::instance('innomaticcontainer');
+        $innomatic = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
         $innomatic->setInterface(InnomaticContainer::INTERFACE_EXTERNAL);
-        $root = RootContainer::instance('rootcontainer');
+        $root = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
         $innomatic_home = $root->getHome() . 'innomatic/';
         $innomatic->bootstrap($innomatic_home, $innomatic_home . 'core/conf/innomatic.ini');
         
         // Start Innomatic domain
-        InnomaticContainer::instance('innomaticcontainer')->startDomain(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()
+        \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()
             ->getName());
         
         // Innomedia page
@@ -66,15 +61,15 @@ class InnomediaWebAppHandler extends WebAppHandler
         $page_name = isset($location[2]) ? $location[2] : '';
         
         // Define Innomatic context
-        $home = WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome();
-        $context = InnomediaContext::instance('InnomediaContext', $home, $req, $res);
+        $home = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
+        $context = InnomediaContext::instance('\Innomedia\InnomediaContext', $home, $req, $res);
         
         // Build Innomedia page
         $page = new InnomediaPage($context, $req, $res, $module_name, $page_name);
         $page->build();
     }
 
-    public function doPost(WebAppRequest $req, WebAppResponse $res)
+    public function doPost(\Innomatic\Webapp\WebAppRequest $req, \Innomatic\Webapp\WebAppResponse $res)
     {
         // We do get instead
         $this->doGet($req, $res);

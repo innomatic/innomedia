@@ -23,6 +23,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
+namespace Innomedia;
 
 /**
  *

@@ -22,8 +22,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-require_once ('innomedia/InnomediaTemplate.php');
-require_once ('innomedia/InnomediaBlock.php');
+namespace Innomedia;
 
 /**
  *
@@ -48,7 +47,7 @@ class InnomediaGrid extends InnomediaTemplate
             $tpl = $this->page->getContext()->getThemesHome() . 'default/grid.tpl.php';
         }
         if (! file_exists($tpl)) {
-            $this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+            $this->page->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
         }
         parent::__construct($tpl);
         $this->setPredefinedTags();
@@ -66,20 +65,19 @@ class InnomediaGrid extends InnomediaTemplate
         
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
-        $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
+        $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;
         $xajax->setLogFile($this->page->getContext()
             ->getHome() . 'core/log/ajax.log');
         
         // Set debug mode
-        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == \Innomatic\Core\InnomaticContainer::STATE_DEBUG) {
             $xajax->debugOn();
         }
         
         // Register Ajax calls parsing the ajax.xml configuration file
         if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
-            require_once ('innomatic/ajax/XajaxConfig.php');
-            $cfg = XajaxConfig::getInstance(WebAppContainer::instance('webappcontainer')->getCurrentWebApp(), WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
+            $cfg = \Innomatic\Ajax\XajaxConfig::getInstance(\Innomatic\Webapp\WebAppContainer::instance('webappcontainer')->getCurrentWebApp(), \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
             
             if (isset($cfg->functions)) {
                 foreach ($cfg->functions as $name => $functionData) {

@@ -4,6 +4,9 @@ NEW FEATURES:
 - Added LICENSE file. (Alex Pagnoni)
 - Added sessionLifetime parameter in web.xml. (Salvatore Pollaci)
 
+CHANGES:
+- Support for Innomatic 6.2.x PHP namespaces. (Alex Pagnoni)
+
 
 
 1.1 - 2013/11/28
