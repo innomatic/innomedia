@@ -1,27 +1,17 @@
 <?php
-/****** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+/**
+ * Innomedia
  *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * LICENSE
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.
  *
- * The Original Code is InnoMedia.
- *
- * The Initial Developer of the Original Code is
- * Alex Pagnoni.
- * Portions created by the Initial Developer are Copyright (C) 2008-2013
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * ***** END LICENSE BLOCK ***** */
+ * @copyright  2008-2014 Innoteam Srl
+ * @license    http://www.innomatic.org/license/   BSD License
+ * @link       http://www.innomatic.org
+ * @since      Class available since Release 1.0.0
+ */
 namespace Innomedia;
 
 require_once ('innomedia/InnomediaContext.php');
