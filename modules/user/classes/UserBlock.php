@@ -12,12 +12,10 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('innomedia/InnomediaBlock.php');
-require_once('InnomaticMediaUser.php');
 
-class UserBlock extends InnomediaBlock
+class UserBlock extends \Innomedia\InnomediaBlock
 {
-    public function run(WebAppRequest $request, WebAppResponse $response)
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
     	$user = new InnomaticMediaUser();
     	if ($userid = $user->isLoggedIn()) {

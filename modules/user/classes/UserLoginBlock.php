@@ -17,7 +17,7 @@ require_once('InnomaticMediaUser.php');
 
 class UserLoginBlock extends InnomediaBlock
 {
-    public function run(WebAppRequest $request, WebAppResponse $response)
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
     	$user = new InnomaticMediaUser();
     	

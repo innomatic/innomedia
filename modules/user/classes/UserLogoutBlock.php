@@ -12,12 +12,11 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('innomedia/InnomediaBlock.php');
 require_once('InnomaticMediaUser.php');
 
-class UserLogoutBlock extends InnomediaBlock
+class UserLogoutBlock extends \Innomedia\InnomediaBlock
 {
-    public function run(WebAppRequest $request, WebAppResponse $response)
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
     	// Logout the current user, if logged in
    		$user = new InnomaticMediaUser();

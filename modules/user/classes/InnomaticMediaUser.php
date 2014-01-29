@@ -12,7 +12,6 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('innomedia/InnomediaContext.php');
 
 class InnomaticMediaUser
 {
@@ -105,7 +104,7 @@ class InnomaticMediaUser
 	 */
 	public function isLoggedIn()
 	{
-		$session = InnomediaContext::instance('innomediacontext')->getSession();
+		$session = \Innomedia\InnomediaContext::instance('\Innomedia\InnomediaContext')->getSession();
 		
 		if ($session->isValid('userid')) {
 			return $session->get('userid');
@@ -146,7 +145,7 @@ class InnomaticMediaUser
 		
 		// The users exists, the password is right and the user has already been activated
 		
-		$session = InnomediaContext::instance('innomediacontext')->getSession();
+		$session = \Innomedia\InnomediaContext::instance('\Innomedia\InnomediaContext')->getSession();
 		$session->put('userid', $this->users[$username]['id']);
 		return self::RESPONSE_LOGIN_OK;
 	}
@@ -206,7 +205,7 @@ class InnomaticMediaUser
 	 */
 	public function logout()
 	{
-		$session = InnomediaContext::instance('innomediacontext')->getSession();
+		$session = \Innomedia\InnomediaContext::instance('\Innomedia\InnomediaContext')->getSession();
 		
 		if ($session->isValid('userid')) {
 			$session->remove('userid');
