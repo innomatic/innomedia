@@ -1,5 +1,5 @@
 <?php
-/* ***** BEGIN LICENSE BLOCK *****
+/****** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -22,54 +22,56 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-
-require_once('innomedia/InnomediaContext.php');
+require_once ('innomedia/InnomediaContext.php');
 
 /**
+ *
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
 class InnomediaModule
 {
+
     protected $context;
+
     protected $name;
-    
+
     public function __construct(InnomediaContext $context, $moduleName)
     {
         $this->context = $context;
         $this->name = $moduleName;
     }
-    
+
     public function getName()
     {
         return $this->name;
     }
-    
+
     public function getHome()
     {
-        return $this->context->getHome().'core/innomedia/modules/'.$this->name.'/';
+        return $this->context->getHome() . 'core/innomedia/modules/' . $this->name . '/';
     }
-    
+
     public function hasPages()
     {
-        return file_exists($this->getHome().'pages');
+        return file_exists($this->getHome() . 'pages');
     }
-    
+
     public function hasBlocks()
     {
-        return file_exists($this->getHome().'blocks');
+        return file_exists($this->getHome() . 'blocks');
     }
-    
+
     public function getPagesList()
     {
-        $list = array ();
-        if (!$this->hasPages()) {
+        $list = array();
+        if (! $this->hasPages()) {
             return $list;
         }
-        if ($dh = opendir($this->getHome().'pages')) {
+        if ($dh = opendir($this->getHome() . 'pages')) {
             while (($file = readdir($dh)) !== false) {
-                if ($file != '.' and $file != '..' and is_file($this->getHome().'pages/'.$file) and strrpos($file, '.xml')) {
+                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'pages/' . $file) and strrpos($file, '.xml')) {
                     $list[] = substr($file, 0, strrpos($file, '.xml'));
                 }
             }
@@ -77,16 +79,16 @@ class InnomediaModule
         }
         return $list;
     }
-    
+
     public function getBlocksList()
     {
-        $list = array ();
-        if (!$this->hasBlocks()) {
+        $list = array();
+        if (! $this->hasBlocks()) {
             return $list;
         }
-        if ($dh = opendir($this->getHome().'blocks')) {
+        if ($dh = opendir($this->getHome() . 'blocks')) {
             while (($file = readdir($dh)) !== false) {
-                if ($file != '.' and $file != '..' and is_file($this->getHome().'blocks/'.$file) and strrpos($file, '.xml')) {
+                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'blocks/' . $file) and strrpos($file, '.xml')) {
                     $list[] = substr($file, 0, strrpos($file, '.xml'));
                 }
             }

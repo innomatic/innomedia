@@ -1,5 +1,5 @@
-<?php 
-/* ***** BEGIN LICENSE BLOCK *****
+<?php
+/****** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -22,105 +22,113 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-
-require_once('innomedia/InnomediaTemplate.php');
-require_once('innomedia/InnomediaBlock.php');
+require_once ('innomedia/InnomediaTemplate.php');
+require_once ('innomedia/InnomediaBlock.php');
 
 /**
+ *
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
 class InnomediaGrid extends InnomediaTemplate
 {
+
     protected $page;
+
     protected $blocks;
 
     public function InnomediaGrid(InnomediaPage $page)
     {
-    	$this->page = $page;
-        $this->blocks = array ();
-
-		$tpl = $this->page->getContext()->getThemesHome().$this->page->getTheme().'/grid.tpl.php';
-        if (!file_exists($tpl)) {
-			$tpl = $this->page->getContext()->getThemesHome().'default/grid.tpl.php';
-		}
-        if (!file_exists($tpl)) {
-        	$this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
-		}
-		parent::__construct($tpl);
-		$this->setPredefinedTags();
+        $this->page = $page;
+        $this->blocks = array();
+        
+        $tpl = $this->page->getContext()->getThemesHome() . $this->page->getTheme() . '/grid.tpl.php';
+        if (! file_exists($tpl)) {
+            $tpl = $this->page->getContext()->getThemesHome() . 'default/grid.tpl.php';
+        }
+        if (! file_exists($tpl)) {
+            $this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+        }
+        parent::__construct($tpl);
+        $this->setPredefinedTags();
         $this->setArray('blocks', $this->blocks);
-	}
+    }
 
     public function setPredefinedTags()
     {
-        $this->set('receiver', $this->page->getRequest()->getUrlPath(true));
-        $this->set('baseurl', $this->page->getRequest()->getUrlPath(false).'/');
+        $this->set('receiver', $this->page->getRequest()
+            ->getUrlPath(true));
+        $this->set('baseurl', $this->page->getRequest()
+            ->getUrlPath(false) . '/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
-
+        
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
-        $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false).'/ajax/');
+        $xajax = Xajax::instance('Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;
-        $xajax->setLogFile($this->page->getContext()->getHome().'core/log/ajax.log');
+        $xajax->setLogFile($this->page->getContext()
+            ->getHome() . 'core/log/ajax.log');
         
         // Set debug mode
         if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-        	$xajax->debugOn();
+            $xajax->debugOn();
         }
-
-        // Register Ajax calls parsing the ajax.xml configuration file  
-        if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml')) {    
-	        require_once ('innomatic/ajax/XajaxConfig.php');
-	        $cfg = XajaxConfig :: getInstance(
-	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp(),
-	        		WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome().'core/conf/ajax.xml');
-	        
-	        if (isset($cfg->functions)) {
-	        	foreach($cfg->functions as $name => $functionData) {
-	        		$xajax->registerExternalFunction(array($name, $functionData['classname'], $functionData['method']), $functionData['classfile']);
-	        	}
-	        }
+        
+        // Register Ajax calls parsing the ajax.xml configuration file
+        if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
+            require_once ('innomatic/ajax/XajaxConfig.php');
+            $cfg = XajaxConfig::getInstance(WebAppContainer::instance('webappcontainer')->getCurrentWebApp(), WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
+            
+            if (isset($cfg->functions)) {
+                foreach ($cfg->functions as $name => $functionData) {
+                    $xajax->registerExternalFunction(array(
+                        $name,
+                        $functionData['classname'],
+                        $functionData['method']
+                    ), $functionData['classfile']);
+                }
+            }
         }
         
         // Build the base javascript for ajax
-        $xajax_js = $xajax->getJavascript($this->page->getRequest()->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
-
+        $xajax_js = $xajax->getJavascript($this->page->getRequest()
+            ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
+        
         // Setup calls.
         if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
-        	$setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
-        	$xajax_js .= '<script type="text/javascript">' . "\n";
-        	foreach ($setup_calls as $call) {
-        		$xajax_js .= $call . ";\n";
-        	}
-        	$xajax_js .= '</script>' . "\n";
+            $setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
+            $xajax_js .= '<script type="text/javascript">' . "\n";
+            foreach ($setup_calls as $call) {
+                $xajax_js .= $call . ";\n";
+            }
+            $xajax_js .= '</script>' . "\n";
         }
-
+        
         $this->set('xajax_js', $xajax_js);
     }
 
     public function addBlock(InnomediaBlock $block, $row, $column, $position)
     {
         $block->run($this->page->getRequest(), $this->page->getResponse());
-        if (!$row) {
+        if (! $row) {
             $row = 1;
         }
-        if (!$column) {
+        if (! $column) {
             $column = 1;
         }
-        if (!$position) {
+        if (! $position) {
             $position = 1;
         }
-        $block_name = 'block_'.$row.'_'.$column.'_'.$position;
+        $block_name = 'block_' . $row . '_' . $column . '_' . $position;
         $this->set($block_name, $block);
         $this->blocks[$row][$column][$position] = $block_name;
     }
-    
+
     public function getGrid()
     {
-    	return $this;
+        return $this;
     }
 }
 

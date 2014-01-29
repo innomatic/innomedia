@@ -1,5 +1,5 @@
-<?php 
-/* ***** BEGIN LICENSE BLOCK *****
+<?php
+/****** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -22,21 +22,21 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-
-require_once('innomedia/InnomediaBlock.php');
-require_once('innomatic/webapp/WebAppRequest.php');
-require_once('innomatic/webapp/WebAppResponse.php');
+require_once ('innomedia/InnomediaBlock.php');
+require_once ('innomatic/webapp/WebAppRequest.php');
+require_once ('innomatic/webapp/WebAppResponse.php');
 
 /**
+ *
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
 class InnomediaEmptyBlock extends InnomediaBlock
 {
+
     public function run(WebAppRequest $request, WebAppResponse $response)
-    {
-    }
+    {}
 }
 
 ?>

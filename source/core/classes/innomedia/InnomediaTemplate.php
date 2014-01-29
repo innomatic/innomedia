@@ -1,5 +1,6 @@
-<?php  
-/* ***** BEGIN LICENSE BLOCK *****
+<?php
+
+/****** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,61 +24,63 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
 /**
+ *
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */
 abstract class InnomediaTemplate implements \Innomatic\Tpl\Template
 {
-	protected $tplEngine;
-	
-	public function __construct($file)
-	{
-		$this->tplEngine = new \Innomatic\Php\PHPTemplate($file);
-	}
-	
-	public function set($name, $value)
-	{
-		$this->tplEngine->set($name, $value);
-	}
-	
-	public function get($name)
-	{
-		$value = $this->tplEngine->get($name);
-		if ($value === false and !($this instanceof InnomaticGrid)) {
-			$value = $this->getGrid()->get($name);
-		}
-		return $value;
-	}
-	
-	public function setArray($name, &$value)
-	{
-		if (method_exists($this->tplEngine, 'setArray')) {
-			$this->tplEngine->setArray($name, $value);
-		} else {
-			$this->tplEngine->set($name, $value);
-		}
-	}
-	
-	public function &getArray($name)
-	{
-		if (method_exists($this->tplEngine, 'getArray')) {
-			return $this->tplEngine->getArray($name);
-		} else {
-			return $this->tplEngine->get($name);
-		}
-	}
-	
-	public function parse()
-	{
-		return $this->tplEngine->parse();
-	}
-	
-	public function getTags() {
-		return $this->tplEngine->getTags();
-	}
-	
-	public abstract function getGrid();
+
+    protected $tplEngine;
+
+    public function __construct($file)
+    {
+        $this->tplEngine = new \Innomatic\Php\PHPTemplate($file);
+    }
+
+    public function set($name, $value)
+    {
+        $this->tplEngine->set($name, $value);
+    }
+
+    public function get($name)
+    {
+        $value = $this->tplEngine->get($name);
+        if ($value === false and ! ($this instanceof InnomaticGrid)) {
+            $value = $this->getGrid()->get($name);
+        }
+        return $value;
+    }
+
+    public function setArray($name, &$value)
+    {
+        if (method_exists($this->tplEngine, 'setArray')) {
+            $this->tplEngine->setArray($name, $value);
+        } else {
+            $this->tplEngine->set($name, $value);
+        }
+    }
+
+    public function &getArray($name)
+    {
+        if (method_exists($this->tplEngine, 'getArray')) {
+            return $this->tplEngine->getArray($name);
+        } else {
+            return $this->tplEngine->get($name);
+        }
+    }
+
+    public function parse()
+    {
+        return $this->tplEngine->parse();
+    }
+
+    public function getTags()
+    {
+        return $this->tplEngine->getTags();
+    }
+
+    public abstract function getGrid();
 }
