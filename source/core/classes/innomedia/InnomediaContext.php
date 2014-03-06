@@ -48,14 +48,14 @@ class InnomediaContext extends \Innomatic\Util\Singleton
         $this->response = $response;
         $this->session = new \Innomatic\Php\PHPSession();
         $this->session->start();
-        
+
         // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
         // defined by the 'sessionLifetime' parameter in web.xml
         $lifetime = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
         if ($lifetime !== false) {
             $this->session->setLifeTime($lifetime);
         }
-        
+
         // Process the request
         $this->process();
     }
@@ -68,6 +68,11 @@ class InnomediaContext extends \Innomatic\Util\Singleton
     public function getThemesHome()
     {
         return $this->home . 'shared/themes/';
+    }
+
+    public function getLayoutsHome()
+    {
+        return $this->home . 'core/innomedia/layouts/';
     }
 
     public function getModulesHome()
@@ -183,12 +188,12 @@ class InnomediaContext extends \Innomatic\Util\Singleton
             // Stores the locale into the session
             $this->session->put('innomedia_locale', $this->request->getParameter('innomedia_setlocale'));
         }
-        
+
         // Retrieves the locale from the session, if set
         if ($this->session->isValid('innomedia_locale')) {
             $this->locales[] = $this->session->get('innomedia_locale');
         }
-        
+
         // Adds the locales supported by the web agent
         $this->locales = array_merge($this->locales, $this->request->getLocales());
     }
