@@ -1,10 +1,24 @@
 <?php
-
+/**
+ * Innomedia
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.
+ *
+ * @copyright  2008-2014 Innoteam Srl
+ * @license    http://www.innomatic.org/license/   BSD License
+ * @link       http://www.innomatic.org
+ * @since      Class available since Release 1.0.0
+ */
 require_once('innomedia/InnomediaBlock.php');
 require_once('InnomaticMediaUser.php');
 
-class UserLoginBlock extends InnomediaBlock {
-    public function run(WebAppRequest $request, WebAppResponse $response) {
+class UserLoginBlock extends InnomediaBlock
+{
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
+    {
     	$user = new InnomaticMediaUser();
     	
     	// Check the dologin parameter
@@ -13,7 +27,6 @@ class UserLoginBlock extends InnomediaBlock {
     		$this->set('username', $request->getParameter('username'));
     		$this->set('password', $request->getParameter('password'));
     		
-
     		// Check the login response
     		
     		switch ($user->login($request->getParameter('username'), $request->getParameter('password'))) {
