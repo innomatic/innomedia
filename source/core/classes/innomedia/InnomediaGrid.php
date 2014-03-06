@@ -34,7 +34,7 @@ class InnomediaGrid extends InnomediaTemplate
      *
      * @param InnomediaPage $page Current page object.
      */
-    public function __construct(InnomediaPage $page)
+    public function __construct($page)
     {
         $this->page = $page;
         $this->blocks = array();
