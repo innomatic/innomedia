@@ -35,6 +35,13 @@ class InnomediaPage
 
     protected $pageDefFile;
 
+    /**
+     * Layout name
+     *
+     * @var string
+     */
+    protected $layout;
+
     protected $theme;
 
     protected $grid;
@@ -45,8 +52,7 @@ class InnomediaPage
         \Innomatic\Webapp\WebAppResponse $response,
         $module,
         $page
-    )
-    {
+    ) {
         $this->context = $context;
         $this->request = $request;
         $this->response = $response;
@@ -60,30 +66,95 @@ class InnomediaPage
 
     protected function parsePage()
     {
+        // Check if the XML file for the given page exists
         if (! file_exists($this->pageDefFile)) {
             return false;
         }
-        $def = simplexml_load_file($this->pageDefFile);
-        // Gets page level theme if defined
-        if (strlen("$def->theme")) {
-            $this->theme = "$def->theme";
-        }
-        // Loads the grid
+
+        // Load the grid
         $this->grid = new InnomediaGrid($this);
-        // Gets block list
-        foreach ($def->block as $blockDef) {
-            $block = InnomediaBlock::load($this->context, $this->grid, "$blockDef->module", "$blockDef->name");
+
+        // Load the page XML structure
+        $page_def = simplexml_load_file($this->pageDefFile);
+
+        // Get page layout if defined and check if the XML file for the given layout exists
+        if (
+            strlen("$page_def->layout")
+            && file_exists($context->getLayoutsHome().$this->layout.'/layout.xml')) {
+            // Set the layout name
+            $this->layout = "$page_def->layout";
+
+            // Load the layout XML structure
+            $layout_def = simplexml_load_file(
+                $context->getLayoutsHome().
+                $this->layout.'/layout.xml'
+            );
+
+            // Get layout level theme if defined
+            if (strlen("$layout_def->theme")) {
+                $this->theme = "$layout_def->theme";
+            }
+
+            // Get block list
+            foreach ($layout_def->block as $blockDef) {
+                // Load the block
+                $block = InnomediaBlock::load(
+                    $this->context,
+                    $this->grid,
+                    "$blockDef->module",
+                    "$blockDef->name"
+                );
+
+                if (! is_null($block)) {
+                    // Add the block
+                    $this->grid->addBlock(
+                        $block,
+                        "$blockDef->row",
+                        "$blockDef->column",
+                        "$blockDef->position"
+                    );
+                }
+            }
+        }
+
+        // Get page level theme if defined, overriding layout level theme
+        if (strlen("$page_def->theme")) {
+            $this->theme = "$page_def->theme";
+        }
+
+        // Get block list
+        foreach ($page_def->block as $blockDef) {
+            $block = InnomediaBlock::load(
+                $this->context,
+                $this->grid,
+                "$blockDef->module",
+                "$blockDef->name"
+            );
+
             if (! is_null($block)) {
-                $this->grid->addBlock($block, "$blockDef->row", "$blockDef->column", "$blockDef->position");
+                $this->grid->addBlock(
+                    $block,
+                    "$blockDef->row",
+                    "$blockDef->column",
+                    "$blockDef->position"
+                );
             }
         }
     }
 
+    /**
+     * Returns InnomediaContext object.
+     */
     public function getContext()
     {
         return $this->context;
     }
 
+    /**
+     * Returns the theme set for the current page.
+     *
+     * @return string current theme
+     */
     public function getTheme()
     {
         return $this->theme;
