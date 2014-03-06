@@ -7,18 +7,19 @@
  * This source file is subject to the new BSD license that is bundled
  * with this package in the file LICENSE.
  *
- * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
- * @since      Class available since Release 1.0.0
+ * @copyright 2008-2014 Innoteam Srl
+ * @license   http://www.innomatic.org/license/   BSD License
+ * @link      http://www.innomatic.org
+ * @since     1.0.0
  */
 namespace Innomedia;
 
 /**
+ * This class is a dependency injection container for Innomedia.
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
- * @copyright Copyright 2008-2013 Innoteam Srl
- * @since 1.0
+ * @author    Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @copyright 2008-2013 Innoteam Srl
+ * @since     1.0
  */
 class InnomediaContext extends \Innomatic\Util\Singleton
 {
@@ -65,15 +66,29 @@ class InnomediaContext extends \Innomatic\Util\Singleton
         return $this->home;
     }
 
+    /* public getThemesHome() {{{ */
+    /**
+     * Returns the themes home directory.
+     *
+     * @return string the themes home directory
+     */
     public function getThemesHome()
     {
         return $this->home . 'shared/themes/';
     }
+    /* }}} */
 
+    /* public getLayoutsHome() {{{ */
+    /**
+     * Returns the layouts home directory.
+     *
+     * @return string the layouts home directory
+     */
     public function getLayoutsHome()
     {
         return $this->home . 'core/innomedia/layouts/';
     }
+    /* }}} */
 
     public function getModulesHome()
     {

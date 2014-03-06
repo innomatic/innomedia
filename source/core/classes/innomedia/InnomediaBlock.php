@@ -51,29 +51,29 @@ abstract class InnomediaBlock extends InnomediaTemplate
         if (! strlen($module)) {
             return;
         }
-        
+
         // Adds module classes directory to classpath
         $context->importModule($module);
-        
+
         $block_xml_file = $context->getBlocksHome($module) . $name . '.xml';
         if (! file_exists($block_xml_file)) {
             $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.xml');
             return;
         }
-        // Imports block's class and return an instance of it.
+        // Imports block class and return an instance of it.
         $def = simplexml_load_file($block_xml_file);
         $fqcn = "$def->class";
         if (! strlen($fqcn)) {
             $fqcn = 'innomedia/InnomediaEmptyBlock.php';
         }
-        
+
         // @todo convert to new namespace convention
         $included = @include_once ($fqcn);
         if (! $included) {
             $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
         }
-        
+
         $tpl_root = $context->getBlocksHome($module);
         $tpl_file = '';
         $locales = $context->getLocales();
@@ -93,19 +93,19 @@ abstract class InnomediaBlock extends InnomediaTemplate
                 $tpl_file = $tpl_root . "$def->template";
             }
         }
-        
+
         // Find block class
         $class = substr($fqcn, strrpos($fqcn, '/') ? strrpos($fqcn, '/') + 1 : 0, - 4);
         if (! class_exists($class)) {
             $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
             return;
         }
-        
+
         // Build block
         $obj = new $class($tpl_file);
         $obj->setContext($context);
         $obj->setGrid($grid);
-        
+
         // Get all grid tags and set them in the block tags
         $grid_tags = $grid->getTags();
         foreach ($grid_tags as $tag) {
@@ -123,7 +123,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
                 return $pages_root . $locale . '/' . $page;
             }
         }
-        
+
         if (file_exists($pages_root . $this->context->getRequest()
             ->getContext()
             ->getConfig()
