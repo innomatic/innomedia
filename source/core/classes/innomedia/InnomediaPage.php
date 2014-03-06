@@ -80,14 +80,15 @@ class InnomediaPage
         // Get page layout if defined and check if the XML file for the given layout exists
         if (
             strlen("$page_def->layout")
-            && file_exists($context->getLayoutsHome().$this->layout.'/layout.xml')) {
+            && file_exists($this->context->getLayoutsHome()."$page_def->layout".'/layout.xml')) {
             // Set the layout name
             $this->layout = "$page_def->layout";
 
             // Load the layout XML structure
             $layout_def = simplexml_load_file(
-                $context->getLayoutsHome().
-                $this->layout.'/layout.xml'
+                $this->context->getLayoutsHome().
+                $this->layout.
+                '/layout.xml'
             );
 
             // Get layout level theme if defined
