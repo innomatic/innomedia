@@ -4,31 +4,31 @@
 	<definition>
 		<idname>innomedia</idname>
 		<release>
-			<version>1.2</version>
-			<date>2013/11/28</date>
+			<version>1.2.0</version>
+			<date>2013/03/06</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
-		<description>InnoMedia CMF - Content Management Framework</description>
+		<description>InnoMedia Frontend Framework</description>
 		<category>web</category>
 		<dependencies>
-			<dependency>innomatic[6.2]</dependency>
+			<dependency>innomatic[6.2.0]</dependency>
 		</dependencies>
 		<legal>
 			<author>
 				<name>Innoteam Srl</name>
-				<email>info@innoteam.it</email>
-				<web>http://www.innoteam.it/</web>
+				<email>info@innoteam.io</email>
+				<web>http://www.innomatic.io/</web>
 			</author>
 			<copyright>Copyright (C) 2009-2014 Innoteam Srl</copyright>
 			<license>New BSD</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
 		<support>
-			<supportemail>helpdesk@innoteam.it</supportemail>
-			<bugsemail>helpdesk@innoteam.it</bugsemail>
+			<supportemail>helpdesk@innomatic.io</supportemail>
+			<bugsemail>bugs@innomatic.io</bugsemail>
 			<maintainer>
 				<name>Alex Pagnoni</name>
-				<email>alex.pagnoni@innoteam.it</email>
+				<email>alex.pagnoni@innomatic.io</email>
 			</maintainer>
 		</support>
 	</definition>
