@@ -33,6 +33,7 @@ abstract class InnomediaTemplate implements \Innomatic\Tpl\Template
     public function set($name, $value)
     {
         $this->tplEngine->set($name, $value);
+        return $this;
     }
 
     public function get($name)
@@ -51,6 +52,7 @@ abstract class InnomediaTemplate implements \Innomatic\Tpl\Template
         } else {
             $this->tplEngine->set($name, $value);
         }
+        return $this;
     }
 
     public function &getArray($name)

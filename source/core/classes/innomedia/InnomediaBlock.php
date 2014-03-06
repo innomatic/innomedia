@@ -37,11 +37,13 @@ abstract class InnomediaBlock extends InnomediaTemplate
     public function setContext(InnomediaContext $context)
     {
         $this->context = $context;
+        return $this;
     }
 
     public function setGrid(InnomediaGrid $grid)
     {
         $this->grid = $grid;
+        return $this;
     }
 
     public static function load(InnomediaContext $context, InnomediaGrid $grid, $module, $name)
@@ -139,6 +141,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
     public function setShow($show)
     {
         $this->show = $show;
+        return $this;
     }
 
     public function getShow()
@@ -156,7 +159,10 @@ abstract class InnomediaBlock extends InnomediaTemplate
         return $this->grid;
     }
 
-    abstract public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response);
+    abstract public function run(
+        \Innomatic\Webapp\WebAppRequest $request,
+        \Innomatic\Webapp\WebAppResponse $response
+    );
 }
 
 ?>

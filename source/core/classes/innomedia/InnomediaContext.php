@@ -37,7 +37,11 @@ class InnomediaContext extends \Innomatic\Util\Singleton
 
     protected $registeredAjaxSetupCalls = array();
 
-    public function ___construct($home, \Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
+    public function ___construct(
+        $home,
+        \Innomatic\Webapp\WebAppRequest $request,
+        \Innomatic\Webapp\WebAppResponse $response
+    )
     {
         $this->home = realpath($home) . '/';
         $this->request = $request;

@@ -39,7 +39,13 @@ class InnomediaPage
 
     protected $grid;
 
-    public function __construct(InnomediaContext $context, \Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response, $module, $page)
+    public function __construct(
+        InnomediaContext $context,
+        \Innomatic\Webapp\WebAppRequest $request,
+        \Innomatic\Webapp\WebAppResponse $response,
+        $module,
+        $page
+    )
     {
         $this->context = $context;
         $this->request = $request;

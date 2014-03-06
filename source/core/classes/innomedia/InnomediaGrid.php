@@ -27,7 +27,7 @@ class InnomediaGrid extends InnomediaTemplate
 
     protected $blocks;
 
-    public function InnomediaGrid(InnomediaPage $page)
+    public function __construct(InnomediaPage $page)
     {
         $this->page = $page;
         $this->blocks = array();
@@ -81,8 +81,10 @@ class InnomediaGrid extends InnomediaTemplate
         }
         
         // Build the base javascript for ajax
-        $xajax_js = $xajax->getJavascript($this->page->getRequest()
-            ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
+        $xajax_js = $xajax->getJavascript(
+            $this->page
+                ->getRequest()
+                ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
         
         // Setup calls.
         if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
@@ -95,6 +97,8 @@ class InnomediaGrid extends InnomediaTemplate
         }
         
         $this->set('xajax_js', $xajax_js);
+
+        return $this;
     }
 
     public function addBlock(InnomediaBlock $block, $row, $column, $position)
@@ -112,6 +116,8 @@ class InnomediaGrid extends InnomediaTemplate
         $block_name = 'block_' . $row . '_' . $column . '_' . $position;
         $this->set($block_name, $block);
         $this->blocks[$row][$column][$position] = $block_name;
+
+        return $this;
     }
 
     public function getGrid()
