@@ -77,42 +77,42 @@ class InnomediaPage
         // Load the page XML structure
         $page_def = simplexml_load_file($this->pageDefFile);
 
-        // Get page layout if defined and check if the XML file for the given layout exists
+        // Get page layout if defined and check if the YAML file for the given layout exists
         if (
             strlen("$page_def->layout")
-            && file_exists($this->context->getLayoutsHome()."$page_def->layout".'/layout.xml')) {
+            && file_exists($this->context->getLayoutsHome()."$page_def->layout".'.yml')) {
             // Set the layout name
             $this->layout = "$page_def->layout";
 
-            // Load the layout XML structure
-            $layout_def = simplexml_load_file(
+            // Load the layout YAML structure
+            $layout_def = yaml_parse_file(
                 $this->context->getLayoutsHome().
                 $this->layout.
-                '/layout.xml'
+                '.yml'
             );
 
             // Get layout level theme if defined
-            if (strlen("$layout_def->theme")) {
-                $this->theme = "$layout_def->theme";
+            if (strlen($layout_def['theme'])) {
+                $this->theme = $layout_def['theme'];
             }
 
             // Get block list
-            foreach ($layout_def->block as $blockDef) {
+            foreach ($layout_def['blocks'] as $blockDef) {
                 // Load the block
                 $block = InnomediaBlock::load(
                     $this->context,
                     $this->grid,
-                    "$blockDef->module",
-                    "$blockDef->name"
+                    $blockDef['module'],
+                    $blockDef['name']
                 );
 
                 if (! is_null($block)) {
                     // Add the block
                     $this->grid->addBlock(
                         $block,
-                        "$blockDef->row",
-                        "$blockDef->column",
-                        "$blockDef->position"
+                        $blockDef['row'],
+                        $blockDef['column'],
+                        $blockDef['position']
                     );
                 }
             }
