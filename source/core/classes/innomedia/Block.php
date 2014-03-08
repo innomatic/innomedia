@@ -27,6 +27,13 @@ abstract class Block extends Template
 
     protected $grid;
 
+    /**
+     * Block parameters
+     *
+     * @var array
+     */
+    protected $parameters;
+
     protected $show = true;
 
     public function __construct($file)
@@ -46,7 +53,21 @@ abstract class Block extends Template
         return $this;
     }
 
-    public static function load(Context $context, Grid $grid, $module, $name)
+    /* public setParameters($params) {{{ */
+    /**
+     * Sets block parameters array.
+     *
+     * @param array $params Array of parameters.
+     *
+     * @return \Innomedia\Block itself.
+     */
+    public function setParameters($params)
+    {
+        $this->parameters = $params;
+    }
+    /* }}} */
+
+    public static function load(Context $context, Grid $grid, $module, $name, $params = array())
     {
         if (! strlen($module)) {
             return;
@@ -159,6 +180,17 @@ abstract class Block extends Template
         return $this->grid;
     }
 
+    /* public getParameters() {{{ */
+    /**
+     * Returns block parameters.
+     *
+     * @return array
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+    /* }}} */
     abstract public function run(
         \Innomatic\Webapp\WebAppRequest $request,
         \Innomatic\Webapp\WebAppResponse $response

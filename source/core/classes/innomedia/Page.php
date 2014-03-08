@@ -33,6 +33,8 @@ class Page
 
     protected $page;
 
+    protected $id;
+
     protected $pageDefFile;
 
     /**
@@ -51,7 +53,8 @@ class Page
         \Innomatic\Webapp\WebAppRequest $request,
         \Innomatic\Webapp\WebAppResponse $response,
         $module,
-        $page
+        $page,
+        $id = 0
     ) {
         $this->context = $context;
         $this->request = $request;
@@ -59,6 +62,7 @@ class Page
         // TODO Add fallback module/page as optional welcome page
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
+        $this->id = $id;
         $this->theme = 'default';
         $this->pageDefFile = $context->getPagesHome($this->module) . $this->page . '.yml';
         $this->parsePage();
@@ -66,7 +70,7 @@ class Page
 
     protected function parsePage()
     {
-        // Check if the YAML file for the given page exists
+       // Check if the YAML file for the given page exists
         if (! file_exists($this->pageDefFile)) {
             return false;
         }
@@ -74,6 +78,24 @@ class Page
         // Load the grid
         $this->grid = new Grid($this);
 
+        // Load block parameters for this instance of the page, is available
+        $blockParams = array();
+        if ($this->id != 0) {
+            $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+                ->getCurrentDomain()
+                ->getDataAccess();
+
+            $blocksParamsQuery = $domainDa->execute(
+                "SELECT block,params
+                FROM innomedia_blocks
+                WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+                "AND pageid={$this->id}");
+
+            while (!$blocksParamsQuery->eof) {
+                $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+                $blocksParamsQuery->moveNext();
+            }
+        }
         // Load the page YAML structure
         $page_def = yaml_parse_file($this->pageDefFile);
 
@@ -103,7 +125,8 @@ class Page
                     $this->context,
                     $this->grid,
                     $blockDef['module'],
-                    $blockDef['name']
+                    $blockDef['name'],
+                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
                 );
 
                 if (! is_null($block)) {
