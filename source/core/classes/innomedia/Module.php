@@ -7,29 +7,27 @@
  * This source file is subject to the new BSD license that is bundled
  * with this package in the file LICENSE.
  *
- * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
- * @since      Class available since Release 1.0.0
+ * @copyright 2008-2014 Innoteam Srl
+ * @license   http://www.innomatic.org/license/   BSD License
+ * @link      http://www.innomatic.org
+ * @since     1.0.0
  */
 namespace Innomedia;
 
-require_once ('innomedia/InnomediaContext.php');
-
 /**
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
- * @copyright Copyright 2008-2013 Innoteam Srl
- * @since 1.0
+ * @author    Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @copyright 2008-2013 Innoteam Srl
+ * @since     1.0.0
  */
-class InnomediaModule
+class Module
 {
 
     protected $context;
 
     protected $name;
 
-    public function __construct(InnomediaContext $context, $moduleName)
+    public function __construct(Context $context, $moduleName)
     {
         $this->context = $context;
         $this->name = $moduleName;

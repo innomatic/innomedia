@@ -20,7 +20,7 @@ namespace Innomedia;
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-abstract class InnomediaBlock extends InnomediaTemplate
+abstract class Block extends Template
 {
 
     protected $context;
@@ -34,19 +34,19 @@ abstract class InnomediaBlock extends InnomediaTemplate
         parent::__construct($file);
     }
 
-    public function setContext(InnomediaContext $context)
+    public function setContext(Context $context)
     {
         $this->context = $context;
         return $this;
     }
 
-    public function setGrid(InnomediaGrid $grid)
+    public function setGrid(Grid $grid)
     {
         $this->grid = $grid;
         return $this;
     }
 
-    public static function load(InnomediaContext $context, InnomediaGrid $grid, $module, $name)
+    public static function load(Context $context, Grid $grid, $module, $name)
     {
         if (! strlen($module)) {
             return;
@@ -64,7 +64,7 @@ abstract class InnomediaBlock extends InnomediaTemplate
         $def = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
         if (! strlen($fqcn)) {
-            $fqcn = 'innomedia/InnomediaEmptyBlock.php';
+            $fqcn = 'innomedia/EmptyBlock.php';
         }
 
         // @todo convert to new namespace convention

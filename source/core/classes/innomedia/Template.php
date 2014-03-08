@@ -20,7 +20,7 @@ namespace Innomedia;
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */
-abstract class InnomediaTemplate implements \Innomatic\Tpl\Template
+abstract class Template implements \Innomatic\Tpl\Template
 {
 
     protected $tplEngine;

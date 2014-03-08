@@ -15,7 +15,7 @@
 
 namespace Innomedia;
 
-class InnomediaLayout
+class Layout
 {
     public function __construct()
     {

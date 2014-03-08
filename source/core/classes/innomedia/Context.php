@@ -21,7 +21,7 @@ namespace Innomedia;
  * @copyright 2008-2013 Innoteam Srl
  * @since     1.0
  */
-class InnomediaContext extends \Innomatic\Util\Singleton
+class Context extends \Innomatic\Util\Singleton
 {
 
     protected $home;

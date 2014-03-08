@@ -20,7 +20,7 @@ namespace Innomedia;
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaEmptyBlock extends InnomediaBlock
+class EmptyBlock extends Block
 {
 
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)

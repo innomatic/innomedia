@@ -20,7 +20,7 @@ namespace Innomedia;
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaWebAppHandler extends \Innomatic\Webapp\WebAppHandler
+class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
 {
 
     /**
@@ -32,30 +32,30 @@ class InnomediaWebAppHandler extends \Innomatic\Webapp\WebAppHandler
     public function doGet(\Innomatic\Webapp\WebAppRequest $req, \Innomatic\Webapp\WebAppResponse $res)
     {
         // Start Innomatic
-        
+
         $innomatic = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
-        $innomatic->setInterface(InnomaticContainer::INTERFACE_EXTERNAL);
+        $innomatic->setInterface(\Innomatic\Core\InnomaticContainer::INTERFACE_EXTERNAL);
         $root = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
         $innomatic_home = $root->getHome() . 'innomatic/';
         $innomatic->bootstrap($innomatic_home, $innomatic_home . 'core/conf/innomatic.ini');
-        
+
         // Start Innomatic domain
         \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()
             ->getName());
-        
+
         // Innomedia page
-        
+
         // Get module and page name
         $location = explode('/', $req->getPathInfo());
         $module_name = isset($location[1]) ? $location[1] : '';
         $page_name = isset($location[2]) ? $location[2] : '';
-        
+
         // Define Innomatic context
         $home = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
-        $context = InnomediaContext::instance('\Innomedia\InnomediaContext', $home, $req, $res);
-        
+        $context = Context::instance('\Innomedia\Context', $home, $req, $res);
+
         // Build Innomedia page
-        $page = new InnomediaPage($context, $req, $res, $module_name, $page_name);
+        $page = new Page($context, $req, $res, $module_name, $page_name);
         $page->build();
     }
 

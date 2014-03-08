@@ -36,18 +36,18 @@
 
 	<components>
 
-		<class name="innomedia/InnomediaBlock.php" />
-		<class name="innomedia/InnomediaContext.php" />
-		<class name="innomedia/InnomediaEmptyBlock.php" />
-		<class name="innomedia/InnomediaGrid.php" />
-		<class name="innomedia/InnomediaModule.php" />
-		<class name="innomedia/InnomediaPage.php" />
-		<class name="innomedia/InnomediaTemplate.php" />
-		<class name="innomedia/InnomediaWebAppHandler.php" />
+		<class name="innomedia/Block.php" />
+		<class name="innomedia/Context.php" />
+		<class name="innomedia/EmptyBlock.php" />
+		<class name="innomedia/Grid.php" />
+		<class name="innomedia/Module.php" />
+		<class name="innomedia/Page.php" />
+		<class name="innomedia/Template.php" />
+		<class name="innomedia/WebAppHandler.php" />
 		<catalog name="innomedia" />
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />
 		<webapphandler name="innomedia"
-			class="innomedia/InnomediaWebAppHandler.php"
+			class="innomedia/WebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
 
 	</components>

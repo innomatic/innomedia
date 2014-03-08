@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -23,10 +23,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
-require_once('innomedia/InnomediaModule.php');
-
-class MediaDesignerPagesList extends InnomediaBlock {
+class MediaDesignerPagesList extends \Innomedia\Block {
     public function run(WebAppRequest $request, WebAppResponse $response) {
     	$pages_list = array ();
         $modules = $this->context->getModulesList();
@@ -41,7 +38,7 @@ class MediaDesignerPagesList extends InnomediaBlock {
             $this->context->getSession()->put('mediadesigner_currentmodulemenu', $open_module);
         }
         foreach ($modules as $module) {
-                $module_obj = new InnomediaModule($this->context, $module);
+                $module_obj = new \Innomedia\Module($this->context, $module);
                 if (!$module_obj->hasPages()) {
                     continue;
                 }

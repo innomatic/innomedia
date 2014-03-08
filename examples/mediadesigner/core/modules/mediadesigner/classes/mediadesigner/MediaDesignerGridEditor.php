@@ -23,9 +23,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
-
-class MediaDesignerGridEditor extends InnomediaBlock {
+class MediaDesignerGridEditor extends \Innomedia\Block {
     protected $blocks = array ();
     protected $theme;
     protected $rows;

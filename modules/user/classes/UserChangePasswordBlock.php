@@ -12,10 +12,9 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('innomedia/InnomediaBlock.php');
 require_once('InnomaticMediaUser.php');
 
-class UserChangePasswordBlock extends InnomediaBlock
+class UserChangePasswordBlock extends \Innomedia\Block
 {
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
@@ -23,23 +22,23 @@ class UserChangePasswordBlock extends InnomediaBlock
     	if ($userid = $user->isLoggedIn()) {
     		$this->set('user_loggedin', '1');
     		$this->set('userid', $userid);
-    	
+
     		$userdata = $user->getData();
     		$this->set('username', $userdata['username']);
-    	
+
     		// @todo Here we should set user and point data variables
-    	
+
     	} else {
     		$this->set('user_loggedin', '0');
     	}
-    	 
+
     	// Check the changepassword parameter
-    	
+
     	if ( !is_null($request->getParameter('changepassword')) ) {
     		$user = new InnomaticMediaUser();
 
     		// Check the change password response
-    		
+
     		switch ($user->changePassword(
     				$request->getParameter('username'),
     				$request->getParameter('oldpassword'),
@@ -47,11 +46,11 @@ class UserChangePasswordBlock extends InnomediaBlock
     				$request->getParameter('newpassword2'))) {
     			case InnomaticMediaUser::RESPONSE_USERNAME_NOT_FOUND:
     				$this->set('change_password_response', 'username_not_found');
-    				break; 
+    				break;
 
     			case InnomaticMediaUser::RESPONSE_WRONG_OLD_PASSWORD:
     				$this->set('change_password_response', 'wrong_old_password');
-    				break; 
+    				break;
 
     			case InnomaticMediaUser::RESPONSE_WRONG_NEW_PASSWORD:
     				$this->set('change_password_response', 'wrong_new_password');

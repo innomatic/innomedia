@@ -23,9 +23,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
-
-class MediaDesignerMenu extends InnomediaBlock {
+class MediaDesignerMenu extends \Innomedia\Block {
     public function run(WebAppRequest $request, WebAppResponse $response) {
         $this->set('receiver', $this->grid->get('receiver'));
     	$this->set('baseurl', $this->grid->get('baseurl'));

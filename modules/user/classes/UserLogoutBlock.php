@@ -14,7 +14,7 @@
  */
 require_once('InnomaticMediaUser.php');
 
-class UserLogoutBlock extends \Innomedia\InnomediaBlock
+class UserLogoutBlock extends \Innomedia\Block
 {
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {

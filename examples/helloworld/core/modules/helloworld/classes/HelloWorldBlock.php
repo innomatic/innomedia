@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -23,10 +23,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
-
-class HelloWorldBlock extends InnomediaBlock {
-    public function run(WebAppRequest $request, WebAppResponse $response) {
+class HelloWorldBlock extends \Innomedia\Block {
+    public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response) {
         $this->set('message', 'Hello World!');
     }
 }

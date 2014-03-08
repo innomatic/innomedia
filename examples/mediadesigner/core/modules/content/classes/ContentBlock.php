@@ -23,10 +23,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
 require_once('innomatic/webapp/WebAppContainer.php');
 
-class ContentBlock extends InnomediaBlock {
+class ContentBlock extends \Innomedia\Block {
 	private $pages_root;
 
 	public function run(WebAppRequest $request, WebAppResponse $response) {
@@ -50,7 +49,7 @@ class ContentBlock extends InnomediaBlock {
 			// Retrieves 404 page
 			$page_file = $this->getPage('common/404.html');
 		}
-		
+
 		// Sets the page content
 		if ($page_file) {
 			$this->set('content', file_get_contents($page_file));

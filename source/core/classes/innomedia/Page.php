@@ -20,7 +20,7 @@ namespace Innomedia;
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
-class InnomediaPage
+class Page
 {
 
     protected $context;
@@ -47,7 +47,7 @@ class InnomediaPage
     protected $grid;
 
     public function __construct(
-        InnomediaContext $context,
+        Context $context,
         \Innomatic\Webapp\WebAppRequest $request,
         \Innomatic\Webapp\WebAppResponse $response,
         $module,
@@ -72,7 +72,7 @@ class InnomediaPage
         }
 
         // Load the grid
-        $this->grid = new InnomediaGrid($this);
+        $this->grid = new Grid($this);
 
         // Load the page YAML structure
         $page_def = yaml_parse_file($this->pageDefFile);
@@ -99,7 +99,7 @@ class InnomediaPage
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
                 // Load the block
-                $block = InnomediaBlock::load(
+                $block = Block::load(
                     $this->context,
                     $this->grid,
                     $blockDef['module'],
@@ -125,7 +125,7 @@ class InnomediaPage
 
         // Get block list
         foreach ($page_def['blocks'] as $blockDef) {
-            $block = InnomediaBlock::load(
+            $block = Block::load(
                 $this->context,
                 $this->grid,
                 $blockDef['module'],
@@ -144,7 +144,7 @@ class InnomediaPage
     }
 
     /**
-     * Returns InnomediaContext object.
+     * Returns Context object.
      */
     public function getContext()
     {

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -23,15 +23,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomedia/InnomediaBlock.php');
-require_once('innomedia/InnomediaModule.php');
-
-class MediaDesignerAddBlock extends InnomediaBlock {
+class MediaDesignerAddBlock extends \Innomedia\Block {
     public function run(WebAppRequest $request, WebAppResponse $response) {
         $modules = $this->context->getModulesList();
         $modules_list = array ();
         foreach ($modules as $module) {
-            $module_obj = new InnomediaModule($this->context, $module);
+            $module_obj = new \Innomedia\Module($this->context, $module);
             if ($module_obj->hasBlocks()) {
                 $modules_list[] = $module;
             }
@@ -39,11 +36,11 @@ class MediaDesignerAddBlock extends InnomediaBlock {
         $this->setArray('modules', $modules_list);
 
         if ($request->parameterExists('mediadesigner_module')) {
-            $module_obj = new InnomediaModule($this->context, $request->getParameter('mediadesigner_module'));
+            $module_obj = new \Innomedia\Module($this->context, $request->getParameter('mediadesigner_module'));
             $this->setArray('blocks', $module_obj->getBlocksList());
             $this->set('module', $request->getParameter('mediadesigner_module'));
         }
-        
+
         $this->set('row', $request->getParameter('mediadesigner_row'));
         $this->set('column', $request->getParameter('mediadesigner_column'));
         $this->set('position', $request->getParameter('mediadesigner_position'));

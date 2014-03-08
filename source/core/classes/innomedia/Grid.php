@@ -21,18 +21,18 @@ namespace Innomedia;
  * @copyright 2008-2013 Innoteam Srl
  * @since     1.0
  */
-class InnomediaGrid extends InnomediaTemplate
+class Grid extends \Innomedia\Template
 {
 
     protected $page;
 
     protected $blocks;
 
-    /* public __construct(InnomediaPage $page) {{{ */
+    /* public __construct(Page $page) {{{ */
     /**
      * Class constructor.
      *
-     * @param InnomediaPage $page Current page object.
+     * @param Page $page Current page object.
      */
     public function __construct($page)
     {
@@ -44,7 +44,7 @@ class InnomediaGrid extends InnomediaTemplate
             $tpl = $this->page->getContext()->getGridsHome() . 'default.tpl.php';
         }
         if (! file_exists($tpl)) {
-            $this->page->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+            $this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
         }
         parent::__construct($tpl);
         $this->setPredefinedTags();
@@ -60,7 +60,6 @@ class InnomediaGrid extends InnomediaTemplate
         $this->set('page', $this->page->getPage());
 
         // Ajax support
-        require_once 'innomatic/ajax/Xajax.php';
         $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;
         $xajax->setLogFile(
@@ -74,8 +73,8 @@ class InnomediaGrid extends InnomediaTemplate
         }
 
         // Register Ajax calls parsing the ajax.xml configuration file
-        if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
-            $cfg = \Innomatic\Ajax\XajaxConfig::getInstance(\Innomatic\Webapp\WebAppContainer::instance('webappcontainer')->getCurrentWebApp(), \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
+        if (file_exists(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
+            $cfg = \Innomatic\Ajax\XajaxConfig::getInstance(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp(), \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
 
             if (isset($cfg->functions)) {
                 foreach ($cfg->functions as $name => $functionData) {
@@ -113,18 +112,18 @@ class InnomediaGrid extends InnomediaTemplate
         return $this;
     }
 
-    /* public addBlock(InnomediaBlock $block, $row, $column, $position) {{{ */
+    /* public addBlock(Block $block, $row, $column, $position) {{{ */
     /**
-     * Adds an InnomediaBlock to the grid at the given position.
+     * Adds a Block to the grid at the given position.
      *
-     * @param InnomediaBlock $block    Block object to be added at the grid
-     * @param int            $row      Block row in the grid
-     * @param int            $column   Block column in the grid
-     * @param int            $position Block position in the cell
+     * @param Block $block    Block object to be added at the grid
+     * @param int   $row      Block row in the grid
+     * @param int   $column   Block column in the grid
+     * @param int   $position Block position in the cell
      *
-     * @return InnomediaGrid grid object
+     * @return Grid grid object
      */
-    public function addBlock(InnomediaBlock $block, $row, $column, $position)
+    public function addBlock(Block $block, $row, $column, $position)
     {
         $block->run($this->page->getRequest(), $this->page->getResponse());
         if (! $row) {
@@ -148,7 +147,7 @@ class InnomediaGrid extends InnomediaTemplate
     /**
      * Returns the grid object.
      *
-     * @return \Innomedia\InnomediaGrid
+     * @return \Innomedia\Grid
      */
     public function getGrid()
     {
@@ -157,4 +156,3 @@ class InnomediaGrid extends InnomediaTemplate
     /* }}} */
 }
 
-?>
