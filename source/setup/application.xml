@@ -50,5 +50,7 @@
 			class="innomedia/WebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
 
+        <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
+
 	</components>
 </application>
