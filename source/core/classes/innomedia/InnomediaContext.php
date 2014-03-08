@@ -86,23 +86,35 @@ class InnomediaContext extends \Innomatic\Util\Singleton
      */
     public function getLayoutsHome()
     {
-        return $this->home . 'core/innomedia/layouts/';
+        return $this->home . 'core/layouts/';
+    }
+    /* }}} */
+
+    /* public getGridsHome() {{{ */
+    /**
+     * Returns the grids home directory.
+     *
+     * @return string the grids home directory
+     */
+    public function getGridsHome()
+    {
+        return $this->home.'core/grids/';
     }
     /* }}} */
 
     public function getModulesHome()
     {
-        return $this->home . 'core/innomedia/modules/';
+        return $this->home . 'core/modules/';
     }
 
     public function getBlocksHome($module)
     {
-        return $this->home . 'core/innomedia/modules/' . $module . '/blocks/';
+        return $this->home . 'core/modules/' . $module . '/blocks/';
     }
 
     public function getPagesHome($module)
     {
-        return $this->home . 'core/innomedia/modules/' . $module . '/pages/';
+        return $this->home . 'core/modules/' . $module . '/pages/';
     }
 
     /**
@@ -148,9 +160,9 @@ class InnomediaContext extends \Innomatic\Util\Singleton
     public function getModulesList()
     {
         $list = array();
-        if ($dh = opendir($this->home . 'core/innomedia/modules')) {
+        if ($dh = opendir($this->home . 'core/modules')) {
             while (($file = readdir($dh)) !== false) {
-                if ($file != '.' and $file != '..' and is_dir($this->home . 'core/innomedia/modules/' . $file)) {
+                if ($file != '.' and $file != '..' and is_dir($this->home . 'core/modules/' . $file)) {
                     $list[] = $file;
                 }
             }

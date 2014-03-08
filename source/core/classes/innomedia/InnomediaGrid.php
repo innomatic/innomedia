@@ -39,9 +39,9 @@ class InnomediaGrid extends InnomediaTemplate
         $this->page = $page;
         $this->blocks = array();
 
-        $tpl = $this->page->getContext()->getThemesHome() . $this->page->getTheme() . '/grid.tpl.php';
+        $tpl = $this->page->getContext()->getGridsHome() . $this->page->getTheme() . '.tpl.php';
         if (! file_exists($tpl)) {
-            $tpl = $this->page->getContext()->getThemesHome() . 'default/grid.tpl.php';
+            $tpl = $this->page->getContext()->getGridsHome() . 'default.tpl.php';
         }
         if (! file_exists($tpl)) {
             $this->page->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
