@@ -52,6 +52,7 @@
 
         <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
 
+        <domaintable name="innomedia_pages" file="innomedia_pages" />
         <domaintable name="innomedia_blocks" file="innomedia_blocks" />
 
 	</components>

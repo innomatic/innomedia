@@ -44,6 +44,13 @@ class Page
      */
     protected $layout;
 
+    /**
+     * Page parameters array
+     *
+     * @var array
+     */
+    protected $parameters;
+
     protected $theme;
 
     protected $grid;
@@ -78,12 +85,25 @@ class Page
         // Load the grid
         $this->grid = new Grid($this);
 
-        // Load block parameters for this instance of the page, is available
+        // Load page and block parameters for this instance of the page, is available
         $blockParams = array();
+        $instanceBlocks = array();
+
         if ($this->id != 0) {
             $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
                 ->getCurrentDomain()
                 ->getDataAccess();
+
+            $pagesParamsQuery = $domainDa->execute(
+                "SELECT blocks, params
+                FROM innomedia_pages
+                WHERE id={$this->id}"
+            );
+
+            if ($pagesParamsQuery->getNumberRows() > 0) {
+                $this->parameters = unserialize($pagesParamsQuery->getFields('params'));
+                $instanceBlocks = unserialize($pagesParamsQuery->getFields('blocks'));
+            }
 
             $blocksParamsQuery = $domainDa->execute(
                 "SELECT block,params
@@ -96,13 +116,15 @@ class Page
                 $blocksParamsQuery->moveNext();
             }
         }
+
         // Load the page YAML structure
         $page_def = yaml_parse_file($this->pageDefFile);
 
         // Get page layout if defined and check if the YAML file for the given layout exists
         if (
             strlen($page_def['layout'])
-            && file_exists($this->context->getLayoutsHome().$page_def['layout'].'.yml')) {
+            && file_exists($this->context->getLayoutsHome().$page_def['layout'].'.yml')
+        ) {
             // Set the layout name
             $this->layout = $page_def['layout'];
 
@@ -146,13 +168,14 @@ class Page
             $this->theme = $page_def['theme'];
         }
 
-        // Get block list
+        // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
             $block = Block::load(
                 $this->context,
                 $this->grid,
                 $blockDef['module'],
-                $blockDef['name']
+                $blockDef['name'],
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
             );
 
             if (! is_null($block)) {
@@ -164,6 +187,27 @@ class Page
                 );
             }
         }
+
+        // Get page instance block list
+        foreach ($instanceBlocks as $blockDef) {
+            $block = Block::load(
+                $this->context,
+                $this->grid,
+                $blockDef['module'],
+                $blockDef['name'],
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
+            );
+
+            if (! is_null($block)) {
+                $this->grid->addBlock(
+                    $block,
+                    $blockDef['row'],
+                    $blockDef['column'],
+                    $blockDef['position']
+                );
+            }
+        }
+
     }
 
     /**
@@ -203,6 +247,18 @@ class Page
     {
         return $this->page;
     }
+
+    /* public getParameters() {{{ */
+    /**
+     * Return page parameters array.
+     *
+     * @return array parameters.
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+    /* }}} */
 
     public function build()
     {
