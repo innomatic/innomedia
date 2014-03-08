@@ -60,13 +60,13 @@ class InnomediaPage
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
         $this->theme = 'default';
-        $this->pageDefFile = $context->getPagesHome($this->module) . $this->page . '.xml';
+        $this->pageDefFile = $context->getPagesHome($this->module) . $this->page . '.yml';
         $this->parsePage();
     }
 
     protected function parsePage()
     {
-        // Check if the XML file for the given page exists
+        // Check if the YAML file for the given page exists
         if (! file_exists($this->pageDefFile)) {
             return false;
         }
@@ -74,7 +74,7 @@ class InnomediaPage
         // Load the grid
         $this->grid = new InnomediaGrid($this);
 
-        // Load the page XML structure
+        // Load the page YAML structure
         $page_def = yaml_parse_file($this->pageDefFile);
 
         // Get page layout if defined and check if the YAML file for the given layout exists

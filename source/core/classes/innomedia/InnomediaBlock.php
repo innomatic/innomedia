@@ -55,13 +55,13 @@ abstract class InnomediaBlock extends InnomediaTemplate
         // Adds module classes directory to classpath
         $context->importModule($module);
 
-        $block_xml_file = $context->getBlocksHome($module) . $name . '.xml';
-        if (! file_exists($block_xml_file)) {
-            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.xml');
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        if (! file_exists($block_yml_file)) {
+            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.yml');
             return;
         }
         // Imports block class and return an instance of it.
-        $def = yaml_parse_file($block_xml_file);
+        $def = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
         if (! strlen($fqcn)) {
             $fqcn = 'innomedia/InnomediaEmptyBlock.php';

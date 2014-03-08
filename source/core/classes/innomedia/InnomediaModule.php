@@ -63,8 +63,8 @@ class InnomediaModule
         }
         if ($dh = opendir($this->getHome() . 'pages')) {
             while (($file = readdir($dh)) !== false) {
-                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'pages/' . $file) and strrpos($file, '.xml')) {
-                    $list[] = substr($file, 0, strrpos($file, '.xml'));
+                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'pages/' . $file) and strrpos($file, '.yml')) {
+                    $list[] = substr($file, 0, strrpos($file, '.yml'));
                 }
             }
             closedir($dh);
@@ -80,8 +80,8 @@ class InnomediaModule
         }
         if ($dh = opendir($this->getHome() . 'blocks')) {
             while (($file = readdir($dh)) !== false) {
-                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'blocks/' . $file) and strrpos($file, '.xml')) {
-                    $list[] = substr($file, 0, strrpos($file, '.xml'));
+                if ($file != '.' and $file != '..' and is_file($this->getHome() . 'blocks/' . $file) and strrpos($file, '.yml')) {
+                    $list[] = substr($file, 0, strrpos($file, '.yml'));
                 }
             }
             closedir($dh);

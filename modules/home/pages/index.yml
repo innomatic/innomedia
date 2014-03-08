@@ -1,0 +1,6 @@
+blocks:
+    - module: home
+      name: index
+      column: 2
+      row: 1
+      position: 1
