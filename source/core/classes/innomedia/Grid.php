@@ -154,5 +154,17 @@ class Grid extends \Innomedia\Template
         return $this;
     }
     /* }}} */
+
+    /* public getPage() {{{ */
+    /**
+     * Returns the page object given to the grid.
+     *
+     * @return \Innomedia\Page the page object
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+    /* }}} */
 }
 
