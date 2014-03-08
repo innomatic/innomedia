@@ -1,4 +1,4 @@
-<?php                
+<?php
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -76,8 +76,8 @@ class MediaDesignerGridEditor extends InnomediaBlock {
         } else {
         	$this->set('modified', false);
         }
-        
-        $this->parsePage($this->context->getPagesHome($module).$page.'.xml');
+
+        $this->parsePage($this->context->getPagesHome($module).$page.'.yml');
 
         if ($request->parameterExists('mediadesigner_action')) {
             $row = $request->getParameter('mediadesigner_row');
@@ -116,7 +116,7 @@ class MediaDesignerGridEditor extends InnomediaBlock {
                     break;
                 case 'revert' :
                     $this->resetChanges();
-                    $this->parsePage($this->context->getPagesHome($module).$page.'.xml');
+                    $this->parsePage($this->context->getPagesHome($module).$page.'.yml');
 		        	$this->set('modified', false);
                     break;
                 case 'addrow' :
@@ -150,17 +150,17 @@ class MediaDesignerGridEditor extends InnomediaBlock {
 
         // Checks if the page definition exists in session
         if (!$this->context->getSession()->isValid('mediadesigner_blocks')) {
-            $def = simplexml_load_file($page);
+            $def = yaml_parse_file($page);
             $result = array ();
             $rows = $columns = 0;
-            $theme = "$def->theme";
-            foreach ($def->block as $blockDef) {
-                $result["$blockDef->row"]["$blockDef->column"]["$blockDef->position"] = array ('module' => "$blockDef->module", 'name' => "$blockDef->name");
-                if ("$blockDef->row" > $rows) {
-                    $rows = "$blockDef->row";
+            $theme = $def['theme'];
+            foreach ($def['blocks'] as $blockDef) {
+                $result[$blockDef['row']][$blockDef['column']][$blockDef['position']] = array ('module' => $blockDef['module'], 'name' => $blockDef['name']);
+                if ($blockDef['row'] > $rows) {
+                    $rows = $blockDef['row'];
                 }
-                if ("$blockDef->column" > $columns) {
-                    $columns = "$blockDef->column";
+                if ($blockDef['column'] > $columns) {
+                    $columns = $blockDef['column'];
                 }
             }
             ksort($result);
@@ -191,34 +191,31 @@ class MediaDesignerGridEditor extends InnomediaBlock {
     }
 
     protected function savePage($module, $page) {
-        $file = $this->context->getPagesHome($module).$page.'.xml';
+        $file = $this->context->getPagesHome($module).$page.'.yml';
+        $yaml = array();
 
-        if (!$fh = @fopen($file, 'w')) {
-        	return false;
-        }
-
-        fwrite($fh, '<?xml version="1.0"?>'."\n");
-		fwrite($fh, '<page>'."\n");
-		
 		if (strlen($this->theme)) {
-		    fwrite($fh, '  <theme>'.$this->theme."</theme>\n");
+            $yaml['theme'] = $this->theme;
 		}
-		
+
 		foreach ($this->blocks as $row => $columns) {
 		    foreach ($columns as $column => $positions) {
 		        foreach ($positions as $position => $block) {
-		            fwrite($fh, '  <block>'."\n");
-		            fwrite($fh, '    <module>'.$block['module'].'</module>'."\n");
-		            fwrite($fh, '    <name>'.$block['name'].'</name>'."\n");
-		            fwrite($fh, '    <row>'.$row.'</row>'."\n");
-		            fwrite($fh, '    <column>'.$column.'</column>'."\n");
-		            fwrite($fh, '    <position>'.$position.'</position>'."\n");
-		            fwrite($fh, '  </block>'."\n");
+                    $yaml['blocks'][] = array(
+                        'module' => $block['module'],
+                        'name' => $block['name'],
+                        'row' => $row,
+                        'column' => $colum,
+                        'position' => $position
+                    );
 		        }
 		    }
 		}
-		fwrite($fh, '</page>'."\n");
-		fclose($fh);
+
+        if (!yaml_emit_file($file, $yaml)) {
+            return false;
+        }
+
 		$this->resetChanges();
 		return true;
     }
@@ -227,7 +224,7 @@ class MediaDesignerGridEditor extends InnomediaBlock {
         $this->blocks[$row][$column][$position] = array('module' => $module, 'name' => $block);
         $this->context->getSession()->put('mediadesigner_blocks', $this->blocks);
     }
-    
+
     protected function moveBlock($row, $column, $position, $direction) {
         switch ($direction) {
             case 'up' :
@@ -307,7 +304,7 @@ class MediaDesignerGridEditor extends InnomediaBlock {
             for ($i = 1; $i <= $rows; $i++) {
                 for ($j = $column; $j <= $columns; $j++) {
                     $this->blocks[$i][$j] = $this->blocks[$i][$j +1];
-                }                
+                }
             }
         }
 

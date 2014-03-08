@@ -61,14 +61,14 @@ abstract class InnomediaBlock extends InnomediaTemplate
             return;
         }
         // Imports block class and return an instance of it.
-        $def = simplexml_load_file($block_xml_file);
-        $fqcn = "$def->class";
+        $def = yaml_parse_file($block_xml_file);
+        $fqcn = $def['class'];
         if (! strlen($fqcn)) {
             $fqcn = 'innomedia/InnomediaEmptyBlock.php';
         }
 
         // @todo convert to new namespace convention
-        $included = @include_once ($fqcn);
+        $included = @include_once $fqcn;
         if (! $included) {
             $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
@@ -78,19 +78,19 @@ abstract class InnomediaBlock extends InnomediaTemplate
         $tpl_file = '';
         $locales = $context->getLocales();
         foreach ($locales as $locale) {
-            if (file_exists($tpl_root . $locale . '.' . "$def->template")) {
+            if (file_exists($tpl_root . $locale . '.' . $def['template'])) {
                 // Page for given language exists
-                $tpl_file = $tpl_root . $locale . '.' . "$def->template";
+                $tpl_file = $tpl_root . $locale . '.' . $def['template'];
                 break;
             }
         }
         if (! strlen($tpl_file)) {
-            if (file_exists($tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template")) {
+            if (file_exists($tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $def['template'])) {
                 // Page for default language exists
-                $tpl_file = $tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . "$def->template";
+                $tpl_file = $tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $def['template'];
             } else {
                 // Page for no specific language exists
-                $tpl_file = $tpl_root . "$def->template";
+                $tpl_file = $tpl_root . $def['template'];
             }
         }
 

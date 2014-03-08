@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>UserLoginBlock.php</class>
-	<template>login.tpl.php</template>
-</block>

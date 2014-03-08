@@ -1,0 +1,6 @@
+blocks:
+  - module: helloworld
+    name: helloworld
+    column: 2
+    row: 1
+    position: 1
