@@ -12,6 +12,7 @@
 		<category>web</category>
 		<dependencies>
 			<dependency>innomatic[6.2.0]</dependency>
+            <dependency>yaml.extension</dependency>
 		</dependencies>
 		<legal>
 			<author>
@@ -43,11 +44,11 @@
 		<class name="innomedia/InnomediaPage.php" />
 		<class name="innomedia/InnomediaTemplate.php" />
 		<class name="innomedia/InnomediaWebAppHandler.php" />
-		<catalog name="innomedia" />		
+		<catalog name="innomedia" />
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />
 		<webapphandler name="innomedia"
 			class="innomedia/InnomediaWebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
-		
+
 	</components>
 </application>
