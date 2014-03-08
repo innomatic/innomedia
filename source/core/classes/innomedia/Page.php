@@ -77,10 +77,14 @@ class Page
 
     protected function parsePage()
     {
-       // Check if the YAML file for the given page exists
+        // Check if the YAML file for the given page exists
         if (! file_exists($this->pageDefFile)) {
             return false;
         }
+
+        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
 
         // Load the grid
         $this->grid = new Grid($this);
@@ -90,10 +94,6 @@ class Page
         $instanceBlocks = array();
 
         if ($this->id != 0) {
-            $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-                ->getCurrentDomain()
-                ->getDataAccess();
-
             $pagesParamsQuery = $domainDa->execute(
                 "SELECT blocks, params
                 FROM innomedia_pages
@@ -108,8 +108,7 @@ class Page
             $blocksParamsQuery = $domainDa->execute(
                 "SELECT block,params
                 FROM innomedia_blocks
-                WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
-                "AND pageid={$this->id}");
+                WHERE page IS NULL AND pageid IS NULL");
 
             while (!$blocksParamsQuery->eof) {
                 $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
@@ -168,6 +167,18 @@ class Page
             $this->theme = $page_def['theme'];
         }
 
+        // Get page level block parameters
+        $blocksParamsQuery = $domainDa->execute(
+            "SELECT block,params
+            FROM innomedia_blocks
+            WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+            "AND pageid IS NULL");
+
+        while (!$blocksParamsQuery->eof) {
+            $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+            $blocksParamsQuery->moveNext();
+        }
+
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
             $block = Block::load(
@@ -188,7 +199,18 @@ class Page
             }
         }
 
-        // Get page instance block list
+        // Get page instance level block parameters
+        $blocksParamsQuery = $domainDa->execute(
+            "SELECT block,params
+            FROM innomedia_blocks
+            WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+            "AND pageid={$this->id}");
+
+        while (!$blocksParamsQuery->eof) {
+            $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+            $blocksParamsQuery->moveNext();
+        }
+
         foreach ($instanceBlocks as $blockDef) {
             $block = Block::load(
                 $this->context,
