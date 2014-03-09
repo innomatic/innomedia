@@ -120,6 +120,7 @@ abstract class Block extends Template
         $def = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
         if (! strlen($fqcn)) {
+            // @todo convert to new class loader
             $fqcn = 'innomedia/EmptyBlock.php';
         }
 
@@ -147,12 +148,13 @@ abstract class Block extends Template
         }
 
         if (! strlen($tpl_file)) {
-            if (file_exists($tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php')) {
+            $webapp = WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()
+            if (file_exists($tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php')) {
                 // Local template for default language exists
-                $tpl_file = $tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php';
-            } elseif (file_exists($tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php')) {
+                $tpl_file = $tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php';
+            } elseif (file_exists($tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php')) {
                 // Template for default language exists
-                $tpl_file = $tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php';
+                $tpl_file = $tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php';
             } elseif (file_exists($tpl_root.$name.'.local.tpl.php')) {
                 // Local template for no specific language exists
                 $tpl_file = $tpl_root . $name.'.local.tpl.php';
