@@ -11,7 +11,7 @@
 		<description>InnoMedia Frontend Framework</description>
 		<category>web</category>
 		<dependencies>
-			<dependency>innomatic[6.2.0]</dependency>
+			<dependency>innomatic[6.4.0]</dependency>
             <dependency>yaml.extension</dependency>
 		</dependencies>
 		<legal>
