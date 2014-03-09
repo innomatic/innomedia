@@ -149,6 +149,18 @@ class Grid extends \Innomedia\Template
     }
     /* }}} */
 
+    /* public getBlocks() {{{ */
+    /**
+     * Returns the blocks array.
+     *
+     * @return array blocks.
+     */
+    public function getBlocks()
+    {
+        return $this->blocks;
+    }
+    /* }}} */
+
     /* public getGrid() {{{ */
     /**
      * Returns the grid object.
