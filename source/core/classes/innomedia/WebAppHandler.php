@@ -32,7 +32,6 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
     public function doGet(\Innomatic\Webapp\WebAppRequest $req, \Innomatic\Webapp\WebAppResponse $res)
     {
         // Start Innomatic
-
         $innomatic = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
         $innomatic->setInterface(\Innomatic\Core\InnomaticContainer::INTERFACE_EXTERNAL);
         $root = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
@@ -46,17 +45,24 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
         // Innomedia page
 
         // Get module and page name
-        $location = explode('/', $req->getPathInfo());
+        $location    = explode('/', $req->getPathInfo());
         $module_name = isset($location[1]) ? $location[1] : '';
-        $page_name = isset($location[2]) ? $location[2] : '';
+        $page_name   = isset($location[2]) ? $location[2] : '';
+        $pageId      = isset($location[3]) ? $location[3] : 0;
 
         // Define Innomatic context
-        $home = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
+        $home    = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
         $context = Context::instance('\Innomedia\Context', $home, $req, $res);
 
         // Build Innomedia page
-        $page = new Page($context, $req, $res, $module_name, $page_name);
-        $page->build();
+        $page = new Page($context, $req, $res, $module_name, $page_name, $pageId);
+
+        // Check if the page is valid
+        if (!$page->isValid()) {
+            $res->sendError(\Innomatic\Webapp\WebAppResponse::SC_NOT_FOUND, $req->getRequestURI());
+        } else {
+            $page->build();
+        }
     }
 
     public function doPost(\Innomatic\Webapp\WebAppRequest $req, \Innomatic\Webapp\WebAppResponse $res)

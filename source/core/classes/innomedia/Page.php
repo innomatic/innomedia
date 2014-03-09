@@ -55,6 +55,10 @@ class Page
 
     protected $grid;
 
+    protected $isValid = true;
+
+    protected $requiresId = true;
+
     public function __construct(
         Context $context,
         \Innomatic\Webapp\WebAppRequest $request,
@@ -69,7 +73,11 @@ class Page
         // TODO Add fallback module/page as optional welcome page
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
-        $this->id = $id;
+        $this->id = (int)$id;
+        if (!is_int($this->id)) {
+            $this->id = 0;
+        }
+        $this->isValid = true;
         $this->theme = 'default';
         $this->pageDefFile = file_exists($context->getPagesHome($this->module).$this->page . '.local.yml') ?
             $context->getPagesHome($this->module) . $this->page . '.local.yml' :
@@ -84,6 +92,20 @@ class Page
             return false;
         }
 
+        // Load the page YAML structure
+        $page_def = yaml_parse_file($this->pageDefFile);
+
+        // Check if the page requires a valid id
+        if (isset($page_def['properties']['requireid']) && $page_def['properties']['requireid'] == true) {
+            $this->requiresId = true;
+
+            // Check if the id has been given
+            if ($this->id == 0) {
+                $this->isValid = false;
+                return false;
+            }
+        }
+
         $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
             ->getCurrentDomain()
             ->getDataAccess();
@@ -91,7 +113,7 @@ class Page
         // Load the grid
         $this->grid = new Grid($this);
 
-        // Load page and block parameters for this instance of the page, is available
+        // Load page and parameters for this instance of the page, is available
         $blockParams = array();
         $instanceBlocks = array();
 
@@ -105,10 +127,14 @@ class Page
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->parameters = unserialize($pagesParamsQuery->getFields('params'));
                 $instanceBlocks = unserialize($pagesParamsQuery->getFields('blocks'));
+            } elseif ($this->requiresId) {
+                // This page id doesn't exist
+                $this->isValid = false;
+                return false;
             }
 
             $blocksParamsQuery = $domainDa->execute(
-                "SELECT block,params
+                "SELECT block, params
                 FROM innomedia_blocks
                 WHERE page IS NULL AND pageid IS NULL"
             );
@@ -118,9 +144,6 @@ class Page
                 $blocksParamsQuery->moveNext();
             }
         }
-
-        // Load the page YAML structure
-        $page_def = yaml_parse_file($this->pageDefFile);
 
         // Get page layout if defined and check if the YAML file for the given layout exists
         $layout = false;
@@ -243,6 +266,46 @@ class Page
 
     }
 
+    /* public getId() {{{ */
+    /**
+     * Returns the page id.
+     *
+     * @return integer page id.
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /* }}} */
+
+    /* public requiresId() {{{ */
+    /**
+     * Checks if the page requires a valid id.
+     *
+     * A page requires a valid id when it is content based and it has multiple
+     * instances.
+     *
+     * @return boolean true if the page requires a valid id.
+     */
+    public function requiresId()
+    {
+        return $this->requiresId;
+    }
+    /* }}} */
+
+    /* public isValid() {{{ */
+    /**
+     * Checks if the given page id is valid in case the page requires the id.
+     *
+     * If the page doesn't require an id, it returns true.
+     *
+     * @return boolean true if the page is valid
+     */
+    public function isValid()
+    {
+        return $this->isValid;
+    }
+    /* }}} */
     /**
      * Returns Context object.
      */
