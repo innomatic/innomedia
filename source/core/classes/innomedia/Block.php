@@ -70,10 +70,27 @@ abstract class Block extends Template
     }
     /* }}} */
 
+    /* public hasBlockManager() {{{ */
+    /**
+     * Returns true if the block has a manager class.
+     *
+     * When a block provides an administration interface it must override this
+     * method and return true. It also must return a valid implementation of
+     * \Innomedia\BlockManager with the method getBlockManager().
+     *
+     * @return boolean true
+     */
+    public static function hasBlockManager()
+    {
+        return false;
+    }
+    /* }}} */
+
     /* public getBlockManager() {{{ */
     /**
      * Returns an instance of the current block manager class, if available.
      *
+     * @also hasBlockManager()
      * @return \Innomedia\BlockManager|null
      */
     public static function getBlockManager()
