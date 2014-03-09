@@ -30,7 +30,7 @@ class ContentBlock extends \Innomedia\Block {
 
 	public function run(WebAppRequest $request, WebAppResponse $response) {
 		$page = $request->getParameter('content_page');
-		$this->pages_root = $this->context->getHome().'core/innomedia/content/';
+		$this->pages_root = $this->context->getHome().'core/content/';
 		// If no page has been given, it is set to the default one
 		if (!strlen($page)) {
 			$page = 'home/index.html';
@@ -80,7 +80,7 @@ class ContentBlock extends \Innomedia\Block {
 	}
 
 	public function getPage($page) {
-		$pages_root = $this->context->getHome().'core/innomedia/content/';
+		$pages_root = $this->context->getHome().'core/content/';
 		$locales = $this->context->getLocales();
 		foreach ($locales as $locale) {
 			if (file_exists($this->pages_root.$locale.'/'.$page)) {

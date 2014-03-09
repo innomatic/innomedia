@@ -1,6 +1,6 @@
-Creare la directory content nella cartella core/innomedia della webapp.
+Creare la directory content nella cartella core della webapp.
 
-Es. webapp/core/innomedia/content
+Es. webapp/core/content
 
 Creare la struttura delle pagine, anche divise in sottocartelle.
 
