@@ -31,8 +31,8 @@ abstract class BlockManager
         $blockQuery = $domainDa->execute(
             "SELECT id,params
             FROM innomedia_blocks
-            WHERE block = ".$domainDa->formatText($this->blockName)."
-            AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL")."
+            WHERE block = ".$domainDa->formatText($this->blockName).
+            ($this->pageId == 0 ? " AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL") : '')."
             AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
         );
 

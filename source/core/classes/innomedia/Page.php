@@ -110,7 +110,8 @@ class Page
             $blocksParamsQuery = $domainDa->execute(
                 "SELECT block,params
                 FROM innomedia_blocks
-                WHERE page IS NULL AND pageid IS NULL");
+                WHERE page IS NULL AND pageid IS NULL"
+            );
 
             while (!$blocksParamsQuery->eof) {
                 $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
@@ -181,7 +182,8 @@ class Page
             "SELECT block,params
             FROM innomedia_blocks
             WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
-            "AND pageid IS NULL");
+            "AND pageid IS NULL"
+        );
 
         while (!$blocksParamsQuery->eof) {
             $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
@@ -212,8 +214,8 @@ class Page
         $blocksParamsQuery = $domainDa->execute(
             "SELECT block,params
             FROM innomedia_blocks
-            WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
-            "AND pageid={$this->id}");
+            WHERE pageid={$this->id}"
+        ); // " AND page=".$domainDa->formatText($this->module.'/'.$this->page)
 
         while (!$blocksParamsQuery->eof) {
             $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
