@@ -57,6 +57,9 @@
         <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
 
         <component name="webappmodule" file="WebappmoduleComponent.php" />
+        <component name="webappconfiguration" file="WebappconfigurationComponent.php" />
+        <component name="webappgrid" file="WebappgridComponent.php" />
+        <component name="webapplayout" file="WebapplayoutComponent.php" />
 
 	</components>
 </application>
