@@ -22,9 +22,9 @@ use \Innomatic\Core;
  */
 class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
 {
-    public function __construct($rootda, $domainda, $appname, $name, $basedir)
+    public function __construct($rootda, $domainida, $appname, $name, $basedir)
     {
-        parent::__construct($rootda, $domainda, $appname, $name, $basedir);
+        parent::__construct($rootda, $domainida, $appname, $name, $basedir);
     }
 
     public static function getType()
@@ -105,7 +105,7 @@ class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
             if (is_dir($file)) {
                 if (DirectoryUtils::dirCopy(
                     $file.'/',
-                    InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/' .basename($file).'/'
+                    InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($file).'/'
                 )) {
                     $result = true;
                 }
@@ -127,33 +127,9 @@ class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
             return false;
         }
 
-        $domain = $domainQuery->getFields('domaind');
+        $domain = $domainQuery->getFields('domainid');
 
-        $moduleDestFolder = RootContainer::instance()->getHome().$domain.'/modules/'.basename($params['module']);
-
-        if (!file_exists($moduleDestFolder)) {
-            DirectoryUtils::mkTree($moduleDestFolder, 0755);
-        }
-
-        if (!DirectoryUtils::dirCopy(
-            InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($params['module']).'/',
-            RootContainer::instance()->getHome().$domain.'/modules/'.basename($params['module'])
-        )) {
-            return false;
-        }
-        return true;
-    }
-
-    public function doDisableDomainAction($domainid, $params)
-    {
-        $domainQuery = $this->rootda->execute("SELECT domainid FROM domains WHERE id={$domainid}");
-        if (!$domainQuery->getNumberRows()) {
-            return false;
-        }
-
-        $domain = $domainQuery->getFields('domaind');
-
-        $moduleDestFolder = RootContainer::instance()->getHome().$domain.'/modules/'.basename($params['module']);
+        $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
 
         if (!file_exists($moduleDestFolder)) {
             DirectoryUtils::mkTree($moduleDestFolder, 0755);
@@ -161,12 +137,11 @@ class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
 
         if (!DirectoryUtils::dirCopy(
             InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($params['module']).'/',
-            RootContainer::instance()->getHome().$domain.'/modules/'.basename($params['module'])
+            $moduleDestFolder
         )) {
             return false;
         }
         return true;
-
     }
 
     public function doUpdateDomainAction($domainid, $params)
@@ -176,12 +151,35 @@ class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
             return false;
         }
 
-        $domain = $domainQuery->getFields('domaind');
+        $domain = $domainQuery->getFields('domainid');
 
-        $moduleDestFolder = RootContainer::instance()->getHome().$domain.'/modules/'.basename($params['module']);
+        $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
+
+        if (!DirectoryUtils::dirCopy(
+            InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($params['module']).'/',
+            $moduleDestFolder
+        )) {
+            return false;
+        }
+        return true;
+
+    }
+
+    public function doDisableDomainAction($domainid, $params)
+    {
+        $domainQuery = $this->rootda->execute("SELECT domainid FROM domains WHERE id={$domainid}");
+        if (!$domainQuery->getNumberRows()) {
+            return false;
+        }
+
+        $domain = $domainQuery->getFields('domainid');
+
+        $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
 
         if (is_dir($moduleDestFolder)) {
             return DirectoryUtils::unlinkTree($moduleDestFolder);
+        } else {
+            return false;
         }
     }
 
