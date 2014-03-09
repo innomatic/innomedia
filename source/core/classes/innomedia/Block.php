@@ -148,7 +148,7 @@ abstract class Block extends Template
         }
 
         if (! strlen($tpl_file)) {
-            $webapp = WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()
+            $webapp = WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp();
             if (file_exists($tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php')) {
                 // Local template for default language exists
                 $tpl_file = $tpl_root . $webapp->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php';
