@@ -40,7 +40,7 @@ class Module
 
     public function getHome()
     {
-        return $this->context->getHome() . 'core/innomedia/modules/' . $this->name . '/';
+        return $this->context->getHome() . 'core/modules/' . $this->name . '/';
     }
 
     public function hasPages()
@@ -62,6 +62,7 @@ class Module
         if ($dh = opendir($this->getHome() . 'pages')) {
             while (($file = readdir($dh)) !== false) {
                 if ($file != '.' and $file != '..' and is_file($this->getHome() . 'pages/' . $file) and strrpos($file, '.yml')) {
+                    // TODO skip pages with already existing local file
                     $list[] = substr($file, 0, strrpos($file, '.yml'));
                 }
             }
@@ -79,6 +80,7 @@ class Module
         if ($dh = opendir($this->getHome() . 'blocks')) {
             while (($file = readdir($dh)) !== false) {
                 if ($file != '.' and $file != '..' and is_file($this->getHome() . 'blocks/' . $file) and strrpos($file, '.yml')) {
+                    // TODO skip blocks with already existing local file
                     $list[] = substr($file, 0, strrpos($file, '.yml'));
                 }
             }

@@ -14,6 +14,8 @@
  */
 namespace Innomedia;
 
+use \Innomatic\Webapp;
+
 /**
  *
  * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
@@ -89,9 +91,12 @@ abstract class Block extends Template
         // Adds module classes directory to classpath
         $context->importModule($module);
 
-        $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
-        if (! file_exists($block_yml_file)) {
-            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.yml');
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
+        if (!file_exists($block_yml_file)) {
+            $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        }
+        if (!file_exists($block_yml_file)) {
+            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.yml');
             return;
         }
         // Imports block class and return an instance of it.
@@ -104,7 +109,7 @@ abstract class Block extends Template
         // @todo convert to new namespace convention
         $included = @include_once $fqcn;
         if (! $included) {
-            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
+            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
         }
 
@@ -112,26 +117,38 @@ abstract class Block extends Template
         $tpl_file = '';
         $locales = $context->getLocales();
         foreach ($locales as $locale) {
-            if (file_exists($tpl_root . $locale . '.' . $def['template'])) {
-                // Page for given language exists
-                $tpl_file = $tpl_root . $locale . '.' . $def['template'];
+            if (file_exists($tpl_root . '.' . $name.'_'.$locale.'.local.tpl.php')) {
+                // Local template for given language exists
+                $tpl_file = $tpl_root . '.' . $name.'_'.$locale.'.local.tpl.php';
+                break;
+            }
+            if (file_exists($tpl_root . '.' . $name.'_'.$locale.'.tpl.php')) {
+                // Template for given language exists
+                $tpl_file = $tpl_root . '.' . $name.'_'.$locale.'.tpl.php';
                 break;
             }
         }
+
         if (! strlen($tpl_file)) {
-            if (file_exists($tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $def['template'])) {
-                // Page for default language exists
-                $tpl_file = $tpl_root . \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $def['template'];
+            if (file_exists($tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php')) {
+                // Local template for default language exists
+                $tpl_file = $tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.local.tpl.php';
+            } elseif (file_exists($tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php')) {
+                // Template for default language exists
+                $tpl_file = $tpl_root . WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('InnomediaDefaultLanguage') . '.' . $name.'.tpl.php';
+            } elseif (file_exists($tpl_root.$name.'.local.tpl.php')) {
+                // Local template for no specific language exists
+                $tpl_file = $tpl_root . $name.'.local.tpl.php';
             } else {
-                // Page for no specific language exists
-                $tpl_file = $tpl_root . $def['template'];
+                // Template for no specific language exists
+                $tpl_file = $tpl_root . $name.'.tpl.php';
             }
         }
 
         // Find block class
         $class = substr($fqcn, strrpos($fqcn, '/') ? strrpos($fqcn, '/') + 1 : 0, - 4);
         if (! class_exists($class)) {
-            $context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
+            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
             return;
         }
 

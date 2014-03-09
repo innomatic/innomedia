@@ -71,7 +71,9 @@ class Page
         $this->page = strlen($page) ? $page : 'index';
         $this->id = $id;
         $this->theme = 'default';
-        $this->pageDefFile = $context->getPagesHome($this->module) . $this->page . '.yml';
+        $this->pageDefFile = file_exists($context->getPagesHome($this->module).$this->page . '.local.yml') ?
+            $context->getPagesHome($this->module) . $this->page . '.local.yml' :
+            $context->getPagesHome($this->module) . $this->page . '.yml';
         $this->parsePage();
     }
 
@@ -120,19 +122,26 @@ class Page
         $page_def = yaml_parse_file($this->pageDefFile);
 
         // Get page layout if defined and check if the YAML file for the given layout exists
-        if (
-            strlen($page_def['layout'])
-            && file_exists($this->context->getLayoutsHome().$page_def['layout'].'.yml')
-        ) {
+        $layout = false;
+
+        if (strlen($page_def['layout'])) {
+            $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.local.yml';
+            if (file_exists($layoutFileName)) {
+                $layout = true;
+            } else {
+                $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.yml';
+                if (file_exists($layoutFileName)) {
+                    $layout = true;
+                }
+            }
+        }
+
+        if ($layout) {
             // Set the layout name
             $this->layout = $page_def['layout'];
 
             // Load the layout YAML structure
-            $layout_def = yaml_parse_file(
-                $this->context->getLayoutsHome().
-                $this->layout.
-                '.yml'
-            );
+            $layout_def = yaml_parse_file($layoutFileName);
 
             // Get layout level theme if defined
             if (strlen($layout_def['theme'])) {
