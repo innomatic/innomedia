@@ -18,9 +18,9 @@ use \Innomatic\Io\Filesystem;
 use \Innomatic\Core;
 
 /**
- * Web Module component handler.
+ * Webapp Module component handler.
  */
-class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
+class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
 {
     public function __construct($rootda, $domainida, $appname, $name, $basedir)
     {
@@ -29,7 +29,7 @@ class WebmoduleComponent extends \Innomatic\Application\ApplicationComponent
 
     public static function getType()
     {
-        return 'webmodule';
+        return 'webappmodule';
     }
 
     public static function getPriority()

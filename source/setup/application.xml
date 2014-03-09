@@ -56,7 +56,7 @@
         <domaintable name="innomedia_pages" file="innomedia_pages.xml" />
         <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
 
-        <component name="webmodule" file="WebmoduleComponent.php" />
+        <component name="webappmodule" file="WebappmoduleComponent.php" />
 
 	</components>
 </application>
