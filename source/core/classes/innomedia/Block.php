@@ -68,6 +68,18 @@ abstract class Block extends Template
     }
     /* }}} */
 
+    /* public getBlockManager() {{{ */
+    /**
+     * Returns an instance of the current block manager class, if available.
+     *
+     * @return \Innomedia\BlockManager|null
+     */
+    public static function getBlockManager()
+    {
+        return null;
+    }
+    /* }}} */
+
     public static function load(Context $context, Grid $grid, $module, $name, $params = array())
     {
         if (! strlen($module)) {
@@ -192,6 +204,7 @@ abstract class Block extends Template
         return $this->parameters;
     }
     /* }}} */
+
     abstract public function run(
         \Innomatic\Webapp\WebAppRequest $request,
         \Innomatic\Webapp\WebAppResponse $response
