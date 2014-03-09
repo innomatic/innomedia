@@ -64,6 +64,7 @@ abstract class Block extends Template
     public function setParameters($params)
     {
         $this->parameters = $params;
+        return $this;
     }
     /* }}} */
 
