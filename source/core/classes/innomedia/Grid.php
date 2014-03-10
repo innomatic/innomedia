@@ -118,6 +118,11 @@ class Grid extends \Innomedia\Template
         return $this;
     }
 
+    public function sortBlocks()
+    {
+        ksort($this->blocks);
+    }
+
     /* public addBlock(Block $block, $row, $column, $position) {{{ */
     /**
      * Adds a Block to the grid at the given position.

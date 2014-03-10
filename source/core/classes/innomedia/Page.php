@@ -263,6 +263,8 @@ class Page
                 );
             }
         }
+
+        $this->grid->sortBlocks();
     }
 
     public function getLayoutBlocks()
