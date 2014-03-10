@@ -89,4 +89,6 @@ abstract class BlockManager
             }
         }
     }
+
+    public abstract function saveBlock($parameters);
 }
