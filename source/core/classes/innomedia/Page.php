@@ -125,8 +125,8 @@ class Page
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->parameters = unserialize($pagesParamsQuery->getFields('params'));
-                $instanceBlocks = unserialize($pagesParamsQuery->getFields('blocks'));
+                $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
+                $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
             } elseif ($this->requiresId) {
                 // This page id doesn't exist
                 $this->isValid = false;
@@ -140,7 +140,7 @@ class Page
             );
 
             while (!$blocksParamsQuery->eof) {
-                $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+                $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
                 $blocksParamsQuery->moveNext();
             }
         }
@@ -209,7 +209,7 @@ class Page
         );
 
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+            $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
             $blocksParamsQuery->moveNext();
         }
 
@@ -241,7 +241,7 @@ class Page
         ); // " AND page=".$domainDa->formatText($this->module.'/'.$this->page)
 
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')] = unserialize($blocksParamsQuery->getFields('params'));
+            $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
             $blocksParamsQuery->moveNext();
         }
 
@@ -263,8 +263,66 @@ class Page
                 );
             }
         }
-
     }
+
+    public function getLayoutBlocks()
+    {
+        $blocks = array();
+
+        // Load the page YAML structure
+        $page_def = yaml_parse_file($this->pageDefFile);
+
+        // Get page layout if defined and check if the YAML file for the given layout exists
+        $layout = false;
+
+        if (strlen($page_def['layout'])) {
+            $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.local.yml';
+            if (file_exists($layoutFileName)) {
+                $layout = true;
+            } else {
+                $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.yml';
+                if (file_exists($layoutFileName)) {
+                    $layout = true;
+                }
+            }
+        }
+
+        if ($layout) {
+            // Load the layout YAML structure
+            $layout_def = yaml_parse_file($layoutFileName);
+
+            // Get block list
+            foreach ($layout_def['blocks'] as $blockDef) {
+                $blocks[$blockDef['module']][] = $blockDef['name'];
+            }
+        }
+
+        return $blocks;
+    }
+
+    public function getPageBlocks($cumulative = false)
+    {
+        $blocks = array();
+
+        // Load the page YAML structure
+        $page_def = yaml_parse_file($this->pageDefFile);
+
+        // Get page block list
+        foreach ($page_def['blocks'] as $blockDef) {
+            $blocks[$blockDef['module']][] = $blockDef['name'];
+        }
+
+        return $blocks;
+    }
+
+    /*
+    public function getPageInstanceBlocks($cumulative = false)
+    {
+        if (!$this->isValid()) {
+            return false;
+        }
+    }
+     */
 
     /* public getId() {{{ */
     /**

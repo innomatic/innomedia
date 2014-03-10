@@ -28,6 +28,10 @@ abstract class BlockManager
      */
     public function retrieve()
     {
+        $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
         $blockQuery = $domainDa->execute(
             "SELECT id,params
             FROM innomedia_blocks
@@ -37,7 +41,7 @@ abstract class BlockManager
         );
 
         if ($blockQuery->getNumberRows() > 0) {
-            $this->parameters = unserialize($blockQuery->getFields('params'));
+            $this->parameters = json_decode($blockQuery->getFields('params'), true);
             $this->id = $blockQuery->getFields('id');
             return true;
         } else {
@@ -66,19 +70,27 @@ abstract class BlockManager
 
                 return $domainDa->execute(
                     "UPDATE innomedia_blocks
-                    SET params=".$domainDa->formatText(serialize($this->parameters)).
+                    SET params=".$domainDa->formatText(json_encode($this->parameters)).
                     " WHERE id=$id"
                 );
             } else {
                 $id = $domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
-
-                return $domainDa->execute(
-                    "INSERT INTO innomedia_blocks (id,block,params".
+echo                     "insert into innomedia_blocks (id,block,params".
                     (strlen($this->pageName) ? ",page" : "").
                     ($this->pageId != 0 ? ",pageid" : "")."
-                    ) VALUES ($id, ".$domainDa->formatText($this->blockName).",".
-                    $domainDa->formatText(serialize($this->parameters)).
-                    (strlen($this->pageName) ? ",".$domainDa->formatText($this->pageName): "").
+                    ) values ($id, ".$domainDa->formattext($this->blockName).",".
+                    $domainDa->formattext(json_encode($this->parameters)).
+                    (strlen($this->pageName) ? ",".$domainDa->formattext($this->pageName): "").
+                    ($this->pageId != 0 ? ",{$this->pageId}" : "").
+                    ")"
+;
+                return $domainDa->execute(
+                    "insert into innomedia_blocks (id,block,params".
+                    (strlen($this->pageName) ? ",page" : "").
+                    ($this->pageId != 0 ? ",pageid" : "")."
+                    ) values ($id, ".$domainDa->formattext($this->blockName).",".
+                    $domainDa->formattext(json_encode($this->parameters)).
+                    (strlen($this->pageName) ? ",".$domainDa->formattext($this->pageName): "").
                     ($this->pageId != 0 ? ",{$this->pageId}" : "").
                     ")"
                 );

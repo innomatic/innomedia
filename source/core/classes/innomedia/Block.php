@@ -184,6 +184,43 @@ abstract class Block extends Template
         return $obj;
     }
 
+    /* public getClass(Context $context, $module, $name) {{{ */
+    /**
+     * Find the class of a block.
+     *
+     * @param Context $context
+     * @param string $module
+     * @param string $name
+     * @return string class name.
+     */
+    public static function getClass(Context $context, $module, $name)
+    {
+        if (! strlen($module)) {
+            return;
+        }
+
+        // Adds module classes directory to classpath
+        $context->importModule($module);
+
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
+        if (!file_exists($block_yml_file)) {
+            $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        }
+        if (!file_exists($block_yml_file)) {
+            return;
+        }
+        // Imports block class and return an instance of it.
+        $def = yaml_parse_file($block_yml_file);
+        $fqcn = $def['class'];
+        if (! strlen($fqcn)) {
+            // @todo convert to new class loader
+            $fqcn = 'innomedia/EmptyBlock.php';
+        }
+
+        return $fqcn;
+    }
+    /* }}} */
+
     private function getTemplateFile($page)
     {
         $locales = $this->context->getLocales();
