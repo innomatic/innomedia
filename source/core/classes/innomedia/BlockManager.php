@@ -75,15 +75,7 @@ abstract class BlockManager
                 );
             } else {
                 $id = $domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
-echo                     "insert into innomedia_blocks (id,block,params".
-                    (strlen($this->pageName) ? ",page" : "").
-                    ($this->pageId != 0 ? ",pageid" : "")."
-                    ) values ($id, ".$domainDa->formattext($this->blockName).",".
-                    $domainDa->formattext(json_encode($this->parameters)).
-                    (strlen($this->pageName) ? ",".$domainDa->formattext($this->pageName): "").
-                    ($this->pageId != 0 ? ",{$this->pageId}" : "").
-                    ")"
-;
+
                 return $domainDa->execute(
                     "insert into innomedia_blocks (id,block,params".
                     (strlen($this->pageName) ? ",page" : "").
