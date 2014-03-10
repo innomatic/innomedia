@@ -176,6 +176,9 @@ abstract class Block extends Template
         $obj->setContext($context);
         $obj->setGrid($grid);
 
+        // Set block parameters
+        $obj->setParameters($params);
+
         // Get all grid tags and set them in the block tags
         $grid_tags = $grid->getTags();
         foreach ($grid_tags as $tag) {
