@@ -87,7 +87,6 @@ class Page
 
     protected function parsePage()
     {
-        print_r(self::getInstancePagesList($this->context));
         // Check if the YAML file for the given page exists
         if (! file_exists($this->pageDefFile)) {
             return false;
