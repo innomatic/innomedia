@@ -62,6 +62,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
 
         // Build Innomedia page
         $page = new Page($module_name, $page_name, $pageId);
+        $page->parsePage();
 
         // Check if the page is valid
         if (!$page->isValid()) {

@@ -116,7 +116,8 @@ class Page
             $pagesParamsQuery = $domainDa->execute(
                 "SELECT blocks, params
                 FROM innomedia_pages
-                WHERE id={$this->id}"
+                WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+                " AND id={$this->id}"
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
@@ -426,8 +427,6 @@ class Page
 
     public function build()
     {
-        $this->parsePage();
-
         if (is_object($this->grid)) {
             echo $this->grid->parse();
         } else {
