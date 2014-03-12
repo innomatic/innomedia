@@ -52,6 +52,7 @@
 			urlpattern="/innomedia/*" listings="false" />
 
         <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
+        <role name="web_editor" title="web_editor" description="" catalog="innomedia::roles" />
 
         <domaintable name="innomedia_pages" file="innomedia_pages.xml" />
         <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
