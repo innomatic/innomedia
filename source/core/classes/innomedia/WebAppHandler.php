@@ -34,12 +34,14 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
         // Start Innomatic
         $innomatic = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
         $innomatic->setInterface(\Innomatic\Core\InnomaticContainer::INTERFACE_EXTERNAL);
-        $root = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
+        $root           = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
         $innomatic_home = $root->getHome() . 'innomatic/';
         $innomatic->bootstrap($innomatic_home, $innomatic_home . 'core/conf/innomatic.ini');
 
         // Start Innomatic domain
-        \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()
+        \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->startDomain(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')
+            ->getCurrentWebApp()
             ->getName());
 
         // Innomedia page
