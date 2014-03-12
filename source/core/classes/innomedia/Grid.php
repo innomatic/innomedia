@@ -23,6 +23,7 @@ namespace Innomedia;
  */
 class Grid extends \Innomedia\Template
 {
+    protected $context;
 
     protected $page;
 
@@ -38,19 +39,20 @@ class Grid extends \Innomedia\Template
     {
         $this->page = $page;
         $this->blocks = array();
+        $this->context = Context::instance('\Innomedia\Context');
 
-        $tpl = $this->page->getContext()->getGridsHome() . $this->page->getTheme() . '.local.tpl.php';
+        $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.local.tpl.php';
         if (!file_exists($tpl)) {
-            $tpl = $this->page->getContext()->getGridsHome() . $this->page->getTheme() . '.tpl.php';
+            $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.tpl.php';
         }
         if (!file_exists($tpl)) {
-            $tpl = $this->page->getContext()->getGridsHome() . 'default.local.tpl.php';
+            $tpl = $this->context->getGridsHome() . 'default.local.tpl.php';
         }
         if (!file_exists($tpl)) {
-            $tpl = $this->page->getContext()->getGridsHome() . 'default.tpl.php';
+            $tpl = $this->context->getGridsHome() . 'default.tpl.php';
         }
         if (!file_exists($tpl)) {
-            $this->page->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+            $this->context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
         }
         parent::__construct($tpl);
         $this->setPredefinedTags();
@@ -60,16 +62,16 @@ class Grid extends \Innomedia\Template
 
     public function setPredefinedTags()
     {
-        $this->set('receiver', $this->page->getRequest()->getUrlPath(true));
-        $this->set('baseurl', $this->page->getRequest()->getUrlPath(false) . '/');
+        $this->set('receiver', $this->context->getRequest()->getUrlPath(true));
+        $this->set('baseurl', $this->context->getRequest()->getUrlPath(false) . '/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
 
         // Ajax support
-        $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
+        $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->context->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;
         $xajax->setLogFile(
-            $this->page->getContext()
+            $this->context
                 ->getHome() . 'core/log/ajax.log'
         );
 
@@ -98,14 +100,14 @@ class Grid extends \Innomedia\Template
 
         // Build the base javascript for ajax
         $xajax_js = $xajax->getJavascript(
-            $this->page
+            $this->context
                 ->getRequest()
                 ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js'
         );
 
         // Setup calls.
-        if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
-            $setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
+        if ($this->context->countRegisteredAjaxSetupCalls() > 0) {
+            $setup_calls = $this->context->getRegisteredAjaxSetupCalls();
             $xajax_js .= '<script type="text/javascript">' . "\n";
             foreach ($setup_calls as $call) {
                 $xajax_js .= $call . ";\n";
@@ -136,7 +138,7 @@ class Grid extends \Innomedia\Template
      */
     public function addBlock(Block $block, $row, $column, $position)
     {
-        $block->run($this->page->getRequest(), $this->page->getResponse());
+        $block->run($this->context->getRequest(), $this->context->getResponse());
         if (! $row) {
             $row = 1;
         }

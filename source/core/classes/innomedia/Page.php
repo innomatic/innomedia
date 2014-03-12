@@ -22,12 +22,7 @@ namespace Innomedia;
  */
 class Page
 {
-
     protected $context;
-
-    protected $request;
-
-    protected $response;
 
     protected $module;
 
@@ -60,16 +55,11 @@ class Page
     protected $requiresId = true;
 
     public function __construct(
-        Context $context,
-        \Innomatic\Webapp\WebAppRequest $request,
-        \Innomatic\Webapp\WebAppResponse $response,
         $module,
         $page,
         $id = 0
     ) {
-        $this->context = $context;
-        $this->request = $request;
-        $this->response = $response;
+        $this->context = Context::instance('\Innomedia\Context');
         // TODO Add fallback module/page as optional welcome page
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
@@ -79,21 +69,26 @@ class Page
         }
         $this->isValid = true;
         $this->theme = 'default';
-        $this->pageDefFile = file_exists($context->getPagesHome($this->module).$this->page . '.local.yml') ?
-            $context->getPagesHome($this->module) . $this->page . '.local.yml' :
-            $context->getPagesHome($this->module) . $this->page . '.yml';
-        $this->parsePage();
     }
 
-    protected function parsePage()
+    protected function getPageDefFile()
     {
+        return file_exists($this->context->getPagesHome($this->module).$this->page . '.local.yml') ?
+            $this->context->getPagesHome($this->module) . $this->page . '.local.yml' :
+            $this->context->getPagesHome($this->module) . $this->page . '.yml';
+    }
+
+    public function parsePage()
+    {
+        $pageDefFile = $this->getPageDefFile();
+
         // Check if the YAML file for the given page exists
-        if (! file_exists($this->pageDefFile)) {
+        if (! file_exists($pageDefFile)) {
             return false;
         }
 
         // Load the page YAML structure
-        $page_def = yaml_parse_file($this->pageDefFile);
+        $page_def = yaml_parse_file($pageDefFile);
 
         // Check if the page requires a valid id
         if (isset($page_def['properties']['requiresid']) && $page_def['properties']['requiresid'] == true) {
@@ -267,12 +262,31 @@ class Page
         $this->grid->sortBlocks();
     }
 
+    public function addContent()
+    {
+        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        $id = $domainDa->getNextSequenceValue('innomatic_pages_id_seq');
+
+        if ($domainDa->execute(
+            'INSERT INTO innomatic_pages (id, page) VALUES ('.
+            $id.','.$domainDa->formatText($this->module.'/'.$this->page).')'
+        )) {
+            $this->id = $id;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getLayoutBlocks()
     {
         $blocks = array();
 
         // Load the page YAML structure
-        $page_def = yaml_parse_file($this->pageDefFile);
+        $page_def = yaml_parse_file($this->getPageDefFile());
 
         // Get page layout if defined and check if the YAML file for the given layout exists
         $layout = false;
@@ -307,7 +321,7 @@ class Page
         $blocks = array();
 
         // Load the page YAML structure
-        $page_def = yaml_parse_file($this->pageDefFile);
+        $page_def = yaml_parse_file($this->getPageDefFile());
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
@@ -384,16 +398,6 @@ class Page
         return $this->theme;
     }
 
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
     public function getModule()
     {
         return $this->module;
@@ -418,28 +422,29 @@ class Page
 
     public function build()
     {
+        $this->parsePage();
+
         if (is_object($this->grid)) {
             echo $this->grid->parse();
         } else {
-            $this->response->sendError(\Innomatic\Webapp\WebAppResponse::SC_NOT_FOUND, $this->request->getRequestURI());
+            $this->context->getResponse()->sendError(\Innomatic\Webapp\WebAppResponse::SC_NOT_FOUND, $this->context->getRequest()->getRequestURI());
         }
     }
 
-    /* public getPagesList($context) {{{ */
+    /* public getPagesList() {{{ */
     /**
      * Returns a list of all the pages defined in the current webapp.
      *
-     * @param \Innomedia\Context $context Innomedia Context
      * @return array
      */
-    public static function getPagesList($context)
+    public static function getPagesList()
     {
         $list = array();
-        if ($dm = opendir($context->getModulesHome())) {
+        if ($dm = opendir($this->context->getModulesHome())) {
             while (($module = readdir($dm)) !== false) {
-                if ($module != '.' and $module != '..' and file_exists($context->getModulesHome().$module.'/pages/') and $dh = opendir($context->getModulesHome().$module.'/pages/')) {
+                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
                     while (($file = readdir($dh)) !== false) {
-                        if ($file != '.' and $file != '..' and is_file( $context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
                             $list[] = $module.'/'.substr($file, 0, strrpos($file, '.yml'));
                         }
                     }
@@ -452,27 +457,26 @@ class Page
     }
     /* }}} */
 
-    /* public getInstancePagesList($context) {{{ */
+    /* public getInstancePagesList() {{{ */
     /**
      * Returns a list of all the pages in the current webapp requiring a valid id.
      *
-     * @param \Innomedia\Context $context Innomedia Context
      * @return array
      */
-    public static function getInstancePagesList($context)
+    public static function getInstancePagesList()
     {
         $list = array();
-        if ($dm = opendir($context->getModulesHome())) {
+        if ($dm = opendir($this->context->getModulesHome())) {
             while (($module = readdir($dm)) !== false) {
-                if ($module != '.' and $module != '..' and file_exists($context->getModulesHome().$module.'/pages/') and $dh = opendir($context->getModulesHome().$module.'/pages/')) {
+                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
                     while (($file = readdir($dh)) !== false) {
-                        if ($file != '.' and $file != '..' and is_file($context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
                             $pageName = substr($file, 0, strrpos($file, '.yml'));
 
-                            if (file_exists($context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
-                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
+                            if (file_exists($this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
+                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
                             } else {
-                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
+                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
                             }
                             $pageDef = yaml_parse_file($yamlFile);
                             if (isset($pageDef['properties']['requiresid']) && $pageDef['properties']['requiresid'] == true) {
@@ -488,6 +492,43 @@ class Page
         return $list;
     }
     /* }}} */
+
+    /* public getNoInstancePagesList() {{{ */
+    /**
+     * Returns a list of pages not requiring a valid id.
+     *
+     * @return array
+     */
+    public static function getNoInstancePagesList()
+    {
+        $list = array();
+        if ($dm = opendir($this->context->getModulesHome())) {
+            while (($module = readdir($dm)) !== false) {
+                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
+                    while (($file = readdir($dh)) !== false) {
+                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                            $pageName = substr($file, 0, strrpos($file, '.yml'));
+
+                            if (file_exists($this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
+                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
+                            } else {
+                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
+                            }
+                            $pageDef = yaml_parse_file($yamlFile);
+                            if (!isset($pageDef['properties']['requiresid']) or $pageDef['properties']['requiresid'] == false) {
+                                $list[] = $module.'/'.$pageName;
+                            }
+                        }
+                    }
+                    closedir($dh);
+                }
+            }
+            closedir($dm);
+        }
+        return $list;
+    }
+    /* }}} */
+
 }
 
 ?>

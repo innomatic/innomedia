@@ -38,15 +38,8 @@ class Context extends \Innomatic\Util\Singleton
 
     protected $registeredAjaxSetupCalls = array();
 
-    public function ___construct(
-        $home,
-        \Innomatic\Webapp\WebAppRequest $request,
-        \Innomatic\Webapp\WebAppResponse $response
-    )
+    public function ___construct()
     {
-        $this->home = realpath($home) . '/';
-        $this->request = $request;
-        $this->response = $response;
         $this->session = new \Innomatic\Php\PHPSession();
         $this->session->start();
 
@@ -56,9 +49,12 @@ class Context extends \Innomatic\Util\Singleton
         if ($lifetime !== false) {
             $this->session->setLifeTime($lifetime);
         }
+    }
 
-        // Process the request
-        $this->process();
+    public function setHome($home)
+    {
+        $this->home = realpath($home).'/';
+        return $this;
     }
 
     public function getHome()
@@ -128,6 +124,12 @@ class Context extends \Innomatic\Util\Singleton
         return $this->request;
     }
 
+    public function setRequest(\Innomatic\Webapp\WebAppRequest $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
     /**
      * Gets the webapp response object.
      *
@@ -137,6 +139,12 @@ class Context extends \Innomatic\Util\Singleton
     public function getResponse()
     {
         return $this->response;
+    }
+
+    public function setResponse(\Innomatic\Webapp\WebAppResponse $response)
+    {
+        $this->response = $response;
+        return $this;
     }
 
     public function getSession()
@@ -208,7 +216,7 @@ class Context extends \Innomatic\Util\Singleton
      * @return void
      * @since 5.1
      */
-    private function process()
+    public function process()
     {
         // Checks if the locale has been passed as parameter
         if ($this->request->parameterExists('innomedia_setlocale')) {

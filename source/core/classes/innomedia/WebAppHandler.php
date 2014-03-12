@@ -52,10 +52,14 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
 
         // Define Innomatic context
         $home    = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
-        $context = Context::instance('\Innomedia\Context', $home, $req, $res);
+        $context = Context::instance('\Innomedia\Context');
+        $context->setHome($home)
+            ->setRequest($req)
+            ->setResponse($res)
+            ->process();
 
         // Build Innomedia page
-        $page = new Page($context, $req, $res, $module_name, $page_name, $pageId);
+        $page = new Page($module_name, $page_name, $pageId);
 
         // Check if the page is valid
         if (!$page->isValid()) {
