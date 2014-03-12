@@ -108,7 +108,7 @@ class Page
         // Load the grid
         $this->grid = new Grid($this);
 
-        // Load page and parameters for this instance of the page, is available
+        // Load page and parameters for this instance of the page, if available
         $blockParams = array();
         $instanceBlocks = array();
 
@@ -122,6 +122,10 @@ class Page
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
                 $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
+
+                if (!is_array($instanceBlocks)) {
+                    $instanceBlocks = array();
+                }
             } elseif ($this->requiresId) {
                 // This page id doesn't exist
                 $this->isValid = false;
