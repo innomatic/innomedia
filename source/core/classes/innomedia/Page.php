@@ -268,10 +268,10 @@ class Page
             ->getCurrentDomain()
             ->getDataAccess();
 
-        $id = $domainDa->getNextSequenceValue('innomatic_pages_id_seq');
+        $id = $domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
         if ($domainDa->execute(
-            'INSERT INTO innomatic_pages (id, page) VALUES ('.
+            'INSERT INTO innomedia_pages (id, page) VALUES ('.
             $id.','.$domainDa->formatText($this->module.'/'.$this->page).')'
         )) {
             $this->id = $id;
