@@ -53,7 +53,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
         // Define Innomatic context
         $home    = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();
         $context = Context::instance('\Innomedia\Context');
-        $context->setHome($home)
+        $context
             ->setRequest($req)
             ->setResponse($res)
             ->process();

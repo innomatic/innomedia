@@ -439,12 +439,13 @@ class Page
      */
     public static function getPagesList()
     {
+        $context = Context::instance('\Innomedia\Context');
         $list = array();
-        if ($dm = opendir($this->context->getModulesHome())) {
+        if ($dm = opendir($context->getModulesHome())) {
             while (($module = readdir($dm)) !== false) {
-                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
+                if ($module != '.' and $module != '..' and file_exists($context->getModulesHome().$module.'/pages/') and $dh = opendir($context->getModulesHome().$module.'/pages/')) {
                     while (($file = readdir($dh)) !== false) {
-                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                        if ($file != '.' and $file != '..' and is_file($context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
                             $list[] = $module.'/'.substr($file, 0, strrpos($file, '.yml'));
                         }
                     }
@@ -465,18 +466,20 @@ class Page
      */
     public static function getInstancePagesList()
     {
+        $context = Context::instance('\Innomedia\Context');
+
         $list = array();
-        if ($dm = opendir($this->context->getModulesHome())) {
+        if ($dm = opendir($context->getModulesHome())) {
             while (($module = readdir($dm)) !== false) {
-                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
+                if ($module != '.' and $module != '..' and file_exists($context->getModulesHome().$module.'/pages/') and $dh = opendir($context->getModulesHome().$module.'/pages/')) {
                     while (($file = readdir($dh)) !== false) {
-                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                        if ($file != '.' and $file != '..' and is_file($context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
                             $pageName = substr($file, 0, strrpos($file, '.yml'));
 
-                            if (file_exists($this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
-                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
+                            if (file_exists($context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
+                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
                             } else {
-                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
+                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
                             }
                             $pageDef = yaml_parse_file($yamlFile);
                             if (isset($pageDef['properties']['requiresid']) && $pageDef['properties']['requiresid'] == true) {
@@ -501,18 +504,20 @@ class Page
      */
     public static function getNoInstancePagesList()
     {
+        $context = Context::instance('\Innomedia\Context');
+
         $list = array();
-        if ($dm = opendir($this->context->getModulesHome())) {
+        if ($dm = opendir($context->getModulesHome())) {
             while (($module = readdir($dm)) !== false) {
-                if ($module != '.' and $module != '..' and file_exists($this->context->getModulesHome().$module.'/pages/') and $dh = opendir($this->context->getModulesHome().$module.'/pages/')) {
+                if ($module != '.' and $module != '..' and file_exists($context->getModulesHome().$module.'/pages/') and $dh = opendir($context->getModulesHome().$module.'/pages/')) {
                     while (($file = readdir($dh)) !== false) {
-                        if ($file != '.' and $file != '..' and is_file($this->context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
+                        if ($file != '.' and $file != '..' and is_file($context->getModulesHome().$module. '/pages/' . $file) and strrpos($file, '.yml') and !strrpos($file, '.local.yml')) {
                             $pageName = substr($file, 0, strrpos($file, '.yml'));
 
-                            if (file_exists($this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
-                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
+                            if (file_exists($context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml')) {
+                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.local.yml';
                             } else {
-                                $yamlFile = $this->context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
+                                $yamlFile = $context->getModulesHome().$module. '/pages/'.$pageName.'.yml';
                             }
                             $pageDef = yaml_parse_file($yamlFile);
                             if (!isset($pageDef['properties']['requiresid']) or $pageDef['properties']['requiresid'] == false) {

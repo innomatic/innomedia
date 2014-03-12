@@ -40,15 +40,10 @@ class Context extends \Innomatic\Util\Singleton
 
     public function ___construct()
     {
-        $this->session = new \Innomatic\Php\PHPSession();
-        $this->session->start();
-
-        // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
-        // defined by the 'sessionLifetime' parameter in web.xml
-        $lifetime = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
-        if ($lifetime !== false) {
-            $this->session->setLifeTime($lifetime);
-        }
+        $this->home = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer')
+                ->getHome().
+            '/'.
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId().'/';
     }
 
     public function setHome($home)
@@ -218,6 +213,17 @@ class Context extends \Innomatic\Util\Singleton
      */
     public function process()
     {
+        // Initialized the session
+        $this->session = new \Innomatic\Php\PHPSession();
+        $this->session->start();
+
+        // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
+        // defined by the 'sessionLifetime' parameter in web.xml
+        $lifetime = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
+        if ($lifetime !== false) {
+            $this->session->setLifeTime($lifetime);
+        }
+
         // Checks if the locale has been passed as parameter
         if ($this->request->parameterExists('innomedia_setlocale')) {
             // Stores the locale into the session
