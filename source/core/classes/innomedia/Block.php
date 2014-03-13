@@ -36,8 +36,6 @@ abstract class Block extends Template
      */
     protected $parameters;
 
-    protected $show = true;
-
     public function __construct($file)
     {
         parent::__construct($file);
@@ -117,23 +115,23 @@ abstract class Block extends Template
             return;
         }
         // Imports block class and return an instance
-        $def = yaml_parse_file($block_yml_file);
+        $def  = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
-        if (! strlen($fqcn)) {
+        if (!strlen($fqcn)) {
             // @todo convert to new class loader
             $fqcn = 'innomedia/EmptyBlock.php';
         }
 
         // @todo convert to new namespace convention
         $included = @include_once $fqcn;
-        if (! $included) {
+        if (!$included) {
             $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
         }
 
         $tpl_root = $context->getBlocksHome($module);
         $tpl_file = '';
-        $locales = $context->getLocales();
+        $locales  = $context->getLocales();
         foreach ($locales as $locale) {
             if (file_exists($tpl_root . '.' . $name.'_'.$locale.'.local.tpl.php')) {
                 // Local template for given language exists
@@ -246,17 +244,6 @@ abstract class Block extends Template
         }
         // No page exists
         return false;
-    }
-
-    public function setShow($show)
-    {
-        $this->show = $show;
-        return $this;
-    }
-
-    public function getShow()
-    {
-        return $this->show;
     }
 
     public function getContext()
