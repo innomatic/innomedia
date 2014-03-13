@@ -201,11 +201,12 @@ class Page
         }
 
         // Get page level block parameters
+        // If this is a content page, it must also retrieve block parameters with the page id
         $blocksParamsQuery = $domainDa->execute(
             "SELECT block,params
             FROM innomedia_blocks
             WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
-            "AND pageid IS NULL"
+            ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
 
         while (!$blocksParamsQuery->eof) {
@@ -237,8 +238,8 @@ class Page
         $blocksParamsQuery = $domainDa->execute(
             "SELECT block,params
             FROM innomedia_blocks
-            WHERE pageid={$this->id}"
-        ); // " AND page=".$domainDa->formatText($this->module.'/'.$this->page)
+            WHERE pageid={$this->id}
+            AND page=".$domainDa->formatText($this->module.'/'.$this->page));
 
         while (!$blocksParamsQuery->eof) {
             $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
