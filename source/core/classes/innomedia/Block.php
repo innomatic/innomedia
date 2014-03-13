@@ -116,7 +116,7 @@ abstract class Block extends Template
             $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing block definition file ' . $name . '.yml');
             return;
         }
-        // Imports block class and return an instance of it.
+        // Imports block class and return an instance
         $def = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
         if (! strlen($fqcn)) {
