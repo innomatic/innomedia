@@ -39,12 +39,7 @@ abstract class Block extends Template
     public function __construct($file)
     {
         parent::__construct($file);
-    }
-
-    public function setContext(Context $context)
-    {
-        $this->context = $context;
-        return $this;
+        $this->context = Context::instance('\Innomedia\Context');
     }
 
     public function setGrid(Grid $grid)
@@ -102,9 +97,6 @@ abstract class Block extends Template
         if (! strlen($module)) {
             return;
         }
-
-        // Adds module classes directory to classpath
-        $context->importModule($module);
 
         $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
         if (!file_exists($block_yml_file)) {
@@ -171,7 +163,6 @@ abstract class Block extends Template
 
         // Build block
         $obj = new $class($tpl_file);
-        $obj->setContext($context);
         $obj->setGrid($grid);
 
         // Set block parameters
@@ -199,9 +190,6 @@ abstract class Block extends Template
         if (! strlen($module)) {
             return;
         }
-
-        // Adds module classes directory to classpath
-        $context->importModule($module);
 
         $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
         if (!file_exists($block_yml_file)) {

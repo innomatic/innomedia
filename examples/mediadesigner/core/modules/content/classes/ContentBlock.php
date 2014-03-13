@@ -65,7 +65,6 @@ class ContentBlock extends \Innomedia\Block {
 
 		/*
 		// Gets site mappings
-		$this->context->importModule('sitemap');
 		Carthag :: import('com.innoteam.modules.sitemap.SiteMapStructure');
 		$structure = SiteMapStructure :: getInstance($request->getContext(), $this->context->getModulesHome().'sitemap/sitemap.xml');
 

@@ -38,12 +38,19 @@ class Context extends \Innomatic\Util\Singleton
 
     protected $registeredAjaxSetupCalls = array();
 
+    protected $modulesClassPathsAdded = false;
+
     public function ___construct()
     {
         $this->home = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer')
                 ->getHome().
             '/'.
             \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId().'/';
+
+        if (!$this->modulesClassPathsAdded) {
+            $this->addModulesClassPaths();
+
+        }
     }
 
     public function setHome($home)
@@ -189,19 +196,18 @@ class Context extends \Innomatic\Util\Singleton
     }
 
     /**
-     * Imports a module.
-     *
      * Adds module's classes to include_path
      *
-     * @param string $module
-     *            Module name.
      * @return void
-     * @since 5.1
+     * @since 2.0.0
      */
-    public function importModule($module)
+    public function addModulesClassPaths()
     {
-        if (is_dir($this->getModulesHome() . $module . '/classes/')) {
-            set_include_path(get_include_path() . ':' . $this->getModulesHome() . $module . '/classes/');
+        $modulesList = $this->getModulesList();
+        foreach ($modulesList as $module) {
+            if (is_dir($this->getModulesHome() . $module . '/classes/')) {
+                set_include_path(get_include_path() . ':' . $this->getModulesHome() . $module . '/classes/');
+            }
         }
     }
 
