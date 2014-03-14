@@ -134,13 +134,13 @@ class Page
             }
 
             $blocksParamsQuery = $domainDa->execute(
-                "SELECT block, params
+                "SELECT block, params, counter
                 FROM innomedia_blocks
                 WHERE page IS NULL AND pageid IS NULL"
             );
 
             while (!$blocksParamsQuery->eof) {
-                $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
+                $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
                 $blocksParamsQuery->moveNext();
             }
         }
@@ -180,7 +180,8 @@ class Page
                     $this->grid,
                     $blockDef['module'],
                     $blockDef['name'],
-                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
+                    isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
                 );
 
                 if (! is_null($block)) {
@@ -203,14 +204,14 @@ class Page
         // Get page level block parameters
         // If this is a content page, it must also retrieve block parameters with the page id
         $blocksParamsQuery = $domainDa->execute(
-            "SELECT block,params
+            "SELECT block,params,counter
             FROM innomedia_blocks
             WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
             ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
 
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
             $blocksParamsQuery->moveNext();
         }
 
@@ -221,7 +222,8 @@ class Page
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
+                isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
             );
 
             if (! is_null($block)) {
@@ -236,13 +238,13 @@ class Page
 
         // Get page instance level block parameters
         $blocksParamsQuery = $domainDa->execute(
-            "SELECT block,params
+            "SELECT block,params,counter
             FROM innomedia_blocks
             WHERE pageid={$this->id}
             AND page=".$domainDa->formatText($this->module.'/'.$this->page));
 
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
             $blocksParamsQuery->moveNext();
         }
 
@@ -252,7 +254,8 @@ class Page
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']] : array()
+                isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
             );
 
             if (! is_null($block)) {

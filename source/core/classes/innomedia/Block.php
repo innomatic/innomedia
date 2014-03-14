@@ -24,6 +24,7 @@ use \Innomatic\Webapp;
  */
 abstract class Block extends Template
 {
+    protected $counter;
 
     protected $context;
 
@@ -63,6 +64,35 @@ abstract class Block extends Template
     }
     /* }}} */
 
+    /* public setCounter($counter) {{{ */
+    /**
+     * Sets the block counter in the page.
+     *
+     * @param integer $counter
+     * @return \Innomedia\Block the block object
+     */
+    public function setCounter($counter)
+    {
+        $this->counter = (int)$counter;
+        return $this;
+    }
+
+    /* public getCounter($counter) {{{ */
+    /**
+     * Returns the block counter.
+     *
+     * If not set, it returns 1.
+     *
+     * @return integer
+     */
+    public function getCounter()
+    {
+        return $this->counter != null ? $this->counter : 1;
+    }
+
+    /* }}} */
+
+    /* }}} */
     /* public hasBlockManager() {{{ */
     /**
      * Returns true if the block has a manager class.
@@ -92,7 +122,7 @@ abstract class Block extends Template
     }
     /* }}} */
 
-    public static function load(Context $context, Grid $grid, $module, $name, $params = array())
+    public static function load(Context $context, Grid $grid, $module, $name, $counter, $params = array())
     {
         if (! strlen($module)) {
             return;
@@ -164,6 +194,9 @@ abstract class Block extends Template
         // Build block
         $obj = new $class($tpl_file);
         $obj->setGrid($grid);
+
+        // Set block counter
+        $obj->setCounter($counter);
 
         // Set block parameters
         $obj->setParameters($params);

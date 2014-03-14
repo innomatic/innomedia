@@ -7,6 +7,7 @@
         <field name="pageid" type="integer" />
         <field name="block" type="text" notnull="1" />
         <field name="params" type="text" />
+        <field name="counter" type="integer" />
         <key field="id"  type="unique"/>
     </table>
 
