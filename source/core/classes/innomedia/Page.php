@@ -174,14 +174,15 @@ class Page
 
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
+                $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
                 // Load the block
                 $block = Block::load(
                     $this->context,
                     $this->grid,
                     $blockDef['module'],
                     $blockDef['name'],
-                    isset($blockDef['counter']) ? $blockDef['counter'] : 1,
-                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
+                    $counter,
+                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
                 );
 
                 if (! is_null($block)) {
@@ -217,13 +218,14 @@ class Page
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
+            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $block = Block::load(
                 $this->context,
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
-                isset($blockDef['counter']) ? $blockDef['counter'] : 1,
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
+                $counter,
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
 
             if (! is_null($block)) {
@@ -249,13 +251,14 @@ class Page
         }
 
         foreach ($instanceBlocks as $blockDef) {
+            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $block = Block::load(
                 $this->context,
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
-                isset($blockDef['counter']) ? $blockDef['counter'] : 1,
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$blockDef['counter']] : array()
+                $counter,
+                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
 
             if (! is_null($block)) {
