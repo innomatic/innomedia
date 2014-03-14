@@ -20,9 +20,9 @@ abstract class BlockManager
 
     public abstract function getManagerXml($blockCounter = 1);
 
-    public function getParamPrefix()
+    public function getParamPrefix($blockCounter = 1)
     {
-        return str_replace('/', '_', $this->blockName.'_'.$this->pageId);
+        return str_replace('/', '_', $this->blockName).'_'.$blockCounter;
     }
 
     /* public retrieve() {{{ */
