@@ -20,6 +20,11 @@ abstract class BlockManager
 
     public abstract function getManagerXml($blockCounter = 1);
 
+    public function getParamPrefix()
+    {
+        return str_replace('/', '_', $this->blockName.'_'.$this->pageId);
+    }
+
     /* public retrieve() {{{ */
     /**
      * Retrieves the block parameters from the storage.
