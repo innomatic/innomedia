@@ -10,19 +10,21 @@ abstract class BlockManager
     public $blockName = '';
     public $parameters = array();
     public $pageName;
+    public $blockCounter = 1;
     public $pageId;
 
-    public function __construct($pageName = '', $pageId = 0)
+    public function __construct($pageName = '', $blockCounter = 1, $pageId = 0)
     {
         $this->pageName = $pageName;
         $this->pageId = $pageId;
+        $this->blockCounter = $blockCounter;
     }
 
-    public abstract function getManagerXml($blockCounter = 1);
+    public abstract function getManagerXml();
 
-    public function getParamPrefix($blockCounter = 1)
+    public function getParamPrefix()
     {
-        return str_replace('/', '_', $this->blockName).'_'.$blockCounter;
+        return str_replace('/', '_', $this->blockName).'_'.$this->blockCounter;
     }
 
     /* public retrieve() {{{ */
@@ -31,7 +33,7 @@ abstract class BlockManager
      *
      * @return boolean true if the parameters have been retrieved.
      */
-    public function retrieve($blockCounter = 1)
+    public function retrieve()
     {
         $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
             ->getCurrentDomain()
@@ -41,7 +43,7 @@ abstract class BlockManager
             "SELECT id,params
             FROM innomedia_blocks
             WHERE block = ".$domainDa->formatText($this->blockName).
-            " AND counter = $blockCounter".
+            " AND counter = $this->blockCounter".
             ($this->pageId == 0 ? " AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL") : '')."
             AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
         );
@@ -56,7 +58,7 @@ abstract class BlockManager
     }
     /* }}} */
 
-    public function store($blockCounter = 1)
+    public function store()
     {
         if (is_array($this->parameters) && strlen($this->blockName)) {
             $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
@@ -67,7 +69,7 @@ abstract class BlockManager
                 "SELECT id
                 FROM innomedia_blocks
                 WHERE block = ".$domainDa->formatText($this->blockName)."
-                AND counter = $blockCounter
+                AND counter = $this->blockCounter
                 AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL")."
                 AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
             );
@@ -87,7 +89,7 @@ abstract class BlockManager
                     "insert into innomedia_blocks (id,block,counter,params".
                     (strlen($this->pageName) ? ",page" : "").
                     ($this->pageId != 0 ? ",pageid" : "")."
-                    ) values ($id, ".$domainDa->formattext($this->blockName).",".$blockCounter.','.
+                    ) values ($id, ".$domainDa->formattext($this->blockName).",".$this->blockCounter.','.
                     $domainDa->formattext(json_encode($this->parameters)).
                     (strlen($this->pageName) ? ",".$domainDa->formattext($this->pageName): "").
                     ($this->pageId != 0 ? ",{$this->pageId}" : "").
@@ -97,5 +99,5 @@ abstract class BlockManager
         }
     }
 
-    public abstract function saveBlock($parameters, $blockCounter = 1);
+    public abstract function saveBlock($parameters);
 }
