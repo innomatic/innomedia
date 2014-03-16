@@ -308,7 +308,7 @@ class Page
         }
 
         return $this->domainDa->execute(
-            "UPDATE innomatic_pages
+            "UPDATE innomedia_pages
             SET
             title=".$this->domainDa->formatText($this->title).",
             params=".$this->domainDa->formatText(json_encode($this->parameters)).",
