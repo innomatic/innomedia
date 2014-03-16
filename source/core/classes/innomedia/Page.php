@@ -429,13 +429,6 @@ class Page
         return $this->isValid;
     }
     /* }}} */
-    /**
-     * Returns Context object.
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
 
     /**
      * Returns the theme set for the current page.
@@ -474,6 +467,7 @@ class Page
         $this->parameters = $parameters;
         return $this;
     }
+
     public function getTitle()
     {
         return $this->title;

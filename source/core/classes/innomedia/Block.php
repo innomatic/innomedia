@@ -267,11 +267,6 @@ abstract class Block extends Template
         return false;
     }
 
-    public function getContext()
-    {
-        return $this->context;
-    }
-
     public function getGrid()
     {
         return $this->grid;
