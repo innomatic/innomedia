@@ -55,7 +55,6 @@ class Grid extends \Innomedia\Template
             $this->context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
         }
         parent::__construct($tpl);
-        $this->setPredefinedTags();
         $this->setArray('blocks', $this->blocks);
     }
     /* }}} */
@@ -191,5 +190,11 @@ class Grid extends \Innomedia\Template
         return $this->page;
     }
     /* }}} */
+
+    public function build()
+    {
+        $this->setPredefinedTags();
+        parent::build();
+    }
 }
 

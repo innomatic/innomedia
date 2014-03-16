@@ -83,7 +83,7 @@ abstract class BlockManager
                     " WHERE id=$id"
                 );
             } else {
-                $id = $domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
+                $id = $domainDa->getNextSequenceValue('innSomedia_blocks_id_seq');
 
                 return $domainDa->execute(
                     "insert into innomedia_blocks (id,block,counter,params".

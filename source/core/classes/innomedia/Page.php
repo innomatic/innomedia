@@ -24,6 +24,8 @@ class Page
 {
     protected $context;
 
+    protected $domainDa;
+
     protected $module;
 
     protected $page;
@@ -56,6 +58,8 @@ class Page
 
     protected $title;
 
+    protected $blocks = array();
+
     protected $instanceBlocks = array();
 
     public function __construct(
@@ -64,6 +68,11 @@ class Page
         $id = 0
     ) {
         $this->context = Context::instance('\Innomedia\Context');
+
+        $this->domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
         // TODO Add fallback module/page as optional welcome page
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
@@ -105,22 +114,15 @@ class Page
             }
         }
 
-        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-            ->getCurrentDomain()
-            ->getDataAccess();
-
-        // Load the grid
-        $this->grid = new Grid($this);
-
         // Load page and parameters for this instance of the page, if available
         $blockParams = array();
         $instanceBlocks = array();
 
         if ($this->id != 0) {
-            $pagesParamsQuery = $domainDa->execute(
+            $pagesParamsQuery = $this->domainDa->execute(
                 "SELECT blocks, params, title
                 FROM innomedia_pages
-                WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+                WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
             );
 
@@ -138,7 +140,7 @@ class Page
                 return false;
             }
 
-            $blocksParamsQuery = $domainDa->execute(
+            $blocksParamsQuery = $this->domainDa->execute(
                 "SELECT block, params, counter
                 FROM innomedia_blocks
                 WHERE page IS NULL AND pageid IS NULL"
@@ -179,26 +181,15 @@ class Page
 
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
-                $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
-                // Load the block
-                $block = Block::load(
-                    $this->context,
-                    $this->grid,
-                    $blockDef['module'],
-                    $blockDef['name'],
-                    $counter,
-                    isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                $this->blocks[] = array(
+                    'module' => $blockDef['module'],
+                    'name'   => $blockDef['name'],
+                    'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                    'row' => $blockDef['row'],
+                    'column' => $blockDef['column'],
+                    'position' => $blockDef['position'],
+                    'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
                 );
-
-                if (! is_null($block)) {
-                    // Add the block
-                    $this->grid->addBlock(
-                        $block,
-                        $blockDef['row'],
-                        $blockDef['column'],
-                        $blockDef['position']
-                    );
-                }
             }
         }
 
@@ -209,10 +200,10 @@ class Page
 
         // Get page level block parameters
         // If this is a content page, it must also retrieve block parameters with the page id
-        $blocksParamsQuery = $domainDa->execute(
+        $blocksParamsQuery = $this->domainDa->execute(
             "SELECT block,params,counter
             FROM innomedia_blocks
-            WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
+            WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
             ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
 
@@ -223,32 +214,23 @@ class Page
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
-            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
-            $block = Block::load(
-                $this->context,
-                $this->grid,
-                $blockDef['module'],
-                $blockDef['name'],
-                $counter,
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+            $this->blocks[] = array(
+                'module' => $blockDef['module'],
+                'name'   => $blockDef['name'],
+                'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                'row' => $blockDef['row'],
+                'column' => $blockDef['column'],
+                'position' => $blockDef['position'],
+                'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
-
-            if (! is_null($block)) {
-                $this->grid->addBlock(
-                    $block,
-                    $blockDef['row'],
-                    $blockDef['column'],
-                    $blockDef['position']
-                );
-            }
         }
 
         // Get page instance level block parameters
-        $blocksParamsQuery = $domainDa->execute(
+        $blocksParamsQuery = $this->domainDa->execute(
             "SELECT block,params,counter
             FROM innomedia_blocks
             WHERE pageid={$this->id}
-            AND page=".$domainDa->formatText($this->module.'/'.$this->page));
+            AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
 
         while (!$blocksParamsQuery->eof) {
             $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
@@ -256,14 +238,34 @@ class Page
         }
 
         foreach ($instanceBlocks as $blockDef) {
-            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
+            $this->blocks[] = array(
+                'module' => $blockDef['module'],
+                'name'   => $blockDef['name'],
+                'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                'row' => $blockDef['row'],
+                'column' => $blockDef['column'],
+                'position' => $blockDef['position'],
+                'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+            );
+        }
+
+
+    }
+
+    public function loadBlocks()
+    {
+        // Load the grid
+        $this->grid = new Grid($this);
+
+        // Load the parsed blocks
+        foreach ($this->blocks as $blockDef) {
             $block = Block::load(
                 $this->context,
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
-                $counter,
-                isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                $blockDef['counter'],
+                $blockDef['params']
             );
 
             if (! is_null($block)) {
@@ -276,21 +278,18 @@ class Page
             }
         }
 
+        // Blocks must be properly sorted for the grid loop
         $this->grid->sortBlocks();
     }
 
     public function addContent()
     {
-        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-            ->getCurrentDomain()
-            ->getDataAccess();
+        $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
-        $id = $domainDa->getNextSequenceValue('innomedia_pages_id_seq');
-
-        if ($domainDa->execute(
+        if ($this->domainDa->execute(
             'INSERT INTO innomedia_pages (id, page, title) VALUES ('.
-            $id.','.$domainDa->formatText($this->module.'/'.$this->page).','.
-            .$domainDa->formatText($this->title).')'
+            $id.','.$this->domainDa->formatText($this->module.'/'.$this->page).','.
+            $this->domainDa->formatText($this->title).')'
         )) {
             $this->id = $id;
             return true;
@@ -305,16 +304,12 @@ class Page
             return false;
         }
 
-        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-            ->getCurrentDomain()
-            ->getDataAccess();
-
-        return $domainDa->execute(
+        return $this->domainDa->execute(
             "UPDATE innomatic_pages
             SET
-            title=".$domainDa->formatText($this->title).",
-            params=".$domainDa->formatText(json_encode($this->parameters)).",
-            blocks=".$domainDa->formatText(json_encode($this->instanceBlocks))."
+            title=".$this->domainDa->formatText($this->title).",
+            params=".$this->domainDa->formatText(json_encode($this->parameters)).",
+            blocks=".$this->domainDa->formatText(json_encode($this->instanceBlocks))."
             WHERE id={$this->id}"
         );
     }
@@ -325,11 +320,7 @@ class Page
             return false;
         }
 
-        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-            ->getCurrentDomain()
-            ->getDataAccess();
-
-        if ($domainDa->execute("DELETE FROM innomatic_pages WHERE id={$this->id}")) {
+        if ($this->domainDa->execute("DELETE FROM innomatic_pages WHERE id={$this->id}")) {
             $this->id = 0;
             return true;
         } else {
@@ -339,8 +330,6 @@ class Page
 
     public function getLayoutBlocks()
     {
-        $blocks = array();
-
         // Load the page YAML structure
         $page_def = yaml_parse_file($this->getPageDefFile());
 
@@ -363,13 +352,17 @@ class Page
             // Load the layout YAML structure
             $layout_def = yaml_parse_file($layoutFileName);
 
+            $blocks = array();
+
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
                 $blocks[$blockDef['module']][] = $blockDef['name'];
             }
+
+            return $blocks;
         }
 
-        return $blocks;
+        return false;
     }
 
     public function getPageBlocks($cumulative = false)
@@ -494,6 +487,8 @@ class Page
 
     public function build()
     {
+        $this->loadBlocks();
+
         if (is_object($this->grid)) {
             echo $this->grid->parse();
         } else {
