@@ -17,19 +17,15 @@ namespace Innomedia;
 /**
  *
  * @author    Alex Pagnoni <alex.pagnoni@innoteam.it>
- * @copyright 2008-2013 Innoteam Srl
+ * @copyright 2008-2014 Innoteam Srl
  * @since     1.0.0
  */
 class Module
 {
-
-    protected $context;
-
     protected $name;
 
-    public function __construct(Context $context, $moduleName)
+    public function __construct($moduleName)
     {
-        $this->context = $context;
         $this->name = $moduleName;
     }
 
@@ -40,7 +36,7 @@ class Module
 
     public function getHome()
     {
-        return $this->context->getHome() . 'core/modules/' . $this->name . '/';
+        return Context::instance('\Innomedia\Context')->getModulesHome().$this->name.'/';
     }
 
     public function hasPages()
