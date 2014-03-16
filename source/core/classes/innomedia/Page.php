@@ -181,10 +181,11 @@ class Page
 
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
+                $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
                 $this->blocks[] = array(
                     'module' => $blockDef['module'],
                     'name'   => $blockDef['name'],
-                    'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                    'counter' => $counter,
                     'row' => $blockDef['row'],
                     'column' => $blockDef['column'],
                     'position' => $blockDef['position'],
@@ -214,10 +215,11 @@ class Page
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
+            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->blocks[] = array(
                 'module' => $blockDef['module'],
                 'name'   => $blockDef['name'],
-                'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                'counter' => $counter,
                 'row' => $blockDef['row'],
                 'column' => $blockDef['column'],
                 'position' => $blockDef['position'],
@@ -238,10 +240,11 @@ class Page
         }
 
         foreach ($instanceBlocks as $blockDef) {
+            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->blocks[] = array(
                 'module' => $blockDef['module'],
                 'name'   => $blockDef['name'],
-                'counter' => isset($blockDef['counter']) ? $blockDef['counter'] : 1,
+                'counter' => $counter,
                 'row' => $blockDef['row'],
                 'column' => $blockDef['column'],
                 'position' => $blockDef['position'],
