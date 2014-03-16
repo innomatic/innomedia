@@ -54,6 +54,10 @@ class Page
 
     protected $requiresId = true;
 
+    protected $title;
+
+    protected $instanceBlocks = array();
+
     public function __construct(
         $module,
         $page,
@@ -114,15 +118,16 @@ class Page
 
         if ($this->id != 0) {
             $pagesParamsQuery = $domainDa->execute(
-                "SELECT blocks, params
+                "SELECT blocks, params, title
                 FROM innomedia_pages
                 WHERE page=".$domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
+                $this->title = $pagesParamsQuery->getFields('title');
                 $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
-                $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
+                $this->instanceBlocks = $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
 
                 if (!is_array($instanceBlocks)) {
                     $instanceBlocks = array();
@@ -283,10 +288,49 @@ class Page
         $id = $domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
         if ($domainDa->execute(
-            'INSERT INTO innomedia_pages (id, page) VALUES ('.
-            $id.','.$domainDa->formatText($this->module.'/'.$this->page).')'
+            'INSERT INTO innomedia_pages (id, page, title) VALUES ('.
+            $id.','.$domainDa->formatText($this->module.'/'.$this->page).','.
+            .$domainDa->formatText($this->title).')'
         )) {
             $this->id = $id;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateContent()
+    {
+        if ($this->id == 0) {
+            return false;
+        }
+
+        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        return $domainDa->execute(
+            "UPDATE innomatic_pages
+            SET
+            title=".$domainDa->formatText($this->title).",
+            params=".$domainDa->formatText(json_encode($this->parameters)).",
+            blocks=".$domainDa->formatText(json_encode($this->instanceBlocks))."
+            WHERE id={$this->id}"
+        );
+    }
+
+    public function deleteContent()
+    {
+        if ($this->id == 0) {
+            return false;
+        }
+
+        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        if ($domainDa->execute("DELETE FROM innomatic_pages WHERE id={$this->id}")) {
+            $this->id = 0;
             return true;
         } else {
             return false;
@@ -431,6 +475,22 @@ class Page
         return $this->parameters;
     }
     /* }}} */
+
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
+        return $this;
+    }
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
 
     public function build()
     {

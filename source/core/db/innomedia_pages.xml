@@ -6,6 +6,7 @@
         <field name="page" type="text" notnull="1" />
         <field name="blocks" type="text" notnull="1" />
         <field name="params" type="text" />
+        <field name="title" type="text" notnull="" />
         <key field="id"  type="unique"/>
     </table>
 
