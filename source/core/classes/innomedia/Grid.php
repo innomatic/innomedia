@@ -29,6 +29,8 @@ class Grid extends \Innomedia\Template
 
     protected $blocks;
 
+    protected $tplFile;
+
     /* public __construct(Page $page) {{{ */
     /**
      * Class constructor.
@@ -44,15 +46,15 @@ class Grid extends \Innomedia\Template
         $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.local.tpl.php';
         if (!file_exists($tpl)) {
             $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.tpl.php';
-        }
-        if (!file_exists($tpl)) {
-            $tpl = $this->context->getGridsHome() . 'default.local.tpl.php';
-        }
-        if (!file_exists($tpl)) {
-            $tpl = $this->context->getGridsHome() . 'default.tpl.php';
-        }
-        if (!file_exists($tpl)) {
-            $this->context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+            if (!file_exists($tpl)) {
+                $tpl = $this->context->getGridsHome() . 'default.local.tpl.php';
+                if (!file_exists($tpl)) {
+                    $tpl = $this->context->getGridsHome() . 'default.tpl.php';
+                    if (!file_exists($tpl)) {
+                        $this->context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
+                    }
+                }
+            }
         }
         parent::__construct($tpl);
         $this->setArray('blocks', $this->blocks);
