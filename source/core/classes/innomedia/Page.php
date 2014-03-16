@@ -359,7 +359,7 @@ class Page
 
             // Get block list
             foreach ($layout_def['blocks'] as $blockDef) {
-                $blocks[$blockDef['module']][] = $blockDef['name'];
+                $blocks[] = $blockDef;
             }
 
             return $blocks;
@@ -368,7 +368,7 @@ class Page
         return false;
     }
 
-    public function getPageBlocks($cumulative = false)
+    public function getPageBlocks()
     {
         $blocks = array();
 
@@ -377,20 +377,20 @@ class Page
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
-            $blocks[$blockDef['module']][] = $blockDef['name'];
+            $blocks[] = $blockDef;
         }
 
         return $blocks;
     }
 
-    /*
-    public function getPageInstanceBlocks($cumulative = false)
+    public function getPageInstanceBlocks()
     {
         if (!$this->isValid()) {
             return false;
         }
+
+        return $this->instanceBlocks;
     }
-     */
 
     /* public getId() {{{ */
     /**
