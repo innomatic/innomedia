@@ -323,7 +323,8 @@ class Page
             return false;
         }
 
-        if ($this->domainDa->execute("DELETE FROM innomatic_pages WHERE id={$this->id}")) {
+        if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
+            $this->domainDa->execute("DELETE FROM innomedia_blocks WHERE pageid={$this->id}");
             $this->id = 0;
             return true;
         } else {
