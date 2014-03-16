@@ -150,9 +150,22 @@ class Context extends \Innomatic\Util\Singleton
         return $this;
     }
 
+    /* public getSession() {{{ */
+    /**
+     * Gets the webapp session object.
+     *
+     * @return \Innomatic\Webapp\WebAppSession
+     */
     public function getSession()
     {
         return $this->session;
+    }
+    /* }}} */
+
+    public function setSession(\Innomatic\Webapp\WebAppSession $session)
+    {
+        $this->session = $session;
+        return $this;
     }
 
     /**
