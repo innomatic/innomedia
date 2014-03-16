@@ -18,8 +18,8 @@ namespace Innomedia;
  * This class is a dependency injection container for Innomedia.
  *
  * @author    Alex Pagnoni <alex.pagnoni@innoteam.it>
- * @copyright 2008-2013 Innoteam Srl
- * @since     1.0
+ * @copyright 2008-2014 Innoteam Srl
+ * @since     1.0.0
  */
 class Context extends \Innomatic\Util\Singleton
 {
@@ -40,16 +40,17 @@ class Context extends \Innomatic\Util\Singleton
 
     protected $modulesClassPathsAdded = false;
 
-    public function ___construct()
+    public function ___construct($domainName = '')
     {
+        if (!strlen($domainName)) {
+            $domainName = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId();
+        }
+
         $this->home = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer')
-                ->getHome().
-            '/'.
-            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId().'/';
+                ->getHome().'/'.$domainName.'/';
 
         if (!$this->modulesClassPathsAdded) {
             $this->addModulesClassPaths();
-
         }
     }
 
@@ -196,7 +197,7 @@ class Context extends \Innomatic\Util\Singleton
     }
 
     /**
-     * Adds module's classes to include_path
+     * Adds modules classes to include_path
      *
      * @return void
      * @since 2.0.0
