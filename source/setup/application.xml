@@ -41,6 +41,7 @@
 		<class name="innomedia/Context.php" />
 		<class name="innomedia/EmptyBlock.php" />
 		<class name="innomedia/Grid.php" />
+        <class name="innomedia/Image.php" />
 		<class name="innomedia/Module.php" />
 		<class name="innomedia/Page.php" />
 		<class name="innomedia/Template.php" />
