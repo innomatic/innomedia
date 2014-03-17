@@ -47,7 +47,7 @@ class Context extends \Innomatic\Util\Singleton
         }
 
         $this->home = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer')
-                ->getHome().'/'.$domainName.'/';
+                ->getHome().$domainName.'/';
 
         if (!$this->modulesClassPathsAdded) {
             $this->addModulesClassPaths();
