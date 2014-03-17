@@ -39,6 +39,7 @@
 		<class name="innomedia/Block.php" />
 		<class name="innomedia/BlockManager.php" />
 		<class name="innomedia/Context.php" />
+        <unittest name="innomedia/tests/ContextTest.php" />
 		<class name="innomedia/EmptyBlock.php" />
 		<class name="innomedia/Grid.php" />
         <class name="innomedia/Image.php" />
