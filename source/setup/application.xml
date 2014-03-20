@@ -62,6 +62,7 @@
         <component name="webappmodule" file="WebappmoduleComponent.php" />
         <component name="webappgrid" file="WebappgridComponent.php" />
         <component name="webapplayout" file="WebapplayoutComponent.php" />
+        <component name="webappasset" file="WebappassetComponent.php" />
 
 	</components>
 </application>
