@@ -42,7 +42,6 @@ class Grid extends \Innomedia\Template
         $this->page = $page;
         $this->blocks = array();
         $this->context = Context::instance('\Innomedia\Context');
-
         $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.local.tpl.php';
         if (!file_exists($tpl)) {
             $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.tpl.php';
@@ -198,10 +197,11 @@ class Grid extends \Innomedia\Template
     }
     /* }}} */
 
-    public function build()
+    public function parse()
     {
         $this->setPredefinedTags();
-        parent::build();
+        return parent::parse();
     }
 }
+
 
