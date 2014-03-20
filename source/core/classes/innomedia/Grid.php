@@ -68,6 +68,11 @@ class Grid extends \Innomedia\Template
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
 
+        $this->set('page_name', $this->page->getName());
+        $this->set('page_title', $this->page->getParameters()['page_title']);
+        $this->set('page_meta_keys', $this->page->getParameters()['page_meta_keys']);
+        $this->set('page_meta_title', $this->page->getParameters()['page_meta_title']);
+
         // Ajax support
         $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->context->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;

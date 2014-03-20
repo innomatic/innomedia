@@ -56,7 +56,7 @@ class Page
 
     protected $requiresId = true;
 
-    protected $title;
+    protected $name;
 
     protected $blocks = array();
 
@@ -120,14 +120,14 @@ class Page
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
-                "SELECT blocks, params, title
+                "SELECT blocks, params, name
                 FROM innomedia_pages
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->title = $pagesParamsQuery->getFields('title');
+                $this->name = $pagesParamsQuery->getFields('name');
                 $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
                 $this->instanceBlocks = $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
 
@@ -290,9 +290,9 @@ class Page
         $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
         if ($this->domainDa->execute(
-            'INSERT INTO innomedia_pages (id, page, title) VALUES ('.
+            'INSERT INTO innomedia_pages (id, page, name) VALUES ('.
             $id.','.$this->domainDa->formatText($this->module.'/'.$this->page).','.
-            $this->domainDa->formatText($this->title).')'
+            $this->domainDa->formatText($this->name).')'
         )) {
             $this->id = $id;
             return true;
@@ -310,7 +310,7 @@ class Page
         return $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
-            title=".$this->domainDa->formatText($this->title).",
+            name=".$this->domainDa->formatText($this->name).",
             params=".$this->domainDa->formatText(json_encode($this->parameters)).",
             blocks=".$this->domainDa->formatText(json_encode($this->instanceBlocks))."
             WHERE id={$this->id}"
@@ -472,14 +472,14 @@ class Page
         return $this;
     }
 
-    public function getTitle()
+    public function getName()
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle($title)
+    public function setName($name)
     {
-        $this->title = $title;
+        $this->name = $name;
         return $this;
     }
 
