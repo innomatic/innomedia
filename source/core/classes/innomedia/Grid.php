@@ -62,15 +62,20 @@ class Grid extends \Innomedia\Template
 
     public function setPredefinedTags()
     {
+        // Base tags
         $this->set('receiver', $this->context->getRequest()->getUrlPath(true));
         $this->set('baseurl', $this->context->getRequest()->getUrlPath(false) . '/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
 
+        // Internal page name
         $this->set('page_name', $this->page->getName());
-        $this->set('page_title', $this->page->getParameters()['page_title']);
-        $this->set('page_meta_keys', $this->page->getParameters()['page_meta_keys']);
-        $this->set('page_meta_title', $this->page->getParameters()['page_meta_title']);
+
+        // Set page parameters as tags
+        $pageParams = $this->page->getParameters();
+        foreach ($pageParams as $paramName => $paramValue) {
+            $this->set('page_'.$paramName, $paramValue);
+        }
 
         // Ajax support
         $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->context->getRequest()->getUrlPath(false) . '/ajax/');
