@@ -260,8 +260,6 @@ class Page
                 'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
         }
-
-
     }
 
     public function loadBlocks()
@@ -350,15 +348,17 @@ class Page
         // Get page layout if defined and check if the YAML file for the given layout exists
         $layout = false;
 
-        if (strlen($page_def['layout'])) {
-            $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.local.yml';
+        if (!strlen($page_def['layout'])) {
+            $page_def['layout'] = 'default';
+        }
+
+        $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.local.yml';
+        if (file_exists($layoutFileName)) {
+            $layout = true;
+        } else {
+            $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.yml';
             if (file_exists($layoutFileName)) {
                 $layout = true;
-            } else {
-                $layoutFileName = $this->context->getLayoutsHome().$page_def['layout'].'.yml';
-                if (file_exists($layoutFileName)) {
-                    $layout = true;
-                }
             }
         }
 
