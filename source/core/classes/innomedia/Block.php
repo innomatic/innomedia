@@ -141,12 +141,11 @@ abstract class Block extends Template
         $fqcn = $def['class'];
         if (!strlen($fqcn)) {
             // @todo convert to new class loader
-            $fqcn = 'innomedia/EmptyBlock.php';
+            $fqcn = '\\Innomedia\\EmptyBlock';
         }
 
         // @todo convert to new namespace convention
-        $included = @include_once $fqcn;
-        if (!$included) {
+        if (!class_exists($fqcn)) {
             $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Missing class ' . $fqcn);
             return;
         }
@@ -184,15 +183,8 @@ abstract class Block extends Template
             }
         }
 
-        // Find block class
-        $class = substr($fqcn, strrpos($fqcn, '/') ? strrpos($fqcn, '/') + 1 : 0, - 4);
-        if (! class_exists($class)) {
-            $context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'Malformed block class ' . $fqcn);
-            return;
-        }
-
         // Build block
-        $obj = new $class($tpl_file);
+        $obj = new $fqcn($tpl_file);
         $obj->setGrid($grid);
 
         // Set block counter
