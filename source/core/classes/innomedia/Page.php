@@ -46,7 +46,7 @@ class Page
      *
      * @var array
      */
-    protected $parameters;
+    protected $parameters = array();
 
     protected $theme;
 
@@ -57,6 +57,8 @@ class Page
     protected $requiresId = true;
 
     protected $name;
+
+    protected $urlKeywords;
 
     protected $blocks = array();
 
@@ -120,15 +122,20 @@ class Page
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
-                "SELECT blocks, params, name
+                "SELECT blocks, params, name, urlkeywords
                 FROM innomedia_pages
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->name = $pagesParamsQuery->getFields('name');
-                $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
+                $this->name           = $pagesParamsQuery->getFields('name');
+                $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
+                $this->parameters     = json_decode($pagesParamsQuery->getFields('params'), true);
+                // Parameters variable must be an array
+                if (!is_array($this->parameters)) {
+                    $this->parameters = array();
+                }
                 $this->instanceBlocks = $instanceBlocks = json_decode($pagesParamsQuery->getFields('blocks'), true);
 
                 if (!is_array($instanceBlocks)) {
@@ -310,9 +317,10 @@ class Page
         return $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
-            name=".$this->domainDa->formatText($this->name).",
-            params=".$this->domainDa->formatText(json_encode($this->parameters)).",
-            blocks=".$this->domainDa->formatText(json_encode($this->instanceBlocks))."
+            name        =".$this->domainDa->formatText($this->name).",
+            params      =".$this->domainDa->formatText(json_encode($this->parameters)).",
+            blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
+            urlkeywords =".$this->domainDa->formatText($this->urlkeywords)."
             WHERE id={$this->id}"
         );
     }
@@ -481,6 +489,17 @@ class Page
     {
         $this->name = $name;
         return $this;
+    }
+
+    public function setUrlKeywords($keywords)
+    {
+        $this->urlKeywords = $keywords;
+        return $this;
+    }
+
+    public function getUrlKeywords()
+    {
+        return $this->urlKeywords;
     }
 
     public function build()
