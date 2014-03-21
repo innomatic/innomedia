@@ -227,8 +227,7 @@ abstract class Block extends Template
         $def = yaml_parse_file($block_yml_file);
         $fqcn = $def['class'];
         if (! strlen($fqcn)) {
-            // @todo convert to new class loader
-            $fqcn = 'innomedia/EmptyBlock.php';
+            $fqcn = '\\Innomedia\\EmptyBlock';
         }
 
         return $fqcn;
