@@ -480,6 +480,21 @@ class Page
         return $this;
     }
 
+    /* public setParameter($paramName, $paramValue) {{{ */
+    /**
+     * Sets a page parameter.
+     *
+     * @param string $paramName
+     * @param string $paramValue
+     * @return \Innomedia\Page
+     */
+    public function setParameter($paramName, $paramValue)
+    {
+        $this->parameters[$paramName] = $paramValue;
+        return $this;
+    }
+    /* }}} */
+
     public function getName()
     {
         return $this->name;
