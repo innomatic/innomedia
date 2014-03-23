@@ -1,4 +1,5 @@
 theme: default
+blocks:
   - module: user
     name: logout
     row: 1
