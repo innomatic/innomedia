@@ -14,7 +14,7 @@
  */
 namespace Shared\Components;
 
-use \Innomatic\Io\Filesystem;
+use \Innomatic\Io\Filesystem\DirectoryUtils;
 use \Innomatic\Core;
 
 /**
