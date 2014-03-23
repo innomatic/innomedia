@@ -116,6 +116,12 @@ class Context extends \Innomatic\Util\Singleton
         return $this->home . 'core/modules/' . $module . '/pages/';
     }
 
+
+    public function getImagesStorageHome()
+    {
+        return $this->home . 'storage/images/';
+    }
+
     /**
      * Gets the webapp request object.
      *

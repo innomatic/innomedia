@@ -58,6 +58,7 @@
 
         <domaintable name="innomedia_pages" file="innomedia_pages.xml" />
         <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
+        <domaintable name="innomedia_images" file="innomedia_images.xml" />
 
         <component name="webappmodule" file="WebappmoduleComponent.php" />
         <component name="webappgrid" file="WebappgridComponent.php" />

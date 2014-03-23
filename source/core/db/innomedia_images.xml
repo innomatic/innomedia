@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innomedia_images">
+        <field name="id" type="integer" notnull="1"/>
+        <field name="page" type="text" />
+        <field name="pageid" type="integer" />
+        <field name="block" type="text" />
+        <field name="blockcounter" type="integer" />
+        <field name="name" type="text" notnull="1" />
+        <field name="path" type="text" />
+        <key field="id"  type="unique"/>
+    </table>
+
+    <sequence name="innomedia_images_id_seq"/>
+
+</database>
+
