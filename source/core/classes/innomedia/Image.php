@@ -10,6 +10,7 @@ class Image
     protected $pageId;
     protected $blockName;
     protected $blockCounter;
+    protected $context;
 
     public function __construct($id = 0)
     {
@@ -18,6 +19,8 @@ class Image
             $id = 0;
         }
         $this->id = $id;
+
+        $this->context = \Innomedia\Context::instance('\Innomedia\Context');
     }
 
     public function setImage($imageTempPath, $deleteSource = true)
@@ -34,8 +37,7 @@ class Image
         }
 
         // Build the destination path in the storage
-        $context = \Innomedia\Context::instance('\Innomedia\Context');
-        $destPath = $context->getImagesStorageHome().$this->buildPath();
+        $destPath = $this->context->getImagesStorageHome().$this->buildPath();
 
         // Check if the destination directory exists
         $dirName = dirname($destPath).'/';
@@ -171,6 +173,28 @@ class Image
                 return false;
             }
         }
+    }
+
+    public function delete()
+    {
+        if ($this->id == 0) {
+            return true;
+        }
+
+        if (!strlen($this->name)) {
+            return false;
+        }
+
+        $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        $domainDa->execute("DELETE FROM innomedia_images WHERE id = {$this->id}");
+
+        $imagePath = $this->context->getImagesStorageHome().$this->buildPath();
+        unlink($imagePath);
+
+        $this->id = 0;
     }
 
     protected function buildPath()
