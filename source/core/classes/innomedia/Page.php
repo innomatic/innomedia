@@ -114,6 +114,8 @@ class Page
                 $this->isValid = false;
                 return false;
             }
+        } else {
+            $this->requiresId = false;
         }
 
         // Load page and parameters for this instance of the page, if available
