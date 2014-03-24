@@ -237,7 +237,7 @@ abstract class Block extends Template
     public static function getScopes(Context $context, $module, $name)
     {
         if (! strlen($module)) {
-            return;
+            return array();
         }
 
         $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
@@ -245,7 +245,7 @@ abstract class Block extends Template
             $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
         }
         if (!file_exists($block_yml_file)) {
-            return;
+            return array();
         }
 
         $def = yaml_parse_file($block_yml_file);
