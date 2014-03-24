@@ -12,12 +12,17 @@ abstract class BlockManager
     public $pageName;
     public $blockCounter = 1;
     public $pageId;
+    protected $this->domainDa;
 
     public function __construct($pageName = '', $blockCounter = 1, $pageId = 0)
     {
         $this->pageName = $pageName;
         $this->pageId = $pageId;
         $this->blockCounter = $blockCounter;
+        $this->domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
     }
 
     public abstract function getManagerXml();
@@ -35,16 +40,12 @@ abstract class BlockManager
      */
     public function retrieve()
     {
-        $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-            ->getCurrentDomain()
-            ->getDataAccess();
-
-        $blockQuery = $domainDa->execute(
+        $blockQuery = $this->domainDa->execute(
             "SELECT id,params
             FROM innomedia_blocks
-            WHERE block = ".$domainDa->formatText($this->blockName).
+            WHERE block = ".$this->domainDa->formatText($this->blockName).
             " AND counter = $this->blockCounter".
-            ($this->pageId == 0 ? " AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL") : '')."
+            ($this->pageId == 0 ? " AND page ".(strlen($this->pageName) ? " = ".$this->domainDa->formatText($this->pageName) : " IS NULL") : '')."
             AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
         );
 
@@ -61,37 +62,33 @@ abstract class BlockManager
     public function store()
     {
         if (is_array($this->parameters) && strlen($this->blockName)) {
-            $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
-                ->getCurrentDomain()
-                ->getDataAccess();
-
-            $checkQuery = $domainDa->execute(
+            $checkQuery = $this->domainDa->execute(
                 "SELECT id
                 FROM innomedia_blocks
-                WHERE block = ".$domainDa->formatText($this->blockName)."
+                WHERE block = ".$this->domainDa->formatText($this->blockName)."
                 AND counter = $this->blockCounter
-                AND page ".(strlen($this->pageName) ? " = ".$domainDa->formatText($this->pageName) : " IS NULL")."
+                AND page ".(strlen($this->pageName) ? " = ".$this->domainDa->formatText($this->pageName) : " IS NULL")."
                 AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
             );
 
             if ($checkQuery->getNumberRows() > 0) {
                 $id = $checkQuery->getFields('id');
 
-                return $domainDa->execute(
+                return $this->domainDa->execute(
                     "UPDATE innomedia_blocks
-                    SET params=".$domainDa->formatText(json_encode($this->parameters)).
+                    SET params=".$this->domainDa->formatText(json_encode($this->parameters)).
                     " WHERE id=$id"
                 );
             } else {
-                $id = $domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
+                $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
 
-                return $domainDa->execute(
+                return $this->domainDa->execute(
                     "INSERT INTO innomedia_blocks (id,block,counter,params".
                     (strlen($this->pageName) ? ",page" : "").
                     ($this->pageId != 0 ? ",pageid" : "")."
-                    ) VALUES ($id, ".$domainDa->formattext($this->blockName).",".$this->blockCounter.','.
-                    $domainDa->formattext(json_encode($this->parameters)).
-                    (strlen($this->pageName) ? ",".$domainDa->formattext($this->pageName): "").
+                    ) VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','.
+                    $this->domainDa->formattext(json_encode($this->parameters)).
+                    (strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "").
                     ($this->pageId != 0 ? ",{$this->pageId}" : "").
                     ")"
                 );
