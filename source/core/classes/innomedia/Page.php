@@ -148,17 +148,17 @@ class Page
                 $this->isValid = false;
                 return false;
             }
+        }
 
-            $blocksParamsQuery = $this->domainDa->execute(
-                "SELECT block, params, counter
-                FROM innomedia_blocks
-                WHERE page IS NULL AND pageid IS NULL"
-            );
-
-            while (!$blocksParamsQuery->eof) {
-                $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
-                $blocksParamsQuery->moveNext();
-            }
+        // Get parameters for global scope blocks
+        $blocksParamsQuery = $this->domainDa->execute(
+            "SELECT block, params, counter
+            FROM innomedia_blocks
+            WHERE page IS NULL AND pageid IS NULL"
+        );
+        while (!$blocksParamsQuery->eof) {
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $blocksParamsQuery->moveNext();
         }
 
         // Get page layout if defined and check if the YAML file for the given layout exists
