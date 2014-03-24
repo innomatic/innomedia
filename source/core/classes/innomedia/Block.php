@@ -234,6 +234,28 @@ abstract class Block extends Template
     }
     /* }}} */
 
+    public static function getScopes(Context $context, $module, $name)
+    {
+        if (! strlen($module)) {
+            return;
+        }
+
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
+        if (!file_exists($block_yml_file)) {
+            $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        }
+        if (!file_exists($block_yml_file)) {
+            return;
+        }
+
+        $def = yaml_parse_file($block_yml_file);
+        if (isset($def['scopes']) && is_array($def['scopes'])) {
+            return $def['scopes'];
+        } else {
+            return array();
+        }
+    }
+
     private function getTemplateFile($page)
     {
         $locales = $this->context->getLocales();
