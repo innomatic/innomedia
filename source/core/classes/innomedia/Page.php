@@ -64,6 +64,8 @@ class Page
 
     protected $instanceBlocks = array();
 
+    protected $cellParameters = array();
+
     public function __construct(
         $module,
         $page,
@@ -121,6 +123,8 @@ class Page
         // Load page and parameters for this instance of the page, if available
         $blockParams = array();
         $instanceBlocks = array();
+        $cells = array();
+        $userBlocks = array();
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
@@ -236,6 +240,13 @@ class Page
                 'position' => $blockDef['position'],
                 'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
+        }
+
+        // Get page cells parameters
+        if (isset($page_def['cells'])) {
+            foreach ($page_def['cells'] as $cellDef) {
+                $this->cellParameters[$cellDef['row']][$cellDef['column']] = $cellDef['parameters'];
+            }
         }
 
         // Get page instance level block parameters
