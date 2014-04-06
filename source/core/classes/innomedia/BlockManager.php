@@ -12,7 +12,7 @@ abstract class BlockManager
     public $pageName;
     public $blockCounter = 1;
     public $pageId;
-    protected $this->domainDa;
+    protected $domainDa;
 
     public function __construct($pageName = '', $blockCounter = 1, $pageId = 0)
     {
