@@ -31,6 +31,19 @@ abstract class Block extends Template
     protected $grid;
 
     /**
+     * Supported block types.
+     *
+     * A block type defines which sort of generic functionalities are supported
+     * by the block.
+     *
+     * Block types are used when there are cell parameters with "accepts"
+     * parameter.
+     *
+     * @var array
+     */
+    protected $types;
+
+    /**
      * Block parameters
      *
      * @var array
@@ -193,6 +206,9 @@ abstract class Block extends Template
         // Set block parameters
         $obj->setParameters($params);
 
+        // Set block types
+        $obj->setTypes((isset($def['types']) && is_array($def['types'])) ? $def['types'] : array());
+
         // Get all grid tags and set them in the block tags
         // @todo tag sharing with grid should be improved
         $grid_tags = $grid->getTags();
@@ -297,6 +313,16 @@ abstract class Block extends Template
         return $this->parameters;
     }
     /* }}} */
+
+    public function setTypes($types = array())
+    {
+        $this->types = $types;
+    }
+
+    public function getTypes()
+    {
+        return $this->types;
+    }
 
     abstract public function run(
         \Innomatic\Webapp\WebAppRequest $request,
