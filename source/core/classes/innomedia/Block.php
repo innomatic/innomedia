@@ -194,6 +194,7 @@ abstract class Block extends Template
         $obj->setParameters($params);
 
         // Get all grid tags and set them in the block tags
+        // @todo tag sharing with grid should be improved
         $grid_tags = $grid->getTags();
         foreach ($grid_tags as $tag) {
             $obj->set($tag, $grid->get($tag));
