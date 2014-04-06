@@ -52,6 +52,7 @@
 	<target name="build" depends="init,clean,package" />
 
 	<target name="dev" depends="build">
+        <!--scp file="${basedir}/build/${name}-${version}.tgz" remoteTodir="innomatic-dev:/tmp/" /-->
         <exec executable="scp">
             <arg value="${basedir}/build/${name}-${version}.tgz" />
             <arg value="innomatic-dev:/tmp/" />

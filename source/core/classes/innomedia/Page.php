@@ -62,6 +62,8 @@ class Page
 
     protected $blocks = array();
 
+    protected $userBlocks = array();
+
     protected $instanceBlocks = array();
 
     protected $cellParameters = array();
@@ -120,11 +122,16 @@ class Page
             $this->requiresId = false;
         }
 
-        // Load page and parameters for this instance of the page, if available
+        // Get page cells parameters
+        if (isset($page_def['cells'])) {
+            foreach ($page_def['cells'] as $cellDef) {
+                $this->cellParameters[$cellDef['row']][$cellDef['column']] = $cellDef['parameters'];
+            }
+        }
+
+        // Load page and instance blocks parameters for this instance of the page, if available
         $blockParams = array();
         $instanceBlocks = array();
-        $cells = array();
-        $userBlocks = array();
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
@@ -230,22 +237,35 @@ class Page
 
         // Get page block list
         foreach ($page_def['blocks'] as $blockDef) {
-            $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
+            $counter        = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->blocks[] = array(
-                'module' => $blockDef['module'],
-                'name'   => $blockDef['name'],
-                'counter' => $counter,
-                'row' => $blockDef['row'],
-                'column' => $blockDef['column'],
-                'position' => $blockDef['position'],
-                'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                'module'    => $blockDef['module'],
+                'name'      => $blockDef['name'],
+                'counter'   => $counter,
+                'row'       => $blockDef['row'],
+                'column'    => $blockDef['column'],
+                'position'  => $blockDef['position'],
+                'params'    => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
             );
         }
 
-        // Get page cells parameters
-        if (isset($page_def['cells'])) {
-            foreach ($page_def['cells'] as $cellDef) {
-                $this->cellParameters[$cellDef['row']][$cellDef['column']] = $cellDef['parameters'];
+        // Page level user blocks
+        $userBlocks = array();
+        if (isset($page_def['userblocks'])) {
+            foreach ($page_def['userblocks'] as $blockDef) {
+                // @todo check if the given block type is supported by the cell
+                // in the parameters list
+
+                $counter            = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
+                $this->userBlocks[] = array(
+                    'module'        => $blockDef['module'],
+                    'name'          => $blockDef['name'],
+                    'counter'       => $counter,
+                    'row'           => $blockDef['row'],
+                    'column'        => $blockDef['column'],
+                    'position'      => $blockDef['position'],
+                    'params'        => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                );
             }
         }
 
@@ -280,8 +300,11 @@ class Page
         // Load the grid
         $this->grid = new Grid($this);
 
+        // Merge the blocks lists
+        $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
+print_r($blocks);
         // Load the parsed blocks
-        foreach ($this->blocks as $blockDef) {
+        foreach ($blocks as $blockDef) {
             $block = Block::load(
                 $this->context,
                 $this->grid,
