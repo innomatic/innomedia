@@ -328,6 +328,61 @@ abstract class Block extends Template
         \Innomatic\Webapp\WebAppRequest $request,
         \Innomatic\Webapp\WebAppResponse $response
     );
+
+    /* public getBlocksByTypes($searchTypes) {{{ */
+    /**
+     * Gets a list of all the blocks supporting at least one of the given types.
+     *
+     * @param array $searchTypes an array of types to check
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function getBlocksByTypes($searchTypes)
+    {
+        $blocks = array();
+
+        $modulesList = Context::instance('\Innomedia\Context')->getModulesList();
+
+        foreach ($modulesList as $module) {
+            $moduleObj = new Module($module);
+            $blocksList = $moduleObj->getBlocksList();
+
+            foreach ($blocksList as $block) {
+                $blockDefFileBase = Context::instance('\Innomedia\Context')->getModulesHome().$module.'/blocks/'.$block;
+                if (file_exists($blockDefFileBase.'.local.yml')) {
+                    // Local block definition file
+                    $blockDefFile = $blockDefFileBase.'.local.yml';
+                } elseif (file_exists($blockDefFileBase.'.yml')) {
+                    // Standard block definition file
+                    $blockDefFile = $blockDefFileBase.'.yml';
+                } else {
+                    // Block definition file doesn't exist
+                    continue;
+                }
+
+                // Get block definition
+                $blockDef = yaml_parse_file($blockDefFile);
+                if (!(isset($blockDef['types']) && is_array($blockDef['types']))) {
+                    // The block has no types
+                    continue;
+                }
+
+                // Check if at least one of the given types is support by the
+                // current block
+                foreach ($searchTypes as $searchType) {
+                    if (in_array($searchType, $blockDef['types'])) {
+                        // Type found
+                        $blocks[] = $module.'/'.$block;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        return $blocks;
+    }
+    /* }}} */
 }
 
 ?>
