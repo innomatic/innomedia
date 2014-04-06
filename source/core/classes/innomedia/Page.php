@@ -436,7 +436,18 @@ class Page
             return false;
         }
 
-        return $this->instanceBlocks;
+        $pagesParamsQuery = $this->domainDa->execute(
+            "SELECT blocks
+            FROM innomedia_pages
+            WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
+            " AND id={$this->id}"
+        );
+
+        if ($pagesParamsQuery->getNumberRows() > 0) {
+            return json_decode($pagesParamsQuery->getFields('blocks'), true);
+        }
+
+        return array();
     }
 
     /* public getId() {{{ */
