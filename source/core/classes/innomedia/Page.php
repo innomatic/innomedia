@@ -302,7 +302,7 @@ class Page
 
         // Merge the blocks lists
         $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
-print_r($blocks);
+
         // Load the parsed blocks
         foreach ($blocks as $blockDef) {
             $block = Block::load(
