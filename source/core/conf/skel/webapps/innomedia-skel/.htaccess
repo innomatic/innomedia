@@ -3,7 +3,7 @@ order allow,deny
 deny from all
 </FilesMatch>
 
-<FilesMatch "(index\.php|\.(gif|jpe?g|png|css|js|htc|ico|html))$">
+<FilesMatch "(index\.php|\.(gif|jpe?g|png|css|js|htc|ico|html|ttf|svg|woff))$">
 order allow,deny
 allow from all
 </FilesMatch>
@@ -11,4 +11,4 @@ allow from all
 DirectoryIndex index.php
 
 RewriteEngine On
-RewriteRule !\.(gif|jpe?g|png|css|js|htc|ico|html)$ index.php
+RewriteRule !\.(gif|jpe?g|png|css|js|htc|ico|html|ttf|svg|woff)$ index.php
