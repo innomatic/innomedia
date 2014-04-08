@@ -11,11 +11,11 @@
 		<paramname>useRewrite</paramname>
 		<paramvalue>true</paramvalue>
 	</contextparam>
-	
+
     <!-- Handler Definitions -->
     <handler>
         <handlername>default</handlername>
-        <handlerclass>innomedia/InnomediaWebAppHandler.php</handlerclass>
+        <handlerclass>innomedia/WebAppHandler.php</handlerclass>
         <initparam>
             <paramname>listings</paramname>
             <paramvalue>false</paramvalue>

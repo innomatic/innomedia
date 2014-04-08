@@ -4,14 +4,15 @@
 	<definition>
 		<idname>innomedia</idname>
 		<release>
-			<version>1.2.0</version>
+			<version>2.0.0</version>
 			<date>2013/03/06</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>InnoMedia Frontend Framework</description>
 		<category>web</category>
 		<dependencies>
-			<dependency>innomatic[6.2.0]</dependency>
+			<dependency>innomatic[6.4.0]</dependency>
+            <dependency>yaml.extension</dependency>
 		</dependencies>
 		<legal>
 			<author>
@@ -35,19 +36,34 @@
 
 	<components>
 
-		<class name="innomedia/InnomediaBlock.php" />
-		<class name="innomedia/InnomediaContext.php" />
-		<class name="innomedia/InnomediaEmptyBlock.php" />
-		<class name="innomedia/InnomediaGrid.php" />
-		<class name="innomedia/InnomediaModule.php" />
-		<class name="innomedia/InnomediaPage.php" />
-		<class name="innomedia/InnomediaTemplate.php" />
-		<class name="innomedia/InnomediaWebAppHandler.php" />
-		<catalog name="innomedia" />		
+		<class name="innomedia/Block.php" />
+		<class name="innomedia/BlockManager.php" />
+		<class name="innomedia/Context.php" />
+        <unittest name="innomedia/tests/ContextTest.php" />
+		<class name="innomedia/EmptyBlock.php" />
+		<class name="innomedia/Grid.php" />
+        <class name="innomedia/Media.php" />
+		<class name="innomedia/Module.php" />
+		<class name="innomedia/Page.php" />
+		<class name="innomedia/Template.php" />
+		<class name="innomedia/WebAppHandler.php" />
+		<catalog name="innomedia" />
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />
 		<webapphandler name="innomedia"
-			class="innomedia/InnomediaWebAppHandler.php"
+			class="innomedia/WebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
-		
+
+        <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
+        <role name="web_editor" title="web_editor" description="" catalog="innomedia::roles" />
+
+        <domaintable name="innomedia_pages" file="innomedia_pages.xml" />
+        <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
+        <domaintable name="innomedia_media" file="innomedia_media.xml" />
+
+        <component name="webappmodule" file="WebappmoduleComponent.php" />
+        <component name="webappgrid" file="WebappgridComponent.php" />
+        <component name="webapplayout" file="WebapplayoutComponent.php" />
+        <component name="webappasset" file="WebappassetComponent.php" />
+
 	</components>
 </application>

@@ -1,3 +1,10 @@
+1.x.x - 2014/
+------------------
+CHANGES:
+- Now all the setters return their object. (Alex Pagnoni)
+
+
+
 1.2.0 - 2014/03/06
 ------------------
 NEW FEATURES:

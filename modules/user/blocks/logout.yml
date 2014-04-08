@@ -1,0 +1,2 @@
+class: UserLogoutBlock.php
+template: logout.tpl.php
