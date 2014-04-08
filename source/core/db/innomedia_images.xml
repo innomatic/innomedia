@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <database>
 
-    <table name="innomedia_images">
+    <table name="innomedia_media">
         <field name="id" type="integer" notnull="1"/>
         <field name="page" type="text" />
         <field name="pageid" type="integer" />
@@ -9,10 +9,12 @@
         <field name="blockcounter" type="integer" />
         <field name="name" type="text" notnull="1" />
         <field name="path" type="text" />
+        <field name="filetype" type="text" />
+        <field name="fileid" type="text" />
         <key field="id"  type="unique"/>
     </table>
 
-    <sequence name="innomedia_images_id_seq"/>
+    <sequence name="innomedia_media_id_seq"/>
 
 </database>
 

@@ -42,7 +42,7 @@
         <unittest name="innomedia/tests/ContextTest.php" />
 		<class name="innomedia/EmptyBlock.php" />
 		<class name="innomedia/Grid.php" />
-        <class name="innomedia/Image.php" />
+        <class name="innomedia/Media.php" />
 		<class name="innomedia/Module.php" />
 		<class name="innomedia/Page.php" />
 		<class name="innomedia/Template.php" />
@@ -58,7 +58,7 @@
 
         <domaintable name="innomedia_pages" file="innomedia_pages.xml" />
         <domaintable name="innomedia_blocks" file="innomedia_blocks.xml" />
-        <domaintable name="innomedia_images" file="innomedia_images.xml" />
+        <domaintable name="innomedia_media" file="innomedia_media.xml" />
 
         <component name="webappmodule" file="WebappmoduleComponent.php" />
         <component name="webappgrid" file="WebappgridComponent.php" />

@@ -1,7 +1,7 @@
 <?php
 namespace Innomedia;
 
-class Image
+class Media
 {
     protected $id = 0;
     protected $name;
@@ -11,6 +11,7 @@ class Image
     protected $blockName;
     protected $blockCounter;
     protected $context;
+    protected $type;
 
     public function __construct($id = 0)
     {
@@ -23,21 +24,21 @@ class Image
         $this->context = \Innomedia\Context::instance('\Innomedia\Context');
     }
 
-    public function setImage($imageTempPath, $deleteSource = true)
+    public function setMedia($mediaTempPath, $deleteSource = true)
     {
-        // The temporary source image must exists
-        if (!file_exists($imageTempPath)) {
+        // The temporary source media must exists
+        if (!file_exists($mediaTempPath)) {
             return $this;
         }
 
-        // If no name has been previously provided, guess it with from
-        // temporary image file name
+        // If no name has been previously provided, guess it from
+        // temporary media file name
         if (!strlen($this->name)) {
-            $this->name = basename($imageTempPath);
+            $this->name = basename($mediaTempPath);
         }
 
         // Build the destination path in the storage
-        $destPath = $this->context->getImagesStorageHome().$this->buildPath();
+        $destPath = $this->context->getStorageHome().$this->getTypePath($this->type).$this->buildPath();
 
         // Check if the destination directory exists
         $dirName = dirname($destPath).'/';
@@ -45,12 +46,12 @@ class Image
             \Innomatic\Io\Filesystem\DirectoryUtils::mktree($dirName, 0755);
         }
 
-        // Copy the file inside the images storage
-        copy($imageTempPath, $destPath);
+        // Copy the file inside the media storage
+        copy($mediaTempPath, $destPath);
 
         // Delete the temporary file if required
         if ($deleteSource == true) {
-            unlink($imageTempPath);
+            unlink($mediaTempPath);
         }
 
         return $this;
@@ -86,6 +87,12 @@ class Image
         return $this;
     }
 
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -94,6 +101,11 @@ class Image
     public function getPath()
     {
         return strlen($this->path) > 0 ? $this->path : $this->buildPath();
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
     public function retrieve()
@@ -106,19 +118,19 @@ class Image
             ->getCurrentDomain()
             ->getDataAccess();
 
-        $imageQuery = $domainDa->execute(
+        $mediaQuery = $domainDa->execute(
             "SELECT *
-            FROM innomedia_images
+            FROM innomedia_media
             WHERE id={$this->id}"
         );
 
-        if ($imageQuery->getNumberRows() > 0) {
-            $this->name = $imageQuery->getFields('name');
-            $this->path = $imageQuery->getFields('path');
-            $this->page = $imageQuery->getFields('page');
-            $this->pageId = $imageQuery->getFields('pageid');
-            $this->blockName = $imageQuery->getFields('block');
-            $this->blockCounter = $imageQuery->getFields('blockcounter');
+        if ($mediaQuery->getNumberRows() > 0) {
+            $this->name = $mediaQuery->getFields('name');
+            $this->path = $mediaQuery->getFields('path');
+            $this->page = $mediaQuery->getFields('page');
+            $this->pageId = $mediaQuery->getFields('pageid');
+            $this->blockName = $mediaQuery->getFields('block');
+            $this->blockCounter = $mediaQuery->getFields('blockcounter');
             return true;
         } else {
             return false;
@@ -138,9 +150,9 @@ class Image
         $path = $this->buildPath();
 
         if ($this->id != 0) {
-            // Update the image row
+            // Update the media row
             return $domainDa->execute(
-                "UPDATE innomedia_images SET ".
+                "UPDATE innomedia_media SET ".
                 " name = ".$domainDa->formatText($this->name).
                 " path = ".$domainDa->formatText($path).
                 " page = ".(strlen($this->pageName) ? $domainDa->formatText($this->pageName) : "NULL").
@@ -150,11 +162,11 @@ class Image
                 "WHERE id={$this->id}"
             );
         } else {
-            // Create a new image row
-            $id = $domainDa->getNextSequenceValue('innomedia_images_id_seq');
+            // Create a new media row
+            $id = $domainDa->getNextSequenceValue('innomedia_media_id_seq');
 
             if ($domainDa->execute(
-                "INSERT INTO innomedia_images (id,name,path".
+                "INSERT INTO innomedia_media (id,name,path".
                 (strlen($this->pageName) ? ",page" : "").
                 ($this->pageId != 0 ? ",pageid" : "").
                 (strlen($this->blockName) ? ",block" : "").
@@ -189,10 +201,10 @@ class Image
             ->getCurrentDomain()
             ->getDataAccess();
 
-        $domainDa->execute("DELETE FROM innomedia_images WHERE id = {$this->id}");
+        $domainDa->execute("DELETE FROM innomedia_media WHERE id = {$this->id}");
 
-        $imagePath = $this->context->getImagesStorageHome().$this->buildPath();
-        unlink($imagePath);
+        $mediaPath = $this->context->getStorageHome().$this->getTypePath($this->type).$this->buildPath();
+        unlink($mediaPath);
 
         $this->id = 0;
     }
@@ -223,6 +235,26 @@ class Image
         }
 
         $path .= $this->name;
+
+        return $path;
+    }
+
+    protected function getTypePath($type)
+    {
+        $path = '';
+
+        switch ($type) {
+        case 'image':
+            $path = 'images/';
+            break;
+
+        case 'file':
+            $path = 'files/';
+            break;
+
+        default:
+            $path = 'files/';
+        }
 
         return $path;
     }
