@@ -511,6 +511,24 @@ class Page
         return $this->page;
     }
 
+    public function getPageUrl($fullPath = false)
+    {
+        $url = $this->module.'/'.$this->page;
+        if (strlen($this->id)) {
+            $url .= '/'.$this->id;
+        }
+
+        if ($fullPath) {
+            $webAppUrl = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['webappurl'];
+            if (substr($webAppUrl, -1) != '/') {
+                $url = '/'.$url;
+            }
+            $url = $webAppUrl.$url;
+        }
+
+        return $url;
+    }
+
     /* public getParameters() {{{ */
     /**
      * Return page parameters array.
