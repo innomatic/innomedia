@@ -12,6 +12,7 @@ class Media
     protected $blockCounter;
     protected $context;
     protected $type;
+    protected $fileId;
 
     public function __construct($id = 0)
     {
@@ -38,7 +39,7 @@ class Media
         }
 
         // Build the destination path in the storage
-        $destPath = $this->context->getStorageHome().$this->getTypePath($this->type).$this->buildPath();
+        $destPath = $this->context->getStorageHome().$this->getTypePath($this->type).'/'.$this->buildPath();
 
         // Check if the destination directory exists
         $dirName = dirname($destPath).'/';
@@ -93,19 +94,55 @@ class Media
         return $this;
     }
 
+    public function setFileId($id)
+    {
+        $this->fileId = $id;
+        return $this;
+    }
+
     public function getId()
     {
         return $this->id;
     }
 
-    public function getPath()
+    public function getPath($fullPath = false)
     {
-        return strlen($this->path) > 0 ? $this->path : $this->buildPath();
+        $path = $this->path;
+        if (strlen($this->path)) {
+            $path = $this->path;
+        } else {
+            $path = $this->buildPath();
+        }
+
+        if ($fullPath) {
+            $path = $this->context->getStorageHome().$this->getTypePath($this->type).'/'.$path;
+        }
+
+        return $path;
+    }
+
+    public function getUrlPath()
+    {
+        $path = $this->path;
+        if (strlen($this->path)) {
+            $path = $this->path;
+        } else {
+            $path = $this->buildPath();
+        }
+
+        $path = 'storage/'.$this->getTypePath($this->type).'/'.$path;
+
+        return $path;
     }
 
     public function getType()
     {
         return $this->type;
+    }
+
+    public function getFileId()
+    {
+        return $this->fileId;
     }
 
     public function retrieve()
@@ -125,14 +162,17 @@ class Media
         );
 
         if ($mediaQuery->getNumberRows() > 0) {
-            $this->name = $mediaQuery->getFields('name');
-            $this->path = $mediaQuery->getFields('path');
-            $this->page = $mediaQuery->getFields('page');
-            $this->pageId = $mediaQuery->getFields('pageid');
-            $this->blockName = $mediaQuery->getFields('block');
+            $this->name         = $mediaQuery->getFields('name');
+            $this->type         = $mediaQuery->getFields('filetype');
+            $this->fileId       = $mediaQuery->getFields('fileid');
+            $this->path         = $mediaQuery->getFields('path');
+            $this->page         = $mediaQuery->getFields('page');
+            $this->pageId       = $mediaQuery->getFields('pageid');
+            $this->blockName    = $mediaQuery->getFields('block');
             $this->blockCounter = $mediaQuery->getFields('blockcounter');
             return true;
         } else {
+            $this->id = 0;
             return false;
         }
     }
@@ -154,12 +194,14 @@ class Media
             return $domainDa->execute(
                 "UPDATE innomedia_media SET ".
                 " name = ".$domainDa->formatText($this->name).
-                " path = ".$domainDa->formatText($path).
-                " page = ".(strlen($this->pageName) ? $domainDa->formatText($this->pageName) : "NULL").
-                " pageid = ".($this->pageId != 0 ? $this->pageId : "NULL").
-                " block = ".(strlen($this->blockName) ? $domainDa->formatText($this->blockName) : "NULL").
-                " blockcounter = ".($this->blockCounter != 0 ? $this->blockCounter : "NULL").
-                "WHERE id={$this->id}"
+                ", path = ".$domainDa->formatText($path).
+                ", filetype = ".$domainDa->formatText($this->type).
+                ", fileid = ".$domainDa->formatText($this->fileId).
+                ", page = ".(strlen($this->pageName) ? $domainDa->formatText($this->pageName) : "NULL").
+                ", pageid = ".($this->pageId != 0 ? $this->pageId : "NULL").
+                ", block = ".(strlen($this->blockName) ? $domainDa->formatText($this->blockName) : "NULL").
+                ", blockcounter = ".($this->blockCounter != 0 ? $this->blockCounter : "NULL").
+                " WHERE id={$this->id}"
             );
         } else {
             // Create a new media row
@@ -167,12 +209,16 @@ class Media
 
             if ($domainDa->execute(
                 "INSERT INTO innomedia_media (id,name,path".
+                (strlen($this->type) ? ",filetype" : "").
+                (strlen($this->fileId) ? ",fileid" : "").
                 (strlen($this->pageName) ? ",page" : "").
                 ($this->pageId != 0 ? ",pageid" : "").
                 (strlen($this->blockName) ? ",block" : "").
                 ($this->blockCounter != 0 ? ",blockcounter" : "")."
                 ) VALUES ($id, ".$domainDa->formatText($this->name).",".
                 $domainDa->formatText($path).
+                (strlen($this->type) ? ",".$domainDa->formatText($this->type): "").
+                (strlen($this->fileId) ? ",".$domainDa->formatText($this->fileId): "").
                 (strlen($this->pageName) ? ",".$domainDa->formatText($this->pageName): "").
                 ($this->pageId != 0 ? ",{$this->pageId}" : "").
                 (strlen($this->blockName) ? ",".$domainDa->formatText($this->blockName): "").
@@ -203,7 +249,7 @@ class Media
 
         $domainDa->execute("DELETE FROM innomedia_media WHERE id = {$this->id}");
 
-        $mediaPath = $this->context->getStorageHome().$this->getTypePath($this->type).$this->buildPath();
+        $mediaPath = $this->context->getStorageHome().$this->getTypePath($this->type).'/'.$this->buildPath();
         unlink($mediaPath);
 
         $this->id = 0;
@@ -228,6 +274,10 @@ class Media
             if ($this->blockCounter != 0) {
                 $path .= '/'.$this->blockCounter;
             }
+
+            if (strlen($this->fileId)) {
+                $path .= '/'.$this->fileId;
+            }
         }
 
         if (strlen($path) > 0) {
@@ -245,15 +295,15 @@ class Media
 
         switch ($type) {
         case 'image':
-            $path = 'images/';
+            $path = 'images';
             break;
 
         case 'file':
-            $path = 'files/';
+            $path = 'files';
             break;
 
         default:
-            $path = 'files/';
+            $path = 'files';
         }
 
         return $path;

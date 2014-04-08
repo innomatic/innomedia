@@ -95,14 +95,38 @@ abstract class BlockManager
         }
     }
 
+    /* public getUploadedFiles() {{{ */
+    /**
+     * Return a list of uploaded files, grouped by file id.
+     *
+     * @return array
+     */
     public function getUploadedFiles()
     {
         if (!(strlen($this->blockName) && strlen($this->pageName))) {
             return false;
         }
 
-        return self::listdir($this->getUploadedFilesTempPath());
+        $files = array();
+        $start_dir = $this->getUploadedFilesTempPath();
+        if (is_dir($start_dir)) {
+            $fh = opendir($start_dir);
+            while (($file = readdir($fh)) !== false) {
+                if (strcmp($file, '.')==0 || strcmp($file, '..')==0) {
+                    continue;
+                }
+
+                $filepath = $start_dir . '/' . $file;
+                if (is_dir($filepath)) {
+                    $files[$file] = self::listdir($filepath);
+                }
+            }
+            closedir($fh);
+        }
+
+        return $files;
     }
+    /* }}} */
 
     public function cleanUploadedFiles()
     {
