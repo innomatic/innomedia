@@ -22,7 +22,6 @@ abstract class BlockManager
         $this->domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
             ->getCurrentDomain()
             ->getDataAccess();
-
     }
 
     public abstract function getManagerXml();
@@ -94,6 +93,69 @@ abstract class BlockManager
                 );
             }
         }
+    }
+
+    public function getUploadedFiles()
+    {
+        if (!(strlen($this->blockName) && strlen($this->pageName))) {
+            return false;
+        }
+
+        return self::listdir($this->getUploadedFilesTempPath());
+    }
+
+    public function cleanUploadedFiles()
+    {
+        if (!(strlen($this->blockName) && strlen($this->pageName))) {
+            return false;
+        }
+
+        $files = self::listdir($this->getUploadedFilesTempPath());
+        if (!is_array($files)) {
+            return true;
+        }
+
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        return true;
+    }
+
+    protected function getUploadedFilesTempPath()
+    {
+        list($pageModule, $pageName) = explode('/', $this->pageName);
+        list($blockModule, $blockName) = explode('/', $this->blockName);
+        $pageId = strlen($this->pageId) ? $this->pageId : 0;
+        $blockCounter = strlen($this->blockCounter) ? $this->blockCounter :  1;
+
+        $root           = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer');
+        $innomatic_home = $root->getHome() . 'innomatic/';
+        $domainName = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId();
+        return $innomatic_home.'core/temp/dropzone/'.$domainName.'/'.$pageModule.'/'.$pageName.'/'.$pageId.'/'.$blockModule.'/'.$blockName.'/'.$blockCounter;
+    }
+
+    protected static function listdir($start_dir = '.') {
+        $files = array();
+        if (is_dir($start_dir)) {
+            $fh = opendir($start_dir);
+            while (($file = readdir($fh)) !== false) {
+                # loop through the files, skipping . and .., and recursing if necessary
+                if (strcmp($file, '.')==0 || strcmp($file, '..')==0) continue;
+                $filepath = $start_dir . '/' . $file;
+                if (is_dir($filepath)) {
+                    $files = array_merge($files, self::listdir($filepath));
+                } else {
+                  array_push($files, $filepath);
+                }
+            }
+            closedir($fh);
+        } else {
+          # false if the function was called with an invalid non-directory argument
+          $files = false;
+        }
+
+        return $files;
     }
 
     public abstract function saveBlock($parameters);
