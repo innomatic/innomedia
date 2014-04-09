@@ -332,6 +332,12 @@ class Page
             );
 
             $this->setPredefinedTags($block);
+            $block->set('block_module'   , $blockDef['module']);
+            $block->set('block_name'     , $blockDef['name']);
+            $block->set('block_row'      , $blockDef['row']);
+            $block->set('block_column'   , $blockDef['column']);
+            $block->set('block_position' , $blockDef['position']);
+            $block->set('block_counter'  , $blockDef['counter']);
 
             if (! is_null($block)) {
                 $this->grid->addBlock(
