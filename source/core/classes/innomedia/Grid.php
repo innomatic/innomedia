@@ -204,7 +204,6 @@ class Grid extends \Innomedia\Template
 
     public function parse()
     {
-        $this->setPredefinedTags();
         return parent::parse();
     }
 }
