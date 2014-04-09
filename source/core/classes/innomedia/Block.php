@@ -209,12 +209,6 @@ abstract class Block extends Template
         // Set block types
         $obj->setTypes((isset($def['types']) && is_array($def['types'])) ? $def['types'] : array());
 
-        // Get all grid tags and set them in the block tags
-        // @todo tag sharing with grid should be improved
-        $grid_tags = $grid->getTags();
-        foreach ($grid_tags as $tag) {
-            $obj->set($tag, $grid->get($tag));
-        }
         return $obj;
     }
 

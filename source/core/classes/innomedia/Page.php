@@ -315,7 +315,7 @@ class Page
     {
         // Load the grid
         $this->grid = new Grid($this);
-        $this->grid->setPredefinedTags();
+        $this->setPredefinedTags($this->grid);
 
         // Merge the blocks lists
         $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
@@ -331,6 +331,8 @@ class Page
                 $blockDef['params']
             );
 
+            $this->setPredefinedTags($block);
+
             if (! is_null($block)) {
                 $this->grid->addBlock(
                     $block,
@@ -343,6 +345,76 @@ class Page
 
         // Blocks must be properly sorted for the grid loop
         $this->grid->sortBlocks();
+    }
+
+    public function setPredefinedTags($block)
+    {
+        // Base tags
+        $block->set('receiver', $this->context->getRequest()->getUrlPath(true));
+        $block->set('baseurl', $this->context->getRequest()->getUrlPath(false) . '/');
+        $block->set('module', $this->getModule());
+        $block->set('page', $this);
+
+        // Internal page name
+        $block->set('page_name', $this->getName());
+
+        // Set page parameters as tags
+        $pageParams = $this->getParameters();
+        foreach ($pageParams as $paramName => $paramValue) {
+            $block->set('page_'.$paramName, $paramValue);
+        }
+
+        // Ajax support
+        $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->context->getRequest()->getUrlPath(false) . '/ajax/');
+        $xajax->ajaxLoader = false;
+        $xajax->setLogFile(
+            $this->context
+                ->getHome() . 'core/log/ajax.log'
+        );
+
+        // Set debug mode
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == \Innomatic\Core\InnomaticContainer::STATE_DEBUG) {
+            $xajax->debugOn();
+        }
+
+        // Register Ajax calls parsing the ajax.xml configuration file
+        if (file_exists(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
+            $cfg = \Innomatic\Ajax\XajaxConfig::getInstance(\Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp(), \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
+
+            if (isset($cfg->functions)) {
+                foreach ($cfg->functions as $name => $functionData) {
+                    $xajax->registerExternalFunction(
+                        array(
+                            $name,
+                            $functionData['classname'],
+                            $functionData['method']
+                        ),
+                        $functionData['classfile']
+                    );
+                }
+            }
+        }
+
+        // Build the base javascript for ajax
+        $xajax_js = $xajax->getJavascript(
+            $this->context
+                ->getRequest()
+                ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js'
+        );
+
+        // Setup calls.
+        if ($this->context->countRegisteredAjaxSetupCalls() > 0) {
+            $setup_calls = $this->context->getRegisteredAjaxSetupCalls();
+            $xajax_js .= '<script type="text/javascript">' . "\n";
+            foreach ($setup_calls as $call) {
+                $xajax_js .= $call . ";\n";
+            }
+            $xajax_js .= '</script>' . "\n";
+        }
+
+        $block->set('xajax_js', $xajax_js);
+
+        return $this;
     }
 
     public function savePageLevelParameters()
