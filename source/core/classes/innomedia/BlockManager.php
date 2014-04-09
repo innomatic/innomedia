@@ -103,7 +103,7 @@ abstract class BlockManager
      */
     public function getUploadedFiles()
     {
-        if (!(strlen($this->blockName) && strlen($this->pageName))) {
+        if (!(strlen($this->blockName))) {
             return false;
         }
 
@@ -130,7 +130,7 @@ abstract class BlockManager
 
     public function cleanUploadedFiles()
     {
-        if (!(strlen($this->blockName) && strlen($this->pageName))) {
+        if (!(strlen($this->blockName))) {
             return false;
         }
 
@@ -149,6 +149,13 @@ abstract class BlockManager
     protected function getUploadedFilesTempPath()
     {
         list($pageModule, $pageName) = explode('/', $this->pageName);
+
+        // Handle case of site wide block parameters
+        if (!strlen($pageModule) && !strlen($pageName)) {
+            $pageModule = 'site';
+            $pageName   = 'global';
+        }
+
         list($blockModule, $blockName) = explode('/', $this->blockName);
         $pageId = strlen($this->pageId) ? $this->pageId : 0;
         $blockCounter = strlen($this->blockCounter) ? $this->blockCounter :  1;
