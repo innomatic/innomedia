@@ -317,6 +317,10 @@ class Page
         $this->grid = new Grid($this);
         $this->setPredefinedTags($this->grid);
 
+        if (!is_array($this->instanceBlocks)) {
+            $this->instanceBlocks = array();
+        }
+
         // Merge the blocks lists
         $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
 
