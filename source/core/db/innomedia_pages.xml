@@ -4,9 +4,9 @@
     <table name="innomedia_pages">
         <field name="id" type="integer" notnull="1"/>
         <field name="page" type="text" notnull="1" />
-        <field name="blocks" type="text" notnull="1" />
+        <field name="blocks" type="text" />
         <field name="params" type="text" />
-        <field name="name" type="text" notnull="" />
+        <field name="name" type="text" />
         <field name="urlkeywords" type="text" />
         <key field="id"  type="unique"/>
     </table>

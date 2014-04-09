@@ -159,6 +159,22 @@ class Page
                 $this->isValid = false;
                 return false;
             }
+        } else {
+            // This is not a content page, however it may have page level
+            // parameters in database
+            $pagesParamsQuery = $this->domainDa->execute(
+                "SELECT params
+                FROM innomedia_pages
+                WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page)
+            );
+
+            if ($pagesParamsQuery->getNumberRows() > 0) {
+                $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
+                // Parameters variable must be an array
+                if (!is_array($this->parameters)) {
+                    $this->parameters = array();
+                }
+            }
         }
 
         // Get parameters for global scope blocks
@@ -326,6 +342,41 @@ class Page
 
         // Blocks must be properly sorted for the grid loop
         $this->grid->sortBlocks();
+    }
+
+    public function savePageLevelParameters()
+    {
+        if ($this->id != 0) {
+            return false;
+        }
+
+        // Check if parameters already exist in database
+        $pagesParamsQuery = $this->domainDa->execute(
+            "SELECT params
+            FROM innomedia_pages
+            WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page)
+        );
+
+        if ($pagesParamsQuery->getNumberRows() > 0) {
+            return $this->domainDa->execute(
+                "UPDATE innomedia_pages
+                SET
+                params =".$this->domainDa->formatText(json_encode($this->parameters))."
+                WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page)
+            );
+        } else {
+            $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
+
+            if ($this->domainDa->execute(
+                'INSERT INTO innomedia_pages (id, page, params) VALUES ('.
+                $id.','.$this->domainDa->formatText($this->module.'/'.$this->page).','.
+                $this->domainDa->formatText(json_encode($this->parameters, true)).')'
+            )) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public function addContent()
