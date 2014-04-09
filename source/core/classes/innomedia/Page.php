@@ -356,7 +356,7 @@ class Page
             name        =".$this->domainDa->formatText($this->name).",
             params      =".$this->domainDa->formatText(json_encode($this->parameters)).",
             blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
-            urlkeywords =".$this->domainDa->formatText($this->urlkeywords)."
+            urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
             WHERE id={$this->id}"
         );
     }
