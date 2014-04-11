@@ -26,7 +26,15 @@ abstract class Block extends Template
 {
     protected $counter;
 
+    protected $row;
+
+    protected $column;
+
+    protected $position;
+
     protected $context;
+
+    protected $page;
 
     protected $grid;
 
@@ -62,6 +70,17 @@ abstract class Block extends Template
         return $this;
     }
 
+    public function setPage($page)
+    {
+        $this->page = $page;
+        return $this;
+    }
+
+    public function getPage()
+    {
+        return $this->page;
+    }
+
     /* public setParameters($params) {{{ */
     /**
      * Sets block parameters array.
@@ -87,6 +106,24 @@ abstract class Block extends Template
     public function setCounter($counter)
     {
         $this->counter = (int)$counter;
+        return $this;
+    }
+
+    public function setRow($row)
+    {
+        $this->row = (int)$row;
+        return $this;
+    }
+
+    public function setColumn($column)
+    {
+        $this->column = (int)$column;
+        return $this;
+    }
+
+    public function setPosition($position)
+    {
+        $this->position = (int)$position;
         return $this;
     }
 
@@ -135,7 +172,7 @@ abstract class Block extends Template
     }
     /* }}} */
 
-    public static function load(Context $context, Grid $grid, $module, $name, $counter, $params = array())
+    public static function load(Context $context, Page $page, Grid $grid, $module, $name, $counter, $row, $column, $position, $params = array())
     {
         if (! strlen($module)) {
             return;
@@ -198,10 +235,14 @@ abstract class Block extends Template
 
         // Build block
         $obj = new $fqcn($tpl_file);
-        $obj->setGrid($grid);
+        $obj->setPage($page)
+            ->setGrid($grid);
 
         // Set block counter
-        $obj->setCounter($counter);
+        $obj->setCounter($counter)
+            ->setRow($row)
+            ->setColumn($column)
+            ->setPosition($position);
 
         // Set block parameters
         $obj->setParameters($params);

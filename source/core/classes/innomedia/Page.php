@@ -328,22 +328,26 @@ class Page
         foreach ($blocks as $blockDef) {
             $block = Block::load(
                 $this->context,
+                $this,
                 $this->grid,
                 $blockDef['module'],
                 $blockDef['name'],
                 $blockDef['counter'],
+                $blockDef['row'],
+                $blockDef['column'],
+                $blockDef['position'],
                 $blockDef['params']
             );
 
-            $this->setPredefinedTags($block);
-            $block->set('block_module'   , $blockDef['module']);
-            $block->set('block_name'     , $blockDef['name']);
-            $block->set('block_row'      , $blockDef['row']);
-            $block->set('block_column'   , $blockDef['column']);
-            $block->set('block_position' , $blockDef['position']);
-            $block->set('block_counter'  , $blockDef['counter']);
-
             if (! is_null($block)) {
+                $this->setPredefinedTags($block);
+                $block->set('block_module'   , $blockDef['module']);
+                $block->set('block_name'     , $blockDef['name']);
+                $block->set('block_row'      , $blockDef['row']);
+                $block->set('block_column'   , $blockDef['column']);
+                $block->set('block_position' , $blockDef['position']);
+                $block->set('block_counter'  , $blockDef['counter']);
+
                 $this->grid->addBlock(
                     $block,
                     $blockDef['row'],
@@ -425,6 +429,27 @@ class Page
         $block->set('xajax_js', $xajax_js);
 
         return $this;
+    }
+
+    public function getBlocksParameters()
+    {
+        if ($this->id == 0) {
+            return array();
+        }
+
+        $blockParams = array();
+        $blocksQuery = $this->domainDa->execute(
+            "SELECT block, counter, params
+            FROM innomedia_blocks
+            WHERE pageid={$this->id}");
+
+        while (!$blocksQuery->eof) {
+            $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] =
+                json_decode($blocksQuery->getFields('params'), true);
+            $blocksQuery->moveNext();
+        }
+
+        return $blockParams;
     }
 
     public function savePageLevelParameters()
