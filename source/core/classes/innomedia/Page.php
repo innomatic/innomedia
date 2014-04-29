@@ -299,7 +299,7 @@ class Page
 
         foreach ($instanceBlocks as $blockDef) {
             $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
-            $this->blocks[] = array(
+            $this->instanceBlocks[] = array(
                 'module' => $blockDef['module'],
                 'name'   => $blockDef['name'],
                 'counter' => $counter,
