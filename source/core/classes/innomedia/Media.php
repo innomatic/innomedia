@@ -252,10 +252,12 @@ class Media
         $mediaPath = $this->context->getStorageHome().$this->getTypePath($this->type).'/'.$this->buildPath();
         unlink($mediaPath);
 
+        // @todo Delete here all image aliases
+
         $this->id = 0;
     }
 
-    protected function buildPath()
+    protected function buildPath($alias = '')
     {
         $path = '';
 
@@ -284,7 +286,11 @@ class Media
             $path .= '/';
         }
 
-        $path .= $this->name;
+        $name = $this->name;
+        if (strlen($alias)) {
+            $name = pathinfo($this->name, PATHINFO_BASENAME).'_'.$alias.'.'.pathinfo($this->name, PATHINFO_EXTENSION);
+        }
+        $path .= $name;
 
         return $path;
     }
