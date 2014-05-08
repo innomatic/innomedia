@@ -131,6 +131,9 @@ class Media
         }
 
         $path = 'storage/'.$this->getTypePath($this->type).'/'.$path;
+        
+        $array_path = array_map("rawurlencode", explode("/", $path));
+        $path = implode("/", $array_path);
 
         return $path;
     }
