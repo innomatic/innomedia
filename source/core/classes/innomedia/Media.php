@@ -97,7 +97,7 @@ class Media
         // END Manage creation name of the images
 
         // Build the destination path in the storage
-        $destPath = $this->context->getStorageHome().$this->getTypePath($this->type).'/'.$this->buildPath();
+        $destPath = $this->getPath(true);
 
         // Check if the destination directory exists
         $dirName = dirname($destPath).'/';
