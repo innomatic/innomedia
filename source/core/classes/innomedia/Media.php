@@ -130,7 +130,7 @@ class Media
             "SELECT *
             FROM innomedia_media
             WHERE page='$this->pageName'
-                AND pageid={$this->pageId}
+                AND pageid ".($this->pageId != 0 ? "= {$this->pageId}" : "is NULL")."
                 AND block='{$this->blockName}'
                 AND blockcounter={$this->blockCounter}
                 AND fileid='{$this->fileId}'
@@ -458,7 +458,7 @@ class Media
             "SELECT *
             FROM innomedia_media
             WHERE page='{$pageModule}/{$pageName}'
-                AND pageid={$pageId}
+                AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
                 AND block='{$blockModule}/{$blockName}'
                 AND blockcounter={$blockCounter}
                 AND fileid='{$fileId}'"
