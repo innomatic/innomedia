@@ -86,13 +86,20 @@ class Media
             $suffix = array_pop($string_explode)+1;
         } 
 
+        $pos = strrpos($this->name, ".");
+        if ($pos === false) { 
+            // not found...
+            $extension = "";
+        } else {
+            $extension = substr($this->name, $pos+1);
+        }
+
         $new_name = str_replace("/", "", $this->pageName);
         $new_name .= "-".$this->pageId;
         $new_name .= "-".str_replace("/", "", $this->blockName);
         $new_name .= "-".$this->blockCounter;
         $new_name .= "-".$this->type;
-        $new_name .= "-".$suffix.".jpg";
-
+        $new_name .= "-".$suffix.".".$extension;
         $this->name = $new_name;
         // END Manage creation name of the images
 
@@ -514,7 +521,7 @@ class Media
      * @param  string $type type of element media
      * @return string       path folder of element media
      */
-    protected function getTypePath($type)
+    public static function getTypePath($type)
     {
         $path = '';
 
