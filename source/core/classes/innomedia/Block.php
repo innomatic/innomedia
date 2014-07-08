@@ -204,14 +204,14 @@ abstract class Block extends Template
         $tpl_file = '';
         $locales  = $context->getLocales();
         foreach ($locales as $locale) {
-            if (file_exists($tpl_root . '.' . $name.'_'.$locale.'.local.tpl.php')) {
+            if (file_exists($tpl_root . $name.'_'.$locale.'.local.tpl.php')) {
                 // Local template for given language exists
-                $tpl_file = $tpl_root . '.' . $name.'_'.$locale.'.local.tpl.php';
+                $tpl_file = $tpl_root . $name.'_'.$locale.'.local.tpl.php';
                 break;
             }
-            if (file_exists($tpl_root . '.' . $name.'_'.$locale.'.tpl.php')) {
+            if (file_exists($tpl_root . $name.'_'.$locale.'.tpl.php')) {
                 // Template for given language exists
-                $tpl_file = $tpl_root . '.' . $name.'_'.$locale.'.tpl.php';
+                $tpl_file = $tpl_root . $name.'_'.$locale.'.tpl.php';
                 break;
             }
         }
