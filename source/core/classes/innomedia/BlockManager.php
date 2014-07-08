@@ -72,6 +72,7 @@ abstract class BlockManager
 
             if ($checkQuery->getNumberRows() > 0) {
                 $id = $checkQuery->getFields('id');
+                $this->id = $id;
 
                 return $this->domainDa->execute(
                     "UPDATE innomedia_blocks
@@ -80,6 +81,7 @@ abstract class BlockManager
                 );
             } else {
                 $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
+                $this->id = $id;
 
                 return $this->domainDa->execute(
                     "INSERT INTO innomedia_blocks (id,block,counter,params".
@@ -92,6 +94,7 @@ abstract class BlockManager
                     ")"
                 );
             }
+
         }
     }
 
