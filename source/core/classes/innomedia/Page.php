@@ -528,6 +528,23 @@ class Page
 
         if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
             $this->domainDa->execute("DELETE FROM innomedia_blocks WHERE pageid={$this->id}");
+
+            // @TODO: convert the following code in the code with the use of hook
+            // Start - code for delete element of menu ordering
+            $app_deps = new \Innomatic\Application\ApplicationDependencies(
+                \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()
+            );
+            if ($app_deps->isInstalled('innomedia-menu-editor')) {
+                //delete element from secondary menu ordering
+                $editorMenu = new \Innomedia\Menu\Editor\Menu(
+                    DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session,
+                    null, 
+                    'menu/includemenu'
+                );
+                $editorMenu->removeElementFromMenuByPageID($this->id);
+            }
+            // End - code for delete element of menu ordering
+
             $this->id = 0;
             return true;
         } else {
