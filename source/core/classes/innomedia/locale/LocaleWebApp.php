@@ -14,33 +14,43 @@
 */
 namespace Innomedia\Locale;
 
+use \Innomatic\Desktop\Controller\DesktopFrontController;
+
 class LocaleWebApp
 {
 
-    public static function getParamsDecodedByLocales($params)
+    public static function getParamsDecodedByLocales($params, $scope = "frontend")
     {
-
         // control array depth, if depth 1 there isn't the language
         if (!self::isTranslatedParams($params)) {
             return $params;
         }
 
-        $lang = self::getCurrentLanguage();
+        $lang = self::getCurrentLanguage($scope);
         $parameters = array_key_exists($lang, $params) ? $params[$lang] : '';
 
         return $parameters;
     }   
 
 
-    public static function getCurrentLanguage()
+    public static function getCurrentLanguage($scope = 'frontend')
     {
-        $session = DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session;
-        if ($session->isValid('innomedia_lang_for_edit_context')) {
-            $lang = $session->get('innomedia_lang_for_edit_context');
+        // @TODO dynamic load language
+        $lang = 'it';
+
+        if ($scope == 'backend') {
+            $key = 'innomedia_lang_for_edit_context';
+        } elseif ($scope == 'frontend') {
+            $key = 'innomedia_locale';
         } else {
-            // @TODO dynamic load language
-            $lang = 'it';
+            return $lang;
         }
+
+        $session = DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session;
+        if ($session->isValid($key)) {
+            $lang = $session->get($key);
+        } 
+
         return $lang;
     }
 

@@ -144,7 +144,8 @@ class Page
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->name           = $pagesParamsQuery->getFields('name');
                 $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
-                $this->parameters     = json_decode($pagesParamsQuery->getFields('params'), true);
+
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($pagesParamsQuery->getFields('params'), true), 'frontend');
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -169,7 +170,7 @@ class Page
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($pagesParamsQuery->getFields('params'), true), 'frontend');
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -184,10 +185,10 @@ class Page
             WHERE page IS NULL AND pageid IS NULL"
         );
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-
         // Get page layout if defined and check if the YAML file for the given layout exists
         $layout = false;
 
@@ -245,9 +246,9 @@ class Page
             WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
             ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
-
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
 
@@ -291,12 +292,13 @@ class Page
             FROM innomedia_blocks
             WHERE pageid={$this->id}
             AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
-
+        
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-
+        
         foreach ($instanceBlocks as $blockDef) {
             $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->instanceBlocks[] = array(
@@ -320,7 +322,6 @@ class Page
         if (!is_array($this->instanceBlocks)) {
             $this->instanceBlocks = array();
         }
-
         // Merge the blocks lists
         $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
 
@@ -338,7 +339,6 @@ class Page
                 $blockDef['position'],
                 $blockDef['params']
             );
-
             if (! is_null($block)) {
                 $this->setPredefinedTags($block);
                 $block->set('block_module'   , $blockDef['module']);
@@ -356,7 +356,6 @@ class Page
                 );
             }
         }
-
         // Blocks must be properly sorted for the grid loop
         $this->grid->sortBlocks();
     }
@@ -444,8 +443,8 @@ class Page
             WHERE pageid={$this->id}");
 
         while (!$blocksQuery->eof) {
-            $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] =
-                json_decode($blocksQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksQuery->getFields('params'), true));
+            $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] = $params_for_lang;
             $blocksQuery->moveNext();
         }
 

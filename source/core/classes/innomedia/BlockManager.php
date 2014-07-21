@@ -51,7 +51,7 @@ abstract class BlockManager
         );
 
         if ($blockQuery->getNumberRows() > 0) {           
-            $this->parameters =  \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blockQuery->getFields('params'), true));
+            $this->parameters =  \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blockQuery->getFields('params'), true), 'backend');
             $this->id = $blockQuery->getFields('id');
             return true;
         } else {
