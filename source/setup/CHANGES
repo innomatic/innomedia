@@ -1,7 +1,39 @@
-1.x.x - 2014/
-------------------
+2.0.0 - 2014/07/21 - "Pages, Content, Site settings, Block Parameters, User
+------------------    Definable Blocks, Deployable components, Layouts, YML"
+
 CHANGES:
 - Now all the setters return their object. (Alex Pagnoni)
+- Configuration files format changed from XML to YML
+- Moved grid template inside core directory. (Alex Pagnoni)
+- Webapp directories skeleton refactory. (Alex Pagnoni)
+- Updated Innomatic dependency to 6.4.0. (Alex Pagnoni)
+- Improved page generation general flow. (Alex Pagnoni)
+- Removed importModule method since all modules classes are now automatically
+  added to the class paths at the context startup. (Alex Pagnoni)
+- Simplified APIs. (Alex Pagnoni)
+- Upgraded class loading to Innomatic 6.2 style. (Alex Pagnoni)
+- Added PDF and web fonts extensions to the accesible files list. (Alex
+  Pagnoni)
+
+NEW FEATURES:
+- New layout feature. (Alex Pagnoni)
+- Added Web System Administrator role. (Alex Pagnoni)
+- Added Web Editor role. (Alex Pagnoni)
+- Added getter for the page object assigned to the page. (Alex Pagnoni)
+- Added storage and retrieval of block parameters from the database. (Alex
+  Pagnoni)
+- Added Content feature. (Alex Pagnoni)
+- Added Site Settings feature. (Alex Pagnoni)
+- Added page level parameters. (Alex Pagnoni)
+- Added Block Manager feature. (Alex Pagnoni)
+- Added deployable components for web modules, themes, grids, assets. (Alex
+  Pagnoni)
+- Added block counter feature for multiple blocks of the same type in a page.
+  (Alex Pagnoni)
+- Added Media feature. (Alex Pagnoni)
+- Added dev target for ant to deploy application inside vagrant instance. (Alex
+  Pagnoni)
+- Added block meta tags as template variables. (Alex Pagnoni)
 
 
 
