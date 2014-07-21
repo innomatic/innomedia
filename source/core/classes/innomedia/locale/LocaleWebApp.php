@@ -35,8 +35,7 @@ class LocaleWebApp
 
     public static function getCurrentLanguage($scope = 'frontend')
     {
-        // @TODO dynamic load language
-        $lang = 'it';
+        $lang = self::getDefaultLanguage();
 
         if ($scope == 'backend') {
             $key = 'innomedia_lang_for_edit_context';
@@ -54,6 +53,20 @@ class LocaleWebApp
         return $lang;
     }
 
+
+    public static function getDefaultLanguage()
+    {
+        // @TODO dynamic load language
+        $lang = '__it';
+        return $lang;
+    }
+
+    public static function getListLanguageAvailable()
+    {
+        // @TODO dynamic load language
+        $languages = array('__it' => 'Italiano', '__en' => 'Inglese');
+        return $languages;
+    }
 
     public static function isTranslatedParams($params)
     {
