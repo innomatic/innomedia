@@ -5,10 +5,10 @@
 		<idname>innomedia</idname>
 		<release>
 			<version>2.0.0</version>
-			<date>2013/03/06</date>
+			<date>2013/07/21</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
-		<description>InnoMedia Frontend Framework</description>
+		<description>InnoMedia Web Frontend Framework</description>
 		<category>web</category>
 		<dependencies>
 			<dependency>innomatic[6.4.0]</dependency>
@@ -17,7 +17,7 @@
 		<legal>
 			<author>
 				<name>Innoteam Srl</name>
-				<email>info@innoteam.io</email>
+				<email>info@innomatic.io</email>
 				<web>http://www.innomatic.io/</web>
 			</author>
 			<copyright>Copyright (C) 2009-2014 Innoteam Srl</copyright>
