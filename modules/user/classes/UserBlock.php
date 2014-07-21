@@ -13,7 +13,7 @@
  * @since      Class available since Release 1.0.0
  */
 
-class UserBlock extends \Innomedia\InnomediaBlock
+class UserBlock extends \Innomedia\Block
 {
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
@@ -21,14 +21,14 @@ class UserBlock extends \Innomedia\InnomediaBlock
     	if ($userid = $user->isLoggedIn()) {
     		$this->set('user_loggedin', '1');
     		$this->set('userid', $userid);
-    		
+
     		$userdata = $user->getData();
     		$this->set('username', $userdata['username']);
-    		
+
     		// @todo Here we should set user and point data variables
-    		
+
     	} else {
     		$this->set('user_loggedin', '0');
-    	}    	
+    	}
     }
 }

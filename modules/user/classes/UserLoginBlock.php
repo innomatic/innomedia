@@ -12,27 +12,26 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('innomedia/InnomediaBlock.php');
 require_once('InnomaticMediaUser.php');
 
-class UserLoginBlock extends InnomediaBlock
+class UserLoginBlock extends \Innomedia\Block
 {
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
     {
     	$user = new InnomaticMediaUser();
-    	
+
     	// Check the dologin parameter
-    	
+
     	if ( !is_null($request->getParameter('dologin')) ) {
     		$this->set('username', $request->getParameter('username'));
     		$this->set('password', $request->getParameter('password'));
-    		
+
     		// Check the login response
-    		
+
     		switch ($user->login($request->getParameter('username'), $request->getParameter('password'))) {
     			case InnomaticMediaUser::RESPONSE_USERNAME_NOT_FOUND:
     				$this->set('login_response', 'username_not_found');
-    				break; 
+    				break;
 
     			case InnomaticMediaUser::RESPONSE_WRONG_PASSWORD:
     				$this->set('login_response', 'wrong_password');
@@ -48,7 +47,7 @@ class UserLoginBlock extends InnomediaBlock
     				break;
     		}
     	}
-    	
+
     	// Check if the user is logged in
     	$userid = $user->isLoggedIn();
     	if (true) {

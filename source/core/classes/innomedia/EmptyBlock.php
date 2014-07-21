@@ -12,14 +12,19 @@
  * @link       http://www.innomatic.org
  * @since      Class available since Release 1.0.0
  */
-require_once('InnomaticMediaUser.php');
+namespace Innomedia;
 
-class UserLogoutBlock extends \Innomedia\Block
+/**
+ *
+ * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @copyright Copyright 2008-2013 Innoteam Srl
+ * @since 1.0
+ */
+class EmptyBlock extends Block
 {
+
     public function run(\Innomatic\Webapp\WebAppRequest $request, \Innomatic\Webapp\WebAppResponse $response)
-    {
-    	// Logout the current user, if logged in
-   		$user = new InnomaticMediaUser();
-   		$user->logout();
-    }
+    {}
 }
+
+?>
