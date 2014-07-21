@@ -3,6 +3,7 @@
 namespace Innomedia;
 
 use \Innomatic\Core;
+use \Innomatic\Locale;
 
 abstract class BlockManager
 {
@@ -39,6 +40,7 @@ abstract class BlockManager
      */
     public function retrieve()
     {
+
         $blockQuery = $this->domainDa->execute(
             "SELECT id,params
             FROM innomedia_blocks
@@ -48,8 +50,8 @@ abstract class BlockManager
             AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
         );
 
-        if ($blockQuery->getNumberRows() > 0) {
-            $this->parameters = json_decode($blockQuery->getFields('params'), true);
+        if ($blockQuery->getNumberRows() > 0) {           
+            $this->parameters =  \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blockQuery->getFields('params'), true));
             $this->id = $blockQuery->getFields('id');
             return true;
         } else {
@@ -58,11 +60,14 @@ abstract class BlockManager
     }
     /* }}} */
 
+
     public function store()
     {
+
         if (is_array($this->parameters) && strlen($this->blockName)) {
+
             $checkQuery = $this->domainDa->execute(
-                "SELECT id
+                "SELECT id, params
                 FROM innomedia_blocks
                 WHERE block = ".$this->domainDa->formatText($this->blockName)."
                 AND counter = $this->blockCounter
@@ -71,12 +76,21 @@ abstract class BlockManager
             );
 
             if ($checkQuery->getNumberRows() > 0) {
+
                 $id = $checkQuery->getFields('id');
                 $this->id = $id;
+                
+                $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage();
+                $params = json_decode($checkQuery->getFields('params'), true);
+                if (!\Innomedia\Locale\LocaleWebApp::isTranslatedParams($params)) {
+                    $params = array();
+                };
+                $params[$current_language] = $this->parameters;
+
 
                 return $this->domainDa->execute(
                     "UPDATE innomedia_blocks
-                    SET params=".$this->domainDa->formatText(json_encode($this->parameters)).
+                    SET params=".$this->domainDa->formatText(json_encode($params)).
                     " WHERE id=$id"
                 );
             } else {
