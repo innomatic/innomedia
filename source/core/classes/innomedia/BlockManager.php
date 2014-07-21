@@ -3,7 +3,7 @@
 namespace Innomedia;
 
 use \Innomatic\Core;
-use \Innomatic\Locale;
+use \Innomedia\Locale;
 
 abstract class BlockManager
 {
