@@ -99,6 +99,7 @@ class Media
         $new_name .= "-".str_replace("/", "", $this->blockName);
         $new_name .= "-".$this->blockCounter;
         $new_name .= "-".$this->type;
+        $new_name .= "-".\Innomedia\Locale\LocaleWebApp::getCurrentLanguage();
         $new_name .= "-".$suffix.".".$extension;
         $this->name = $new_name;
         // END Manage creation name of the images
@@ -460,17 +461,94 @@ class Media
         $blockName    = $params['blockname'];
         $blockCounter = $params['blockcounter'];
         $fileId       = $params['fileid'];
+        $fieldName    = $params['fieldname'];
 
-        $mediaQuery = $domainDa->execute(
-            "SELECT *
-            FROM innomedia_media
-            WHERE page='{$pageModule}/{$pageName}'
-                AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
-                AND block='{$blockModule}/{$blockName}'
-                AND blockcounter={$blockCounter}
-                AND fileid='{$fileId}'"
-        );
-        return $mediaQuery;
+        // if ($blockName == 'newsslider') print_r($params);
+
+        $default_language = \Innomedia\Locale\LocaleWebApp::getDefaultLanguage();
+        $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+        $list_language_available = \Innomedia\Locale\LocaleWebApp::getListLanguagesAvailable();
+
+        if ($current_language == $default_language) {
+            $i = 0;
+            $string_not_like = '';
+            foreach ($list_language_available as $key => $value) {
+                if ($i != 0) $string_not_like .= " AND ";
+                $string_not_like .= "params NOT LIKE '%\"$key\":%'";
+                $i++;
+            }
+        }
+
+        $sql = "SELECT  params
+                FROM    innomedia_blocks
+                WHERE   page = '{$pageModule}/{$pageName}'
+                    AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
+                    AND block = '{$blockModule}/{$blockName}'
+                    AND counter = {$blockCounter}
+                    AND params LIKE '%\"{$fieldName}\":%'
+                    AND (
+                        (params LIKE '%\"$current_language\":%')
+                        ".($current_language == $default_language ?  "OR ($string_not_like)" : '')."
+                    )";
+        
+        // if ($blockName == 'newsslider') print_r($sql);
+        
+        $blocksQuery = $domainDa->execute($sql);
+        // if ($blockName == 'newsslider') print_r($blocksQuery);
+
+        $list_media = array();
+        while (!$blocksQuery->eof) {
+
+            $json_params = json_decode($blocksQuery->getFields('params'), true);
+            // $ris = \Innomedia\Locale\LocaleWebApp::isTranslatedParams($json_params);
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($json_params, 'backend');
+            
+            // if ($blockName == 'newsslider') echo "A: ";
+            // if ($blockName == 'newsslider') print_r($blocksQuery->getFields('params'));
+            // if ($blockName == 'newsslider') echo "B: ";
+            // if ($blockName == 'newsslider') print_r($json_params);
+            // if ($blockName == 'newsslider') echo "C: ";
+            // if ($blockName == 'newsslider') print_r($params);
+            // $params = json_decode($blocksQuery->getFields('params'), true);
+            // if ($blockName == 'newsslider') print_r($params[$fieldName]);
+
+            if (!is_array($params[$fieldName])) {
+                $list_id_media[] = $params[$fieldName];
+            } else {
+                $list_id_media = $params[$fieldName];
+            }
+
+            // if ($blockName == 'newsslider') print_r($list_id_media);
+
+            $i = 0;
+            foreach ($list_id_media as $value_id) {
+                $sql = "SELECT  *
+                        FROM    innomedia_media
+                        WHERE   page = '{$pageModule}/{$pageName}'
+                            AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
+                            AND block = '{$blockModule}/{$blockName}'
+                            AND blockcounter = {$blockCounter}
+                            AND fileid = '{$fileId}'
+                            AND id = {$value_id}";
+
+                $mediaQuery = $domainDa->execute($sql);
+
+                if (is_object($mediaQuery) && $mediaQuery->resultrows > 0) {
+                    $list_media[$i]['id']  = $mediaQuery->getFields('id');
+                    $list_media[$i]['name'] = $mediaQuery->getFields('name');
+                    $list_media[$i]['path'] = $mediaQuery->getFields('path');
+                    $list_media[$i]['filetype'] = $mediaQuery->getFields('filetype'); 
+                }
+                
+                $i++;
+            }
+
+            // if ($blockName == 'newsslider') print_r($list_media);
+
+            $blocksQuery->moveNext();
+
+        }
+        return $list_media;
     }
 
     /**

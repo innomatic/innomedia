@@ -440,10 +440,11 @@ class Page
         $blocksQuery = $this->domainDa->execute(
             "SELECT block, counter, params
             FROM innomedia_blocks
-            WHERE pageid={$this->id}");
+            WHERE pageid={$this->id}"
+        );
 
         while (!$blocksQuery->eof) {
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksQuery->getFields('params'), true));
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksQuery->getFields('params'), true), 'frontend');
             $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] = $params_for_lang;
             $blocksQuery->moveNext();
         }
