@@ -94,12 +94,14 @@ class Media
             $extension = substr($this->name, $pos+1);
         }
 
+        $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend'); 
+        
         $new_name = str_replace("/", "", $this->pageName);
         $new_name .= "-".$this->pageId;
         $new_name .= "-".str_replace("/", "", $this->blockName);
         $new_name .= "-".$this->blockCounter;
         $new_name .= "-".$this->type;
-        $new_name .= "-".\Innomedia\Locale\LocaleWebApp::getCurrentLanguage();
+        $new_name .= "-".str_replace('__', '', $current_language);
         $new_name .= "-".$suffix.".".$extension;
         $this->name = $new_name;
         // END Manage creation name of the images
@@ -134,6 +136,8 @@ class Media
             ->getCurrentDomain()
             ->getDataAccess();
         
+        $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
         $mediaQuery = $domainDa->execute(
             "SELECT *
             FROM innomedia_media
@@ -142,6 +146,7 @@ class Media
                 AND block='{$this->blockName}'
                 AND blockcounter={$this->blockCounter}
                 AND fileid='{$this->fileId}'
+                AND name LIKE '%-".str_replace('__', '', $current_language)."-%'
             ORDER BY id ASC"
         );
      
@@ -335,8 +340,8 @@ class Media
 
         $mediaQuery = $domainDa->execute(
             "SELECT *
-            FROM innomedia_media
-            WHERE id={$this->id}"
+            FROM    innomedia_media
+            WHERE   id = {$this->id}"
         );
 
         if ($mediaQuery->getNumberRows() > 0) {
@@ -344,7 +349,7 @@ class Media
             $this->type         = $mediaQuery->getFields('filetype');
             $this->fileId       = $mediaQuery->getFields('fileid');
             $this->path         = $mediaQuery->getFields('path');
-            $this->page         = $mediaQuery->getFields('page');
+            $this->pageName     = $mediaQuery->getFields('page');
             $this->pageId       = $mediaQuery->getFields('pageid');
             $this->blockName    = $mediaQuery->getFields('block');
             $this->blockCounter = $mediaQuery->getFields('blockcounter');
@@ -417,9 +422,10 @@ class Media
 
     /**
      * Delete a object media
+     * @param string $fieldName name of field image in innomedia_blocks
      * @return boolean return if the action is successful or not
      */
-    public function delete()
+    public function delete($fieldName='')
     {
         if ($this->id == 0) {
             return true;    
@@ -435,13 +441,67 @@ class Media
 
         $domainDa->execute("DELETE FROM innomedia_media WHERE id = {$this->id}");
 
-        $mediaPath = $this->getPath(true);
+        $mediaPath = $this->getPath(true);      
         unlink($mediaPath);
+
+        // Delete reference image from innomedia_blocks
+        if (!empty($fieldName)) {
+            $this->deleteFromBlock($fieldName);
+        }
 
         // @todo Delete here all image aliases
 
         $this->id = 0;
     }
+
+
+    /**
+     * Delete a object media from innomedia_blocks
+     * @param string $fieldName name of field image in innomedia_blocks
+     * @return boolean return if the action is successful or not
+     */
+    public function deleteFromBlock($fieldName)
+    {
+        // Delete ref image from innomedia_blocks
+        $domainDa = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        $checkQuery = $domainDa->execute(
+            "SELECT     id, params
+                FROM    innomedia_blocks
+                WHERE   block = '$this->blockName'
+                    AND counter = $this->blockCounter
+                    AND page = '$this->pageName'
+                    AND pageid ".($this->pageId != 0 ? "= {$this->pageId}" : "is NULL")
+        );
+
+        if ($checkQuery->getNumberRows() > 0) {
+            $row_id = $checkQuery->getFields('id');
+            $json_params = json_decode($checkQuery->getFields('params'), true);
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($json_params, 'backend');
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+            
+            $key = @array_search($this->id, $params[$fieldName]);
+
+            // remove id image selected
+            unset($params[$fieldName][$key]); 
+
+            // convet array in a not-associative array
+            $params[$fieldName] = @array_values($params[$fieldName]);
+
+            $json_params[$current_language] = $params;
+            
+            $domainDa->execute(
+                "UPDATE innomedia_blocks
+                SET params=".$domainDa->formatText(json_encode($json_params)).
+                " WHERE id=$row_id"
+            );
+        
+        }
+    }
+
 
     /**
      * Get list of media
@@ -462,8 +522,6 @@ class Media
         $blockCounter = $params['blockcounter'];
         $fileId       = $params['fileid'];
         $fieldName    = $params['fieldname'];
-
-        // if ($blockName == 'newsslider') print_r($params);
 
         $default_language = \Innomedia\Locale\LocaleWebApp::getDefaultLanguage();
         $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
@@ -491,10 +549,7 @@ class Media
                         ".($current_language == $default_language ?  "OR ($string_not_like)" : '')."
                     )";
         
-        // if ($blockName == 'newsslider') print_r($sql);
-        
         $blocksQuery = $domainDa->execute($sql);
-        // if ($blockName == 'newsslider') print_r($blocksQuery);
 
         $list_media = array();
         while (!$blocksQuery->eof) {
@@ -503,22 +558,11 @@ class Media
             // $ris = \Innomedia\Locale\LocaleWebApp::isTranslatedParams($json_params);
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($json_params, 'backend');
             
-            // if ($blockName == 'newsslider') echo "A: ";
-            // if ($blockName == 'newsslider') print_r($blocksQuery->getFields('params'));
-            // if ($blockName == 'newsslider') echo "B: ";
-            // if ($blockName == 'newsslider') print_r($json_params);
-            // if ($blockName == 'newsslider') echo "C: ";
-            // if ($blockName == 'newsslider') print_r($params);
-            // $params = json_decode($blocksQuery->getFields('params'), true);
-            // if ($blockName == 'newsslider') print_r($params[$fieldName]);
-
             if (!is_array($params[$fieldName])) {
                 $list_id_media[] = $params[$fieldName];
             } else {
                 $list_id_media = $params[$fieldName];
             }
-
-            // if ($blockName == 'newsslider') print_r($list_id_media);
 
             $i = 0;
             foreach ($list_id_media as $value_id) {
@@ -542,8 +586,6 @@ class Media
                 
                 $i++;
             }
-
-            // if ($blockName == 'newsslider') print_r($list_media);
 
             $blocksQuery->moveNext();
 
@@ -582,6 +624,10 @@ class Media
         }
 
         if (strlen($path) > 0) {
+
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+            $path .= '/'.str_replace('__', '', $current_language);
+
             $path .= '/';
         }
 
@@ -590,6 +636,7 @@ class Media
             $name = pathinfo($this->name, PATHINFO_BASENAME).'_'.$alias.'.'.pathinfo($this->name, PATHINFO_EXTENSION);
         }
         $path .= $name;
+
 
         return $path;
     }

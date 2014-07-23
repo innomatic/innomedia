@@ -75,37 +75,41 @@ abstract class BlockManager
                 AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
             );
 
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
             if ($checkQuery->getNumberRows() > 0) {
 
                 $id = $checkQuery->getFields('id');
                 $this->id = $id;
                 
-                $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage();
                 $params = json_decode($checkQuery->getFields('params'), true);
                 if (!\Innomedia\Locale\LocaleWebApp::isTranslatedParams($params)) {
                     $params = array();
                 };
                 $params[$current_language] = $this->parameters;
 
-
                 return $this->domainDa->execute(
                     "UPDATE innomedia_blocks
                     SET params=".$this->domainDa->formatText(json_encode($params)).
                     " WHERE id=$id"
                 );
+
             } else {
                 $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
                 $this->id = $id;
 
+                $params = array();
+                $params[$current_language] = $this->parameters;
+
                 return $this->domainDa->execute(
-                    "INSERT INTO innomedia_blocks (id,block,counter,params".
-                    (strlen($this->pageName) ? ",page" : "").
-                    ($this->pageId != 0 ? ",pageid" : "")."
-                    ) VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','.
-                    $this->domainDa->formattext(json_encode($this->parameters)).
-                    (strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "").
-                    ($this->pageId != 0 ? ",{$this->pageId}" : "").
-                    ")"
+                    "INSERT INTO innomedia_blocks (id,block,counter,params"
+                    .(strlen($this->pageName) ? ",page" : "")
+                    .($this->pageId != 0 ? ",pageid" : "")
+                    .") VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','
+                    .$this->domainDa->formatText(json_encode($params, true))
+                    .(strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "")
+                    .($this->pageId != 0 ? ",{$this->pageId}" : "")
+                    .")"
                 );
             }
 
