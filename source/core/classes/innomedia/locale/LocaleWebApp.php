@@ -63,6 +63,37 @@ class LocaleWebApp
         return $params_for_lang;
     }   
 
+
+    /**
+     * Get parameters to json decoding them according to the language 
+     * for update database
+     * @param  array  $params_db  field params
+     * @param  array  $params_new field params
+     * @param  string $scope      scope language
+     * @return array param decoding by language
+     */
+    public static function getParamsDecodedByLocalesForUpdate($params_db, $params_new, $scope = "backend")
+    {
+
+        $default_languate = self::getDefaultLanguage();
+        $current_language = self::getCurrentLanguage($scope);
+        
+        $json_params = json_decode($params_db, true);
+        
+        if (!self::isTranslatedParams($json_params)) {
+            if ($current_language == $default_languate) {
+                $params = array();
+            } else {
+                $params[$default_languate] = $json_params;
+            }   
+        } else {
+            $params = $json_params;
+        }
+        $params[$current_language] = $params_new;
+
+        return $params;
+    }
+
     /**
      * Get current languae by scope
      * @param  string $scope scope language

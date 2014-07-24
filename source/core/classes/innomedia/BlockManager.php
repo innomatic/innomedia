@@ -82,11 +82,11 @@ abstract class BlockManager
                 $id = $checkQuery->getFields('id');
                 $this->id = $id;
                 
-                $params = json_decode($checkQuery->getFields('params'), true);
-                if (!\Innomedia\Locale\LocaleWebApp::isTranslatedParams($params)) {
-                    $params = array();
-                };
-                $params[$current_language] = $this->parameters;
+                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                    $checkQuery->getFields('params'), 
+                    $this->parameters,
+                    'backend'
+                );
 
                 return $this->domainDa->execute(
                     "UPDATE innomedia_blocks

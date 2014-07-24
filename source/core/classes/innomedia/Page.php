@@ -26,6 +26,8 @@ class Page
 
     protected $domainDa;
 
+    protected $scope_session;
+
     protected $module;
 
     protected $page;
@@ -71,7 +73,8 @@ class Page
     public function __construct(
         $module,
         $page,
-        $id = 0
+        $id = 0,
+        $scope_session = 'frontend'
     ) {
         $this->context = Context::instance('\Innomedia\Context');
 
@@ -80,6 +83,7 @@ class Page
             ->getDataAccess();
 
         // TODO Add fallback module/page as optional welcome page
+        $this->scope_session = $scope_session;
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
         $this->id = (int)$id;
@@ -145,7 +149,9 @@ class Page
                 $this->name           = $pagesParamsQuery->getFields('name');
                 $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
 
-                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($pagesParamsQuery->getFields('params'), true), 'frontend');
+                $params = json_decode($pagesParamsQuery->getFields('params'), true);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($params, $this->scope_session);
+
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -170,7 +176,7 @@ class Page
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($pagesParamsQuery->getFields('params'), true), 'frontend');
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($pagesParamsQuery->getFields('params'), true), $this->scope_session);
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -185,7 +191,7 @@ class Page
             WHERE page IS NULL AND pageid IS NULL"
         );
         while (!$blocksParamsQuery->eof) {
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), $this->scope_session);
             $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -247,7 +253,7 @@ class Page
             ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
         while (!$blocksParamsQuery->eof) {
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), $this->scope_session);
             $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -294,7 +300,7 @@ class Page
             AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
         
         while (!$blocksParamsQuery->eof) {
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), 'frontend');
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksParamsQuery->getFields('params'), true), $this->scope_session);
             $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -444,7 +450,7 @@ class Page
         );
 
         while (!$blocksQuery->eof) {
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksQuery->getFields('params'), true), 'frontend');
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blocksQuery->getFields('params'), true), $this->scope_session);
             $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] = $params_for_lang;
             $blocksQuery->moveNext();
         }
@@ -466,19 +472,30 @@ class Page
         );
 
         if ($pagesParamsQuery->getNumberRows() > 0) {
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                $pagesParamsQuery->getFields('params'), 
+                $this->parameters,
+                'backend'
+            );
+
             return $this->domainDa->execute(
                 "UPDATE innomedia_pages
                 SET
-                params =".$this->domainDa->formatText(json_encode($this->parameters))."
+                params =".$this->domainDa->formatText(json_encode($params))."
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page)
             );
         } else {
             $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
+            $params = array();
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+            $params[$current_language] = $this->parameters;
+
             if ($this->domainDa->execute(
                 'INSERT INTO innomedia_pages (id, page, params) VALUES ('.
                 $id.','.$this->domainDa->formatText($this->module.'/'.$this->page).','.
-                $this->domainDa->formatText(json_encode($this->parameters, true)).')'
+                $this->domainDa->formatText(json_encode($params, true)).')'
             )) {
                 return true;
             } else {
@@ -508,12 +525,23 @@ class Page
         if ($this->id == 0) {
             return false;
         }
+        $pagesParamsQuery = $this->domainDa->execute(
+            "SELECT params
+            FROM innomedia_pages
+            WHERE id = {$this->id}"
+        );
+
+        $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+            $pagesParamsQuery->getFields('params'), 
+            $this->parameters,
+            'backend'
+        );
 
         return $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
             name        =".$this->domainDa->formatText($this->name).",
-            params      =".$this->domainDa->formatText(json_encode($this->parameters)).",
+            params      =".$this->domainDa->formatText(json_encode($params)).",
             blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
             urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
             WHERE id={$this->id}"
