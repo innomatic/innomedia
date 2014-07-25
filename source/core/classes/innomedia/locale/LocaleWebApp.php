@@ -40,22 +40,43 @@ class LocaleWebApp
 
     /**
      * Get parameters to json decoding them according to the language
-     * @param  array  $params field params 
-     * @param  string $scope  scope language
-     * @return array          param decoding by language
+     * @param  array  $blockName block name
+     * @param  array  $params    field params 
+     * @param  string $scope     scope language
+     * @return array param decoding by language
      */
-    public static function getParamsDecodedByLocales($params, $scope = "frontend")
+    public static function getParamsDecodedByLocales($blockName, $params, $scope = "frontend")
     {
-        $lang = self::getCurrentLanguage($scope);
+        $default_language = self::getDefaultLanguage();
+        $context = \Innomedia\Context::instance('\Innomedia\Context');
 
-        // control array depth, if depth 1 there isn't the language
-        if (!self::isTranslatedParams($params)) {
-            // retroactivity: the content without the language definition 
-            //                is shown only for the default language.
-            if ($lang != self::getDefaultLanguage()) 
-                return '';
+        list($module, $block) = explode('/', $blockName);
 
-            return $params;
+        if (\Innomedia\Block::isNoLocale($context, $module, $block)) {
+
+            if (array_key_exists('nolocale', $params)) {
+                $lang = 'nolocale';
+            } else {
+                if (!self::isTranslatedParams($params)) {
+                    return $params;
+                } else {
+                    $lang = $default_language;
+                }
+            }
+
+        } else {
+
+            $lang = self::getCurrentLanguage($scope);
+
+            // control array depth, if depth 1 there isn't the language
+            if (!self::isTranslatedParams($params)) {
+                // retroactivity: the content without the language definition 
+                //                is shown only for the default language.
+                if ($lang != $default_language) 
+                    return '';
+
+                return $params;
+            }
         }
 
         $params_for_lang = array_key_exists($lang, $params) ? $params[$lang] : '';
@@ -67,28 +88,40 @@ class LocaleWebApp
     /**
      * Get parameters to json decoding them according to the language 
      * for update database
+     * @param  array  $blockName  block name
      * @param  array  $params_db  field params
      * @param  array  $params_new field params
      * @param  string $scope      scope language
      * @return array param decoding by language
      */
-    public static function getParamsDecodedByLocalesForUpdate($params_db, $params_new, $scope = "backend")
+    public static function getParamsDecodedByLocalesForUpdate($blockName, $params_db, $params_new, $scope = "backend")
     {
+        $context = \Innomedia\Context::instance('\Innomedia\Context');
+        list($module, $block) = explode('/', $blockName);
 
-        $default_languate = self::getDefaultLanguage();
-        $current_language = self::getCurrentLanguage($scope);
-        
-        $json_params = json_decode($params_db, true);
-        
-        if (!self::isTranslatedParams($json_params)) {
-            if ($current_language == $default_languate) {
-                $params = array();
-            } else {
-                $params[$default_languate] = $json_params;
-            }   
+        if (\Innomedia\Block::isNoLocale($context, $module, $block)) {
+
+            $params = array();
+            $current_language = 'nolocale';
+
         } else {
-            $params = $json_params;
+
+            $default_languate = self::getDefaultLanguage();
+            $current_language = self::getCurrentLanguage($scope);
+            
+            $json_params = json_decode($params_db, true);
+            
+            if (!self::isTranslatedParams($json_params)) {
+                if ($current_language == $default_languate) {
+                    $params = array();
+                } else {
+                    $params[$default_languate] = $json_params;
+                }   
+            } else {
+                $params = $json_params;
+            }
         }
+
         $params[$current_language] = $params_new;
 
         return $params;

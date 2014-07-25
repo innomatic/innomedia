@@ -478,9 +478,9 @@ class Media
 
         if ($checkQuery->getNumberRows() > 0) {
             $row_id = $checkQuery->getFields('id');
-            $json_params = json_decode($checkQuery->getFields('params'), true);
 
-            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($json_params, 'backend');
+            $json_params = json_decode($checkQuery->getFields('params'), true);
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($this->blockName, $json_params, 'backend');
             $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
             
             $key = @array_search($this->id, $params[$fieldName]);
@@ -556,7 +556,7 @@ class Media
 
             $json_params = json_decode($blocksQuery->getFields('params'), true);
             // $ris = \Innomedia\Locale\LocaleWebApp::isTranslatedParams($json_params);
-            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($json_params, 'backend');
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales('{$blockModule}/{$blockName}', $json_params, 'backend');
             
             if (!is_array($params[$fieldName])) {
                 $list_id_media[] = $params[$fieldName];

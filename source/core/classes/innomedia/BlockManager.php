@@ -51,7 +51,8 @@ abstract class BlockManager
         );
 
         if ($blockQuery->getNumberRows() > 0) {           
-            $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blockQuery->getFields('params'), true), 'backend');
+            $json_params = json_decode($blockQuery->getFields('params'), true);
+            $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($this->blockName, $json_params, 'backend');
             $this->id = $blockQuery->getFields('id');
             return true;
         } else {
@@ -83,6 +84,7 @@ abstract class BlockManager
                 $this->id = $id;
                 
                 $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                    $this->blockName,
                     $checkQuery->getFields('params'), 
                     $this->parameters,
                     'backend'
@@ -98,8 +100,14 @@ abstract class BlockManager
                 $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
                 $this->id = $id;
 
-                $params = array();
-                $params[$current_language] = $this->parameters;
+                // $params = array();
+                // $params[$current_language] = $this->parameters;
+                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                    $this->blockName,
+                    null, 
+                    $this->parameters,
+                    'backend'
+                );
 
                 return $this->domainDa->execute(
                     "INSERT INTO innomedia_blocks (id,block,counter,params"
@@ -192,19 +200,19 @@ abstract class BlockManager
         if (is_dir($start_dir)) {
             $fh = opendir($start_dir);
             while (($file = readdir($fh)) !== false) {
-                # loop through the files, skipping . and .., and recursing if necessary
+                // loop through the files, skipping . and .., and recursing if necessary
                 if (strcmp($file, '.')==0 || strcmp($file, '..')==0) continue;
                 $filepath = $start_dir . '/' . $file;
                 if (is_dir($filepath)) {
                     $files = array_merge($files, self::listdir($filepath));
                 } else {
-                  array_push($files, $filepath);
+                    array_push($files, $filepath);
                 }
             }
             closedir($fh);
         } else {
-          # false if the function was called with an invalid non-directory argument
-          $files = false;
+            // false if the function was called with an invalid non-directory argument
+            $files = false;
         }
 
         return $files;
