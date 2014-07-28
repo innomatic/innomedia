@@ -39,6 +39,145 @@ class LocaleWebApp
 {
 
     /**
+     * Get path of file for configuration languages
+     * @return string path file
+     */
+    protected static function getConfLanguagesFile()
+    {
+        $home = \Innomedia\Context::instance('\Innomedia\Context')->getHome();
+        
+        $confLanguagesFile = file_exists($home . 'core/conf/languages.local.yml') ?
+            $home . 'core/conf/languages.local.yml' :
+            $home . 'core/conf/languages.yml';
+
+        // Check if the YAML file for the configuration languages exists
+        if (! file_exists($confLanguagesFile)) {
+            return false;
+        }
+
+        // Load the configuration YAML
+        return yaml_parse_file($confLanguagesFile);
+    }
+
+    /**
+     * Get list of local languages from db Root
+     * @return array list languages
+     */
+    protected static function getRootLocaleLanguages()
+    {
+        $language_locale = new \Innomatic\Locale\LocaleCatalog(
+            'innomatic::localization', 
+            \Innomatic\Core\InnomaticContainer::instance(
+                '\Innomatic\Core\InnomaticContainer'
+            )->getLanguage()
+        );
+
+        $languageQuery = \Innomatic\Core\InnomaticContainer::instance(
+            '\Innomatic\Core\InnomaticContainer'
+        )->getDataAccess()->execute('SELECT * FROM locale_languages');
+
+        while (!$languageQuery->eof) {
+            $langshort = $languageQuery->getFields('langshort');
+            $langname = $languageQuery->getFields('langname');
+            $languages[$langshort] = $language_locale->getStr($langname);
+            $languageQuery->moveNext();
+        }
+
+        return $languages;
+    }
+
+
+    /**
+     * Get Default language
+     * @return string default language
+     */
+    public static function getDefaultLanguage()
+    {
+        $conf_languages = self::getConfLanguagesFile();
+
+        if (isset($conf_languages['default'])) {
+            
+            $lang = '__' . $conf_languages['default'];
+
+        } else {
+            $lang = '__it';
+        }
+        return $lang;
+    }
+
+    /**
+     * Get list of languages available
+     * @return array list of languages
+     */
+    public static function getListLanguagesAvailable()
+    {
+
+        $locale_languages = self::getRootLocaleLanguages();
+        $conf_languages = self::getConfLanguagesFile();
+
+        if (isset($conf_languages['available'])) {
+            
+            $languages = array();
+            foreach ($conf_languages['available'] as $lang) {
+                $languages['__'.$lang] = $locale_languages[$lang];
+            }
+        } else {
+            $languages = array('__it' => 'Italiano');
+            // $languages = array('__it' => 'Italiano', '__en' => 'Inglese');
+        }
+
+        return $languages;
+    }
+
+    /**
+     * Check structure of json/array 
+     * @param  array $params field params
+     * @return boolean if json is one array return true else return false
+     */
+    public static function isTranslatedParams($params)
+    {
+
+        $languages = self::getListLanguagesAvailable();
+        foreach ($languages as $key => $value) {
+            if (!empty($params[$key]))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get current languae by scope
+     * @param  string $scope scope language
+     * @return string        current language
+     */
+    public static function getCurrentLanguage($scope = 'frontend')
+    {
+        $lang = self::getDefaultLanguage();
+
+        // @TODO use WuiSessonKey when in backoffice context
+        if ($scope == 'backend') {
+            $key = 'innomedia_lang_for_edit_context';
+        } elseif ($scope == 'frontend') {
+            $key = 'innomedia_locale';
+        } else {
+            return $lang;
+        }
+
+        // @TODO use WebAppSession when in frontend context
+        // $session = \Innomedia\Context::instance('\Innomedia\Context')->getSession();
+        $session = \Innomatic\Desktop\Controller\DesktopFrontController::instance(
+            '\Innomatic\Desktop\Controller\DesktopFrontController'
+        )->session;
+
+        if ($session->isValid($key)) {
+            $lang = $session->get($key);
+        } 
+
+        return $lang;
+    }
+
+    /**
      * Get parameters to json decoding them according to the language
      * @param  array  $blockName block name
      * @param  array  $params    field params 
@@ -84,7 +223,6 @@ class LocaleWebApp
         return $params_for_lang;
     }   
 
-
     /**
      * Get parameters to json decoding them according to the language 
      * for update database
@@ -125,76 +263,6 @@ class LocaleWebApp
         $params[$current_language] = $params_new;
 
         return $params;
-    }
-
-    /**
-     * Get current languae by scope
-     * @param  string $scope scope language
-     * @return string        current language
-     */
-    public static function getCurrentLanguage($scope = 'frontend')
-    {
-        $lang = self::getDefaultLanguage();
-
-        // @TODO use WuiSessonKey when in backoffice context
-        if ($scope == 'backend') {
-            $key = 'innomedia_lang_for_edit_context';
-        } elseif ($scope == 'frontend') {
-            $key = 'innomedia_locale';
-        } else {
-            return $lang;
-        }
-
-        // @TODO use WebAppSession when in frontend context
-        // $session = \Innomedia\Context::instance('\Innomedia\Context')->getSession();
-        $session = \Innomatic\Desktop\Controller\DesktopFrontController::instance(
-            '\Innomatic\Desktop\Controller\DesktopFrontController'
-        )->session;
-
-        if ($session->isValid($key)) {
-            $lang = $session->get($key);
-        } 
-
-        return $lang;
-    }
-
-    /**
-     * Get Default language
-     * @return string default language
-     */
-    public static function getDefaultLanguage()
-    {
-        // @TODO dynamic load language
-        $lang = '__it';
-        return $lang;
-    }
-
-    /**
-     * Get list of languages available
-     * @return array list of languages
-     */
-    public static function getListLanguagesAvailable()
-    {
-        // @TODO dynamic load language
-        $languages = array('__it' => 'Italiano', '__en' => 'Inglese');
-        return $languages;
-    }
-
-    /**
-     * Check structure of json/array 
-     * @param  array $params field params
-     * @return boolean if json is one array return true else return false
-     */
-    public static function isTranslatedParams($params)
-    {
-
-        $languages = self::getListLanguagesAvailable();
-        foreach ($languages as $key => $value) {
-            if (!empty($params[$key]))
-                return true;
-        }
-
-        return false;
     }
 
 }
