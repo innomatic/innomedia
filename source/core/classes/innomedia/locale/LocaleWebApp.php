@@ -171,9 +171,9 @@ class LocaleWebApp
         )->session;
 
         if ($session->isValid($key)) {
-            $lang = $session->get($key);
-        } 
 
+            $lang = ($key == 'innomedia_locale' ? '__' : '') . $session->get($key);
+        } 
         return $lang;
     }
 
