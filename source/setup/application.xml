@@ -4,8 +4,8 @@
 	<definition>
 		<idname>innomedia</idname>
 		<release>
-			<version>1.2.0</version>
-			<date>2013/03/06</date>
+			<version>1.2.1</version>
+			<date>2014/08/25</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>InnoMedia Frontend Framework</description>
@@ -43,11 +43,11 @@
 		<class name="innomedia/InnomediaPage.php" />
 		<class name="innomedia/InnomediaTemplate.php" />
 		<class name="innomedia/InnomediaWebAppHandler.php" />
-		<catalog name="innomedia" />		
+		<catalog name="innomedia" />
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />
 		<webapphandler name="innomedia"
 			class="innomedia/InnomediaWebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
-		
+
 	</components>
 </application>
