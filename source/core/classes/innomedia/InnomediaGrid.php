@@ -27,11 +27,11 @@ class InnomediaGrid extends InnomediaTemplate
 
     protected $blocks;
 
-    public function InnomediaGrid(InnomediaPage $page)
+    public function __construct($page)
     {
         $this->page = $page;
         $this->blocks = array();
-        
+
         $tpl = $this->page->getContext()->getThemesHome() . $this->page->getTheme() . '/grid.tpl.php';
         if (! file_exists($tpl)) {
             $tpl = $this->page->getContext()->getThemesHome() . 'default/grid.tpl.php';
@@ -52,23 +52,23 @@ class InnomediaGrid extends InnomediaTemplate
             ->getUrlPath(false) . '/');
         $this->set('module', $this->page->getModule());
         $this->set('page', $this->page->getPage());
-        
+
         // Ajax support
         require_once ('innomatic/ajax/Xajax.php');
         $xajax = \Innomatic\Ajax\Xajax::instance('\Innomatic\Ajax\Xajax', $this->page->getRequest()->getUrlPath(false) . '/ajax/');
         $xajax->ajaxLoader = false;
         $xajax->setLogFile($this->page->getContext()
             ->getHome() . 'core/log/ajax.log');
-        
+
         // Set debug mode
         if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == \Innomatic\Core\InnomaticContainer::STATE_DEBUG) {
             $xajax->debugOn();
         }
-        
+
         // Register Ajax calls parsing the ajax.xml configuration file
         if (file_exists(WebAppContainer::instance('webappcontainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml')) {
             $cfg = \Innomatic\Ajax\XajaxConfig::getInstance(\Innomatic\Webapp\WebAppContainer::instance('webappcontainer')->getCurrentWebApp(), \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome() . 'core/conf/ajax.xml');
-            
+
             if (isset($cfg->functions)) {
                 foreach ($cfg->functions as $name => $functionData) {
                     $xajax->registerExternalFunction(array(
@@ -79,11 +79,11 @@ class InnomediaGrid extends InnomediaTemplate
                 }
             }
         }
-        
+
         // Build the base javascript for ajax
         $xajax_js = $xajax->getJavascript($this->page->getRequest()
             ->getUrlPath(false) . '/' . 'shared/javascript', 'xajax.js');
-        
+
         // Setup calls.
         if ($this->page->getContext()->countRegisteredAjaxSetupCalls() > 0) {
             $setup_calls = $this->page->getContext()->getRegisteredAjaxSetupCalls();
@@ -93,7 +93,7 @@ class InnomediaGrid extends InnomediaTemplate
             }
             $xajax_js .= '</script>' . "\n";
         }
-        
+
         $this->set('xajax_js', $xajax_js);
     }
 
