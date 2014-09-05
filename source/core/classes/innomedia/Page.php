@@ -218,17 +218,19 @@ class Page
             }
 
             // Get block list
-            foreach ($layout_def['blocks'] as $blockDef) {
-                $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
-                $this->blocks[] = array(
-                    'module' => $blockDef['module'],
-                    'name'   => $blockDef['name'],
-                    'counter' => $counter,
-                    'row' => $blockDef['row'],
-                    'column' => $blockDef['column'],
-                    'position' => $blockDef['position'],
-                    'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
-                );
+            if (isset($layout_def['blocks'])) {
+                foreach ($layout_def['blocks'] as $blockDef) {
+                    $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
+                    $this->blocks[] = array(
+                        'module' => $blockDef['module'],
+                        'name'   => $blockDef['name'],
+                        'counter' => $counter,
+                        'row' => $blockDef['row'],
+                        'column' => $blockDef['column'],
+                        'position' => $blockDef['position'],
+                        'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                    );
+                }
             }
         }
 
@@ -538,7 +540,7 @@ class Page
                 //delete element from secondary menu ordering
                 $editorMenu = new \Innomedia\Menu\Editor\Menu(
                     DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session,
-                    null, 
+                    null,
                     'menu/includemenu'
                 );
                 $editorMenu->removeElementFromMenuByPageID($this->id);
