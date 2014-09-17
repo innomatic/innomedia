@@ -51,7 +51,8 @@ abstract class BlockManager
         );
 
         if ($blockQuery->getNumberRows() > 0) {           
-            $this->parameters =  \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(json_decode($blockQuery->getFields('params'), true));
+            $json_params = json_decode($blockQuery->getFields('params'), true);
+            $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($this->blockName, $json_params, 'backend');
             $this->id = $blockQuery->getFields('id');
             return true;
         } else {
@@ -75,37 +76,48 @@ abstract class BlockManager
                 AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
             );
 
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
             if ($checkQuery->getNumberRows() > 0) {
 
                 $id = $checkQuery->getFields('id');
                 $this->id = $id;
                 
-                $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage();
-                $params = json_decode($checkQuery->getFields('params'), true);
-                if (!\Innomedia\Locale\LocaleWebApp::isTranslatedParams($params)) {
-                    $params = array();
-                };
-                $params[$current_language] = $this->parameters;
-
+                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                    $this->blockName,
+                    $checkQuery->getFields('params'), 
+                    $this->parameters,
+                    'backend'
+                );
 
                 return $this->domainDa->execute(
                     "UPDATE innomedia_blocks
                     SET params=".$this->domainDa->formatText(json_encode($params)).
                     " WHERE id=$id"
                 );
+
             } else {
                 $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
                 $this->id = $id;
 
+                // $params = array();
+                // $params[$current_language] = $this->parameters;
+                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                    $this->blockName,
+                    null, 
+                    $this->parameters,
+                    'backend'
+                );
+
                 return $this->domainDa->execute(
-                    "INSERT INTO innomedia_blocks (id,block,counter,params".
-                    (strlen($this->pageName) ? ",page" : "").
-                    ($this->pageId != 0 ? ",pageid" : "")."
-                    ) VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','.
-                    $this->domainDa->formattext(json_encode($this->parameters)).
-                    (strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "").
-                    ($this->pageId != 0 ? ",{$this->pageId}" : "").
-                    ")"
+                    "INSERT INTO innomedia_blocks (id,block,counter,params"
+                    .(strlen($this->pageName) ? ",page" : "")
+                    .($this->pageId != 0 ? ",pageid" : "")
+                    .") VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','
+                    .$this->domainDa->formatText(json_encode($params, true))
+                    .(strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "")
+                    .($this->pageId != 0 ? ",{$this->pageId}" : "")
+                    .")"
                 );
             }
 
@@ -188,19 +200,19 @@ abstract class BlockManager
         if (is_dir($start_dir)) {
             $fh = opendir($start_dir);
             while (($file = readdir($fh)) !== false) {
-                # loop through the files, skipping . and .., and recursing if necessary
+                // loop through the files, skipping . and .., and recursing if necessary
                 if (strcmp($file, '.')==0 || strcmp($file, '..')==0) continue;
                 $filepath = $start_dir . '/' . $file;
                 if (is_dir($filepath)) {
                     $files = array_merge($files, self::listdir($filepath));
                 } else {
-                  array_push($files, $filepath);
+                    array_push($files, $filepath);
                 }
             }
             closedir($fh);
         } else {
-          # false if the function was called with an invalid non-directory argument
-          $files = false;
+            // false if the function was called with an invalid non-directory argument
+            $files = false;
         }
 
         return $files;
