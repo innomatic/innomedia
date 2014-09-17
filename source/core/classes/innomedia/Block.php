@@ -308,6 +308,33 @@ abstract class Block extends Template
         }
     }
 
+    public static function isNoLocale(Context $context, $module, $name)
+    {
+        if (! strlen($module)) {
+            return array();
+        }
+
+        $class = self::getClass($context, $module, $name);
+        $scopes = self::getScopes($context, $module, $name);
+        if (in_array('global', $scopes) && $class::hasBlockManager()) {
+            return true;
+        }
+
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
+        if (!file_exists($block_yml_file)) {
+            $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        }
+        if (!file_exists($block_yml_file)) {
+            return array();
+        }
+        $def = yaml_parse_file($block_yml_file);
+        if (isset($def['nolocale']) && $def['nolocale'] == true) {
+            return $def['nolocale'];
+        } else {
+            return false;
+        }
+    }
+
     private function getTemplateFile($page)
     {
         $locales = $this->context->getLocales();

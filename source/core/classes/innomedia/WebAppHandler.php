@@ -45,6 +45,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
             ->getName());
 
         // Innomedia page
+        $scope_page = 'frontend';
 
         // Get module and page name
         $location    = explode('/', $req->getPathInfo());
@@ -61,7 +62,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
             ->process();
 
         // Build Innomedia page
-        $page = new Page($module_name, $page_name, $pageId);
+        $page = new Page($module_name, $page_name, $pageId, $scope_page);
         $page->parsePage();
 
         // Check if the page is valid

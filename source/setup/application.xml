@@ -38,7 +38,8 @@
 
 		<class name="innomedia/Block.php" />
 		<class name="innomedia/BlockManager.php" />
-		<class name="innomedia/Context.php" />
+        <class name="innomedia/Context.php" />
+		<class name="innomedia/locale/LocaleWebApp.php" />
         <unittest name="innomedia/tests/ContextTest.php" />
 		<class name="innomedia/EmptyBlock.php" />
 		<class name="innomedia/Grid.php" />
@@ -48,10 +49,13 @@
 		<class name="innomedia/Template.php" />
 		<class name="innomedia/WebAppHandler.php" />
 		<catalog name="innomedia" />
+        
 		<webappskeleton name="innomedia" catalog="innomedia::misc" />
 		<webapphandler name="innomedia"
 			class="innomedia/WebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
+
+        <webappconfiguration name="languages" file="languages.yml" />
 
         <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
         <role name="web_editor" title="web_editor" description="" catalog="innomedia::roles" />
