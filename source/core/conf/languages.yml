@@ -1,2 +1,2 @@
-default: it
-available: [it, en]
+default: en
+available: [en]

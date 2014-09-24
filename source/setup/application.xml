@@ -55,7 +55,7 @@
 			class="innomedia/WebAppHandler.php"
 			urlpattern="/innomedia/*" listings="false" />
 
-        <webappconfiguration name="languages" file="languages.yml" />
+        <webappconfiguration name="languages" file="languages.yml" keep="true"/>
 
         <role name="web_system_administrator" title="web_system_administrator" description="" catalog="innomedia::roles" />
         <role name="web_editor" title="web_editor" description="" catalog="innomedia::roles" />
