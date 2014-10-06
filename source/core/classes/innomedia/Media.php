@@ -472,7 +472,7 @@ class Media
                 FROM    innomedia_blocks
                 WHERE   block = '$this->blockName'
                     AND counter = $this->blockCounter
-                    AND page = '$this->pageName'
+                    AND page ".(!empty($this->pageName) ? "= '{$this->pageName}'" : "is NULL")."
                     AND pageid ".($this->pageId != 0 ? "= {$this->pageId}" : "is NULL")
         );
 
@@ -480,8 +480,18 @@ class Media
             $row_id = $checkQuery->getFields('id');
 
             $json_params = json_decode($checkQuery->getFields('params'), true);
+            
+            // $ris = \Innomedia\Locale\LocaleWebApp::isTranslatedParams($json_params);
+            list($blockModule, $blockName) = explode("/", $this->blockName);
+            $context = \Innomedia\Context::instance('\Innomedia\Context');
+            $is_nolocale = \Innomedia\Block::isNoLocale($context, $blockModule, $blockName);
+            
+            if ($is_nolocale)
+                $current_language = 'nolocale';
+            else 
+                $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($this->blockName, $json_params, 'backend');
-            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
             
             $key = @array_search($this->id, $params[$fieldName]);
 
