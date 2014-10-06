@@ -537,9 +537,10 @@ class Media
             }
         }
 
+        $page = "{$pageModule}/{$pageName}";
         $sql = "SELECT  params
                 FROM    innomedia_blocks
-                WHERE   page = '{$pageModule}/{$pageName}'
+                WHERE   page ".($page != "/" ? "= '{$page}'" : "is NULL")."
                     AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
                     AND block = '{$blockModule}/{$blockName}'
                     AND counter = {$blockCounter}
@@ -555,9 +556,9 @@ class Media
         while (!$blocksQuery->eof) {
 
             $json_params = json_decode($blocksQuery->getFields('params'), true);
-            // $ris = \Innomedia\Locale\LocaleWebApp::isTranslatedParams($json_params);
-            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales('{$blockModule}/{$blockName}', $json_params, 'backend');
-            
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales("{$blockModule}/{$blockName}", $json_params, 'backend');
+
             if (!is_array($params[$fieldName])) {
                 $list_id_media[] = $params[$fieldName];
             } else {
@@ -566,9 +567,10 @@ class Media
 
             $i = 0;
             foreach ($list_id_media as $value_id) {
+                $page = "{$pageModule}/{$pageName}";
                 $sql = "SELECT  *
                         FROM    innomedia_media
-                        WHERE   page = '{$pageModule}/{$pageName}'
+                        WHERE   page ".($page != "/" ? "= '{$page}'" : "is NULL")."
                             AND pageid ".($pageId != 0 ? "= {$pageId}" : "is NULL")."
                             AND block = '{$blockModule}/{$blockName}'
                             AND blockcounter = {$blockCounter}
