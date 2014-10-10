@@ -21,18 +21,23 @@
         <mkdir dir="source" />
 
         <!-- Create the different build directories -->
-        <mkdir dir="build" />
+        <mkdir dir="build/api" />
+        <mkdir dir="build/packages" />
 	</target>
 
 	<target name="clean">
-		<!-- Remove old builds -->
-		<delete>
-			<fileset dir="${basedir}/build" includes="**.*" />
-		</delete>
+        <!-- Remove old api documentation -->
+        <delete>
+            <fileset dir="${basedir}/build/api" includes="**.*" />
+        </delete>
+        <!-- Remove old packages -->
+        <delete>
+            <fileset dir="${basedir}/build/packages" includes="**.*" />
+        </delete>
 	</target>
 
 	<target name="package" depends="initdir,clean">
-		<tar destfile="${basedir}/build/${name}-${version}.tgz" compression="gzip">
+		<tar destfile="${basedir}/build/packages/${name}-${version}.tgz" compression="gzip">
 			<tarfileset dir="${basedir}/source" prefix="${name}">
 				<exclude name="build/**" />
 				<exclude name="project.index" />
@@ -66,7 +71,7 @@
 
 	<target name="dev" depends="build">
         <exec executable="scp">
-            <arg value="${basedir}/build/${name}-${version}.tgz" />
+            <arg value="${basedir}/build/packages/${name}-${version}.tgz" />
             <arg value="innomatic-dev:/tmp/" />
         </exec>
 
