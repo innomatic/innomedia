@@ -69,5 +69,9 @@
         <component name="webapplayout" file="WebapplayoutComponent.php" />
         <component name="webappasset" file="WebappassetComponent.php" />
 
+        <!-- Pages Tree -->
+        <domaintable name="innomedia_pages_tree" file="innomedia_pages_tree.xml" />
+        <class name="innomedia/PageTree.php" />
+
 	</components>
 </application>

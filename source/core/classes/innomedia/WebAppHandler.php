@@ -47,11 +47,19 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
         // Innomedia page
         $scope_page = 'frontend';
 
-        // Get module and page name
-        $location    = explode('/', $req->getPathInfo());
-        $module_name = isset($location[1]) ? $location[1] : '';
-        $page_name   = isset($location[2]) ? $location[2] : '';
-        $pageId      = isset($location[3]) ? $location[3] : 0;
+        // Check if the page exists in the page tree
+        $pageSearch = PageTree::findPageByPath(substr($req->getPathInfo(), 1));
+
+        if ($pageSearch === false) {
+            $location    = explode('/', $req->getPathInfo());
+            $module_name = isset($location[1]) ? $location[1] : '';
+            $page_name   = isset($location[2]) ? $location[2] : '';
+            $pageId      = isset($location[3]) ? $location[3] : 0;
+        } else {
+            $module_name = $pageSearch['module'];
+            $page_name   = $pageSearch['page'];
+            $pageId      = $pageSearch['page_id'];
+        }
 
         // Define Innomatic context
         $home    = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getHome();

@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+<database>
+	<table name="innomedia_pages_tree">
+        <field type="text" name="module" notnull="1"/>
+        <field type="text" name="page" notnull="1"/>
+		<field type="integer" name="page_id" notnull="1"/>
+		<field type="integer" name="parent_id" notnull="1"/>
+		<field type="text" name="page_path"/>
+	</table>
+</database>
