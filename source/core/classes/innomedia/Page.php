@@ -8,15 +8,15 @@
  * with this package in the file LICENSE.
  *
  * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
+ * @license    http://www.innomatic.io/license/   BSD License
+ * @link       http://www.innomatic.io
  * @since      Class available since Release 1.0.0
  */
 namespace Innomedia;
 
 /**
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
@@ -25,6 +25,8 @@ class Page
     protected $context;
 
     protected $domainDa;
+
+    protected $scope_session;
 
     protected $module;
 
@@ -71,7 +73,8 @@ class Page
     public function __construct(
         $module,
         $page,
-        $id = 0
+        $id = 0,
+        $scope_session = 'frontend'
     ) {
         $this->context = Context::instance('\Innomedia\Context');
 
@@ -80,6 +83,7 @@ class Page
             ->getDataAccess();
 
         // TODO Add fallback module/page as optional welcome page
+        $this->scope_session = $scope_session;
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
         $this->id = (int)$id;
@@ -144,7 +148,10 @@ class Page
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->name           = $pagesParamsQuery->getFields('name');
                 $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
-                $this->parameters     = json_decode($pagesParamsQuery->getFields('params'), true);
+
+                $params = json_decode($pagesParamsQuery->getFields('params'), true);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $params, $this->scope_session);
+
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -169,7 +176,8 @@ class Page
             );
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
-                $this->parameters = json_decode($pagesParamsQuery->getFields('params'), true);
+                $json_params = json_decode($pagesParamsQuery->getFields('params'), true);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $json_params, $this->scope_session);
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -184,10 +192,12 @@ class Page
             WHERE page IS NULL AND pageid IS NULL"
         );
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $block = $blocksParamsQuery->getFields('block');
+            $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-
         // Get page layout if defined and check if the YAML file for the given layout exists
         $layout = false;
 
@@ -218,17 +228,19 @@ class Page
             }
 
             // Get block list
-            foreach ($layout_def['blocks'] as $blockDef) {
-                $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
-                $this->blocks[] = array(
-                    'module' => $blockDef['module'],
-                    'name'   => $blockDef['name'],
-                    'counter' => $counter,
-                    'row' => $blockDef['row'],
-                    'column' => $blockDef['column'],
-                    'position' => $blockDef['position'],
-                    'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
-                );
+            if (isset($layout_def['blocks'])) {
+                foreach ($layout_def['blocks'] as $blockDef) {
+                    $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
+                    $this->blocks[] = array(
+                        'module' => $blockDef['module'],
+                        'name'   => $blockDef['name'],
+                        'counter' => $counter,
+                        'row' => $blockDef['row'],
+                        'column' => $blockDef['column'],
+                        'position' => $blockDef['position'],
+                        'params' => isset($blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter]) ? $blockParams[$blockDef['module'].'/'.$blockDef['name']][$counter] : array()
+                    );
+                }
             }
         }
 
@@ -245,9 +257,11 @@ class Page
             WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
             ($this->requiresId() ? "AND (pageid IS NULL OR pageid={$this->id})" : "AND pageid IS NULL")
         );
-
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $block = $blocksParamsQuery->getFields('block');
+            $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
 
@@ -291,12 +305,15 @@ class Page
             FROM innomedia_blocks
             WHERE pageid={$this->id}
             AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
-
+        
         while (!$blocksParamsQuery->eof) {
-            $blockParams[$blocksParamsQuery->getFields('block')][$blocksParamsQuery->getFields('counter')] = json_decode($blocksParamsQuery->getFields('params'), true);
+            $block = $blocksParamsQuery->getFields('block');
+            $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-
+        
         foreach ($instanceBlocks as $blockDef) {
             $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->instanceBlocks[] = array(
@@ -320,7 +337,6 @@ class Page
         if (!is_array($this->instanceBlocks)) {
             $this->instanceBlocks = array();
         }
-
         // Merge the blocks lists
         $blocks = array_merge($this->blocks, $this->userBlocks, $this->instanceBlocks);
 
@@ -338,7 +354,6 @@ class Page
                 $blockDef['position'],
                 $blockDef['params']
             );
-
             if (! is_null($block)) {
                 $this->setPredefinedTags($block);
                 $block->set('block_module'   , $blockDef['module']);
@@ -356,7 +371,6 @@ class Page
                 );
             }
         }
-
         // Blocks must be properly sorted for the grid loop
         $this->grid->sortBlocks();
     }
@@ -441,11 +455,14 @@ class Page
         $blocksQuery = $this->domainDa->execute(
             "SELECT block, counter, params
             FROM innomedia_blocks
-            WHERE pageid={$this->id}");
+            WHERE pageid={$this->id}"
+        );
 
         while (!$blocksQuery->eof) {
-            $blockParams[$blocksQuery->getFields('block')][$blocksQuery->getFields('counter')] =
-                json_decode($blocksQuery->getFields('params'), true);
+            $block = $blocksQuery->getFields('block');
+            $json_params = json_decode($blocksQuery->getFields('params'), true);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $blockParams[$block][$blocksQuery->getFields('counter')] = $params_for_lang;
             $blocksQuery->moveNext();
         }
 
@@ -466,19 +483,36 @@ class Page
         );
 
         if ($pagesParamsQuery->getNumberRows() > 0) {
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                null, 
+                $pagesParamsQuery->getFields('params'), 
+                $this->parameters,
+                'backend'
+            );
+
             return $this->domainDa->execute(
                 "UPDATE innomedia_pages
                 SET
-                params =".$this->domainDa->formatText(json_encode($this->parameters))."
+                params =".$this->domainDa->formatText(json_encode($params))."
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page)
             );
         } else {
             $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
+            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                null, 
+                null, 
+                $this->parameters,
+                'backend'
+            );
+
             if ($this->domainDa->execute(
                 'INSERT INTO innomedia_pages (id, page, params) VALUES ('.
                 $id.','.$this->domainDa->formatText($this->module.'/'.$this->page).','.
-                $this->domainDa->formatText(json_encode($this->parameters, true)).')'
+                $this->domainDa->formatText(json_encode($params, true)).')'
             )) {
                 return true;
             } else {
@@ -508,12 +542,24 @@ class Page
         if ($this->id == 0) {
             return false;
         }
+        $pagesParamsQuery = $this->domainDa->execute(
+            "SELECT params
+            FROM innomedia_pages
+            WHERE id = {$this->id}"
+        );
+
+        $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+            null, 
+            $pagesParamsQuery->getFields('params'), 
+            $this->parameters,
+            'backend'
+        );
 
         return $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
             name        =".$this->domainDa->formatText($this->name).",
-            params      =".$this->domainDa->formatText(json_encode($this->parameters)).",
+            params      =".$this->domainDa->formatText(json_encode($params)).",
             blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
             urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
             WHERE id={$this->id}"
@@ -528,6 +574,23 @@ class Page
 
         if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
             $this->domainDa->execute("DELETE FROM innomedia_blocks WHERE pageid={$this->id}");
+
+            // @TODO: convert the following code in the code with the use of hook
+            // Start - code for delete element of menu ordering
+            $app_deps = new \Innomatic\Application\ApplicationDependencies(
+                \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()
+            );
+            if ($app_deps->isInstalled('innomedia-menu-editor')) {
+                //delete element from secondary menu ordering
+                $editorMenu = new \Innomedia\Menu\Editor\Menu(
+                    DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session,
+                    null,
+                    'menu/includemenu'
+                );
+                $editorMenu->removeElementFromMenuByPageID($this->id);
+            }
+            // End - code for delete element of menu ordering
+
             $this->id = 0;
             return true;
         } else {

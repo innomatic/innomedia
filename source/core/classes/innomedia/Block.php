@@ -8,8 +8,8 @@
  * with this package in the file LICENSE.
  *
  * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
+ * @license    http://www.innomatic.io/license/   BSD License
+ * @link       http://www.innomatic.io
  * @since      Class available since Release 1.0.0
  */
 namespace Innomedia;
@@ -18,7 +18,7 @@ use \Innomatic\Webapp;
 
 /**
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
@@ -305,6 +305,33 @@ abstract class Block extends Template
             return $def['scopes'];
         } else {
             return array();
+        }
+    }
+
+    public static function isNoLocale(Context $context, $module, $name)
+    {
+        if (! strlen($module)) {
+            return array();
+        }
+
+        $class = self::getClass($context, $module, $name);
+        $scopes = self::getScopes($context, $module, $name);
+        if (in_array('global', $scopes) && $class::hasBlockManager()) {
+            return true;
+        }
+
+        $block_yml_file = $context->getBlocksHome($module) . $name . '.local.yml';
+        if (!file_exists($block_yml_file)) {
+            $block_yml_file = $context->getBlocksHome($module) . $name . '.yml';
+        }
+        if (!file_exists($block_yml_file)) {
+            return array();
+        }
+        $def = yaml_parse_file($block_yml_file);
+        if (isset($def['nolocale']) && $def['nolocale'] == true) {
+            return $def['nolocale'];
+        } else {
+            return false;
         }
     }
 

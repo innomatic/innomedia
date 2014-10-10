@@ -8,15 +8,15 @@
  * with this package in the file LICENSE.
  *
  * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
+ * @license    http://www.innomatic.io/license/   BSD License
+ * @link       http://www.innomatic.io
  * @since      Class available since Release 1.0.0
  */
 namespace Innomedia;
 
 /**
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.0
  */
@@ -45,6 +45,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
             ->getName());
 
         // Innomedia page
+        $scope_page = 'frontend';
 
         // Get module and page name
         $location    = explode('/', $req->getPathInfo());
@@ -61,7 +62,7 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
             ->process();
 
         // Build Innomedia page
-        $page = new Page($module_name, $page_name, $pageId);
+        $page = new Page($module_name, $page_name, $pageId, $scope_page);
         $page->parsePage();
 
         // Check if the page is valid

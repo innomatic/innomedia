@@ -8,13 +8,12 @@
  * with this package in the file LICENSE.
  *
  * @copyright 2014 Innoteam Srl
- * @license   http://www.innomatic.org/license/   BSD License
- * @link      http://www.innomatic.org
+ * @license   http://www.innomatic.io/license/   BSD License
+ * @link      http://www.innomatic.io
  * @since     2.0.0
  */
 namespace Shared\Components;
 
-use \Innomatic\Io\Filesystem;
 use \Innomatic\Core;
 
 /**
@@ -52,7 +51,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
         $result = false;
         if (strlen($params['module'])) {
             $file = $this->basedir . '/core/modules/' . $params['module'];
-            if (DirectoryUtils::dirCopy(
+            if (\Innomatic\Io\Filesystem\DirectoryUtils::dirCopy(
                 $file.'/',
                 InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($file).'/'
             )) {
@@ -73,7 +72,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
         $result = false;
         if (strlen($params['module'])) {
             if (is_dir(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' . basename($params['module']))) {
-                DirectoryUtils::unlinkTree(
+                \Innomatic\Io\Filesystem\DirectoryUtils::unlinkTree(
                     InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome().
                     'core/applications/'.$this->appname.'/modules/'.basename($params['module'])
                 );
@@ -95,7 +94,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
     {
         if (strlen($params['module'])) {
             if (is_dir(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' . basename($params['module']))) {
-                DirectoryUtils::unlinkTree(
+                \Innomatic\Io\Filesystem\DirectoryUtils::unlinkTree(
                     InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome().
                     'core/applications/' . $this->appname . '/modules/' . basename($params['module'])
                 );
@@ -103,7 +102,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
 
             $file = $this->basedir . '/core/modules/' . $params['module'];
             if (is_dir($file)) {
-                if (DirectoryUtils::dirCopy(
+                if (\Innomatic\Io\Filesystem\DirectoryUtils::dirCopy(
                     $file.'/',
                     InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($file).'/'
                 )) {
@@ -132,10 +131,10 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
         $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
 
         if (!file_exists($moduleDestFolder)) {
-            DirectoryUtils::mkTree($moduleDestFolder, 0755);
+            \Innomatic\Io\Filesystem\DirectoryUtils::mkTree($moduleDestFolder, 0755);
         }
 
-        if (!DirectoryUtils::dirCopy(
+        if (!\Innomatic\Io\Filesystem\DirectoryUtils::dirCopy(
             InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($params['module']).'/',
             $moduleDestFolder
         )) {
@@ -155,7 +154,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
 
         $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
 
-        if (!DirectoryUtils::dirCopy(
+        if (!\Innomatic\Io\Filesystem\DirectoryUtils::dirCopy(
             InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getHome() . 'core/applications/' . $this->appname . '/modules/' .basename($params['module']).'/',
             $moduleDestFolder
         )) {
@@ -177,7 +176,7 @@ class WebappmoduleComponent extends \Innomatic\Application\ApplicationComponent
         $moduleDestFolder = RootContainer::instance('\Innomatic\Core\RootContainer')->getHome().$domain.'/core/modules/'.basename($params['module']).'/';
 
         if (is_dir($moduleDestFolder)) {
-            return DirectoryUtils::unlinkTree($moduleDestFolder);
+            return \Innomatic\Io\Filesystem\DirectoryUtils::unlinkTree($moduleDestFolder);
         } else {
             return false;
         }

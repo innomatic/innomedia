@@ -8,15 +8,15 @@
  * with this package in the file LICENSE.
  *
  * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
+ * @license    http://www.innomatic.io/license/   BSD License
+ * @link       http://www.innomatic.io
  * @since      Class available since Release 1.0.0
  */
 namespace Innomedia;
 
 /**
  *
- * @author Alex Pagnoni <alex.pagnoni@innoteam.it>
+ * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
  * @copyright Copyright 2008-2013 Innoteam Srl
  * @since 1.1
  */

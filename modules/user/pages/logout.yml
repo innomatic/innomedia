@@ -1,7 +1,0 @@
-theme: default
-blocks:
-  - module: user
-    name: logout
-    row: 1
-    column: 2
-    position: 1

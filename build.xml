@@ -4,14 +4,14 @@
 
    InnoMedia build file
 
-   Copyright (C) 2008-2014 Innoteam Srl All rights reserved.
+   Copyright (C) 2008-2014 Innomatic Company All rights reserved.
 
   =======================================================================
 -->
 <project name="InnoMedia" default="build">
 
 	<property name="name" value="innomedia" />
-	<property name="version" value="2.0.0" />
+	<property name="version" value="2.1.0" />
 
     <target name="init" depends="initdir">
     </target>
