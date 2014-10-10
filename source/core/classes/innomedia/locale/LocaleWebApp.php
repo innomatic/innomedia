@@ -12,8 +12,8 @@
  * @author    Amanda Accalai <amanda.accalai@innoteam.it>
  *            Paolo Guanciarossa <paolo.guangiarossa@innoteam.it>
  * @copyright 2008-2014 Innoteam Srl
- * @license   http://www.innomatic.org/license/   BSD License
- * @link      http://www.innomatic.org
+ * @license   http://www.innomatic.io/license/   BSD License
+ * @link      http://www.innomatic.io
  * @since     Class available since Release 2.1.0
  */
 namespace Innomedia\Locale;
@@ -31,8 +31,8 @@ namespace Innomedia\Locale;
  * @author    Amanda Accalai <amanda.accalai@innoteam.it>
  *            Paolo Guanciarossa <paolo.guangiarossa@innoteam.it>
  * @copyright 2008-2014 Innoteam Srl
- * @license   http://www.innomatic.org/license/   BSD License
- * @link      http://www.innomatic.org
+ * @license   http://www.innomatic.io/license/   BSD License
+ * @link      http://www.innomatic.io
  * @since     Class available since Release 2.1.0
  */
 class LocaleWebApp

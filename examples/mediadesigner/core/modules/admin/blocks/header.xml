@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>admin/AdminHeader.php</class>
-	<template>header.tpl.php</template>
-</block>
