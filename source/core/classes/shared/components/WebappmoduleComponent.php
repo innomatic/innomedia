@@ -8,8 +8,8 @@
  * with this package in the file LICENSE.
  *
  * @copyright 2014 Innoteam Srl
- * @license   http://www.innomatic.org/license/   BSD License
- * @link      http://www.innomatic.org
+ * @license   http://www.innomatic.io/license/   BSD License
+ * @link      http://www.innomatic.io
  * @since     2.0.0
  */
 namespace Shared\Components;

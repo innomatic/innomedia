@@ -8,8 +8,8 @@
  * with this package in the file LICENSE.
  *
  * @copyright  2008-2014 Innoteam Srl
- * @license    http://www.innomatic.org/license/   BSD License
- * @link       http://www.innomatic.org
+ * @license    http://www.innomatic.io/license/   BSD License
+ * @link       http://www.innomatic.io
  * @since      Class available since Release 1.0.0
  */
 
@@ -46,7 +46,7 @@ class InnomaticMediaUser
 	public function __construct()
 	{
 		// Stub users
-		$this->users['alex.pagnoni@innoteam.it'] = array('id' => 1, 'point_id' => '23', 'password' => '123', 'activated' => true);
+		$this->users['alex.pagnoni@innomatic.io'] = array('id' => 1, 'point_id' => '23', 'password' => '123', 'activated' => true);
 		$this->users['paolo.guanciarossa@innoteam.it'] = array('id' => 2, 'point_id' => '35','password' => 'abc', 'activated' => false);
 		$this->users['salvatore.pollaci@innoteam.it'] = array('id' => 3, 'point_id' => '44','password' => 'xyz', 'activated' => false);
 
