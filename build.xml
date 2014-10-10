@@ -44,6 +44,19 @@
 		</tar>
 	</target>
 
+    <!--
+   Generates the project documentation into the <project>/build/api directory.
+   -->
+    <target name="php-documentor">
+        <exec executable="phpdoc" dir="${basedir}">
+            <arg line="-d source -t ${basedir}/build/api" />
+        </exec>
+        <tar destfile="${basedir}/build/packages/${name}-${version}-api.tgz" compression="gzip">
+            <tarfileset dir="${basedir}/build/api" prefix="${name}-api">
+            </tarfileset>
+        </tar>
+    </target>
+
 	 <!--
     The default build target for this project. It simply depends on all sub tasks
     that perform the project build. The sub targets are executed in the listed
