@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>admin/AdminAbout.php</class>
-	<template>about.tpl.php</template>
-</block>

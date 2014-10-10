@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<block>
-	<class>mediadesigner/MediaDesignerGridEditor.php</class>
-	<template>grideditor.tpl.php</template>
-</block>
