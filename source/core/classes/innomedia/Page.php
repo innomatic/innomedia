@@ -17,23 +17,55 @@ namespace Innomedia;
 /**
  *
  * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
- * @copyright Copyright 2008-2013 Innoteam Srl
+ * @copyright Copyright 2008-2014 Innoteam Srl
  * @since 1.0
  */
 class Page
 {
+    /**
+     * Innomedia context.
+     * 
+     * @var \Innomedia\Context
+     */
     protected $context;
 
+    /**
+     * Data access for current tenant.
+     * 
+     * @var \Innomatic\Dataaccess\DataAccess
+     */
     protected $domainDa;
 
     protected $scope_session;
 
+    /**
+     * Module name.
+     * 
+     * @var string
+     */
     protected $module;
 
+    /**
+     * Page type.
+     * 
+     * @var string
+     */
     protected $page;
 
+    /**
+     * Content page id.
+     * 
+     * Not set for static pages.
+     * 
+     * @var integer
+     */
     protected $id;
 
+    /**
+     * Page definition file path in web app file system.
+     * 
+     * @var string
+     */
     protected $pageDefFile;
 
     /**
@@ -44,20 +76,35 @@ class Page
     protected $layout;
 
     /**
-     * Page parameters array
+     * Page parameters array.
      *
      * @var array
      */
     protected $parameters = array();
 
+    /**
+     * Page theme to be used for rendering the page.
+     * 
+     * @var string
+     */
     protected $theme;
 
     protected $grid;
 
     protected $isValid = true;
 
+    /**
+     * Boolean set to true when this is a content page.
+     * 
+     * @var boolean
+     */
     protected $requiresId = true;
 
+    /**
+     * Internal name for content pages.
+     * 
+     * @var string
+     */
     protected $name;
 
     protected $urlKeywords;
