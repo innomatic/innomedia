@@ -122,6 +122,7 @@ class PageTree {
      */
     public function removePage($pageId)
     {
+        // Before removing the page, let's remove its children.
         $children = $this->getPageChildren($pageId);
         if (count($children) > 0) {
             foreach($children as $child) {
@@ -129,10 +130,22 @@ class PageTree {
             }
         }
 
-        require_once('innopublish/page/InnopublishPage.php');
-        $page = new InnopublishPage(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), $this->dataAccess, $pageId);
-        $page->removeCurrentOnly();
-        $this->dataAccess->execute(
+        // Get page module and page type.
+        $pageInfo = Page::getModulePageFromId($pageId);
+        if ($pageInfo === false) {
+            return false;
+        }
+
+        // Delete page from the database.
+        $page = new Page($pageInfo['module'], $pageInfo['page'], $pageId);
+        $deleted = $page->deleteContent(false);
+
+        if (!$deleted) {
+            return false;
+        }
+
+        // Delete page from the pages tree.
+        return $this->dataAccess->execute(
             'DELETE FROM innomedia_pages_tree '.
             'WHERE page_id='.$pageId
         );

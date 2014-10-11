@@ -566,10 +566,26 @@ class Page
         );
     }
 
-    public function deleteContent()
+    /* public deleteContent($deleteChildren = true) {{{ */
+    /**
+     * Delete a content page from the database.
+     *
+     * @param bool $deleteChildren Set to true if the method should also delete
+     * children pages.
+     * @access public
+     * @return void
+     */
+    public function deleteContent($deleteChildren = true)
     {
         if ($this->id == 0) {
             return false;
+        }
+
+        // If the page children must also be removed, let the page tree class
+        // handle content delete action.
+        if ($deleteChildren == true) {
+            $tree = new PageTree();
+            return $tree->removePage($this->id);
         }
 
         if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
@@ -597,6 +613,7 @@ class Page
             return false;
         }
     }
+    /* }}} */
 
     public function getLayoutBlocks()
     {
