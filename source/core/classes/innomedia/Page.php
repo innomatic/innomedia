@@ -953,7 +953,7 @@ class Page
             ->getDataAccess();
 
         $pagesParamsQuery = $dataAccess->execute(
-            "SELECT module,page
+            "SELECT page
             FROM innomedia_pages
             WHERE id = $pageId"
         );
@@ -961,9 +961,10 @@ class Page
         if ($pagesParamsQuery->getNumberRows() == 0) {
             return false;
         } else {
+            list($module, $page) = explode('/', $pagesParamsQuery->getFields('page'));
             return [
-                'module' => $pagesParamsQuery->getFields('module'),
-                'page'   => $pagesParamsQuery->getFields('page')
+                'module' => $module,
+                'page'   => $page
             ];
         }
     }
