@@ -854,11 +854,24 @@ class Page
 
     public function getPageUrl($fullPath = false)
     {
-        $url = $this->module.'/'.$this->page;
+        $url = '';
+
+        // If this is a content page, try to get the url from its page path.
         if (strlen($this->id)) {
-            $url .= '/'.$this->id;
+            $tree = new PageTree();
+            $url = $tree->getPagePath($this->id);
         }
 
+        // If the page path was not found, or the page is static, build the url
+        // from the module and page name.
+        if ($url === false or strlen($url) == 0) {
+            $url = $this->module.'/'.$this->page;
+            if (strlen($this->id)) {
+                $url .= '/'.$this->id;
+            }
+        }
+
+        // If $fullPath is set to true, return an absolute url.
         if ($fullPath) {
             $webAppUrl = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['webappurl'];
             if (substr($webAppUrl, -1) != '/') {
