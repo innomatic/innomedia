@@ -62,6 +62,14 @@ class Page
     protected $id;
 
     /**
+     * Content page parent id.
+     * 
+     * Set to 0 when the page is a child of the home page.
+     * @var integer
+     */
+    protected $parentId = 0;
+
+    /**
      * Page definition file path in web app file system.
      * 
      * @var string
@@ -568,7 +576,13 @@ class Page
         }
     }
 
-    public function addContent()
+    /**
+     * Add a content page in the database.
+     * 
+     * @param number $parentId Parent page number. 0 = home page.
+     * @return boolean
+     */
+    public function addContent($parentId = 0)
     {
         $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
@@ -578,6 +592,24 @@ class Page
             $this->domainDa->formatText($this->name).')'
         )) {
             $this->id = $id;
+            
+            // Set the page name for the page tree path.
+            $pageName = $this->parameters['title'];
+
+            // Fallback to internal page name if the page title is empty.
+            if (!strlen($pageName)) {
+                $pageName = $this->name;
+            }
+
+            // Fallback to page id if the page name is still empty.
+            if (!strlen($pageName)) {
+                $pageName = $id;
+            }
+
+            // Add the page to the pages tree.
+            $tree = new PageTree();
+            $tree->addPage($this->module, $this->page, $id, $parentId, $pageName);
+            
             return true;
         } else {
             return false;
@@ -589,6 +621,7 @@ class Page
         if ($this->id == 0) {
             return false;
         }
+
         $pagesParamsQuery = $this->domainDa->execute(
             "SELECT params
             FROM innomedia_pages
@@ -602,7 +635,8 @@ class Page
             'backend'
         );
 
-        return $this->domainDa->execute(
+        // Update the page database row.
+        $updated = $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
             name        =".$this->domainDa->formatText($this->name).",
@@ -611,6 +645,27 @@ class Page
             urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
             WHERE id={$this->id}"
         );
+        
+        if (!$updated) {
+            return false;
+        }
+
+        // Set the page name for the page tree path.
+        $pageName = $this->parameters['title'];
+        
+        // Fallback to internal page name if the page title is empty.
+        if (!strlen($pageName)) {
+            $pageName = $this->name;
+        }
+        
+        // Fallback to page id if the page name is still empty.
+        if (!strlen($pageName)) {
+            $pageName = $id;
+        }
+
+        // Rename the page tree path if needed.
+        $tree = new PageTree();
+        $tree->renamePage($this->id, $pageName);
     }
 
     /* public deleteContent($deleteChildren = true) {{{ */
