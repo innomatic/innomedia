@@ -196,7 +196,17 @@ class PageTree {
     public function renamePage($pageId, $pageName)
     {
         if (!$this->getPageExists($pageId)) {
-            return false;
+            // Compatibility mode: handling of content pages with no location
+            // in page tree.
+            $pageInfo = Page::getModulePageFromId($pageId);
+            
+            if ($pageInfo === false) {
+                // Page really doesn't exist in content pages table.
+                return false;
+            }
+
+            // Add the page in the pages tree.
+            $this->addPage($pageInfo['module'], $pageInfo['page'], $pageId, 0, $pageName);
         }
 
         // Checks if the page name is empty.
