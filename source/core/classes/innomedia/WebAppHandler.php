@@ -51,11 +51,13 @@ class WebAppHandler extends \Innomatic\Webapp\WebAppHandler
         $pageSearch = PageTree::findPageByPath(substr($req->getPathInfo(), 1));
 
         if ($pageSearch === false) {
+            // This is a static page (excluding the home page).
             $location    = explode('/', $req->getPathInfo());
             $module_name = isset($location[1]) ? $location[1] : '';
             $page_name   = isset($location[2]) ? $location[2] : '';
             $pageId      = isset($location[3]) ? $location[3] : 0;
         } else {
+            // This is the home page or a content page.
             $module_name = $pageSearch['module'];
             $page_name   = $pageSearch['page'];
             $pageId      = $pageSearch['page_id'];

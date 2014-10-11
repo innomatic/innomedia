@@ -50,11 +50,19 @@ class PageTree {
      */
     static protected $pagesPathCache = array();
 
+    /* public __construct() {{{ */
+    /**
+     * Class constructor.
+     *
+     * @access public
+     * @return void
+     */
     public function __construct()
     {
         $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
         $this->dataAccess = $da;
     }
+    /* }}} */
 
     /**
      * Adds a new page to the pages tree.
@@ -89,11 +97,11 @@ class PageTree {
         // Normalize page name.
         $pageName = self::normalizePageName($pageName);
 
-        $parent_path = $this->generatePath($parentId);
-        if (strlen($parent_path)) {
-            $parent_path .= '/';
+        $parentPath = $this->generatePath($parentId);
+        if (strlen($parentPath)) {
+            $parentPath .= '/';
         }
-        $page_path = $parent_path.$pageName;
+        $pagePath = $parentPath.$pageName;
 
         return $this->dataAccess->execute(
             'INSERT INTO innomedia_pages_tree '.
@@ -102,7 +110,7 @@ class PageTree {
             $this->dataAccess->formatText($page).','.
             $pageId.','.
             $parentId.','.
-            $this->dataAccess->formatText($page_path).')'
+            $this->dataAccess->formatText($pagePath).')'
         );
     }
 
@@ -124,7 +132,10 @@ class PageTree {
         require_once('innopublish/page/InnopublishPage.php');
         $page = new InnopublishPage(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), $this->dataAccess, $pageId);
         $page->removeCurrentOnly();
-        $this->dataAccess->execute('DELETE FROM innomedia_pages_tree WHERE page_id='.$pageId);
+        $this->dataAccess->execute(
+            'DELETE FROM innomedia_pages_tree '.
+            'WHERE page_id='.$pageId
+        );
     }
 
     /**
@@ -191,12 +202,12 @@ class PageTree {
         );
 
         $old_path = $check_query->getFields('page_path');
-        $parent_path = dirname($check_query->getFields('page_path'));
-        if ($parent_path == '.') {
-            $parent_path = '';
+        $parentPath = dirname($check_query->getFields('page_path'));
+        if ($parentPath == '.') {
+            $parentPath = '';
         }
-        if (strlen($parent_path)) {
-            $parent_path .= '/';
+        if (strlen($parentPath)) {
+            $parentPath .= '/';
         }
         $prev_name = basename($old_path);
         if ($prev_name == $pageName) {
@@ -205,7 +216,7 @@ class PageTree {
         // The name is new.
         if (!$this->dataAccess->execute(
             'UPDATE innomedia_pages_tree
-            SET page_path = '.$this->dataAccess->formatText($parent_path.$pageName).'
+            SET page_path = '.$this->dataAccess->formatText($parentPath.$pageName).'
             WHERE page_id='.$pageId))
         {
             return false;
@@ -217,15 +228,15 @@ class PageTree {
     /**
      * Generates the full path string for a given page.
      *
-     * @param integer $pageId
+     * @param integer $pageId ID of the page.
      * @return string Full path.
      */
     public function generatePath($pageId)
     {
-        $full_path = '';
-        $pages_a = array();
-        $pages_a[] = $pageId;
-        $pages = array_merge($pages_a, $this->getPageParents($pageId));
+        $fullPath = '';
+        $pagesA = array();
+        $pagesA[] = $pageId;
+        $pages = array_merge($pagesA, $this->getPageParents($pageId));
         $start = true;
         while (true) {
             $page = array_pop($pages);
@@ -233,7 +244,7 @@ class PageTree {
                 break;
             }
             if (isset($this->pagesPathCache[$page])) {
-                $page_path = $this->pagesPathCache[$page];
+                $pagePath = $this->pagesPathCache[$page];
             } else {
                 $query = $this->dataAccess->execute(
                     'SELECT page_path '.
@@ -243,7 +254,7 @@ class PageTree {
                 if ($page != 0 and $query->getNumberRows() == 0) {
                     return false;
                 }
-                $page_path = basename($query->getFields('page_path'));
+                $pagePath = basename($query->getFields('page_path'));
             }
 
             if ($page == 0) {
@@ -251,14 +262,14 @@ class PageTree {
                 if ($start == true) {
                     $start = false;
                 } else {
-                    $full_path .= '/';
+                    $fullPath .= '/';
                 }
             }
 
-            $full_path .= $page_path;
+            $fullPath .= $pagePath;
         }
 
-        return $full_path;
+        return $fullPath;
     }
 
     /**
@@ -271,7 +282,7 @@ class PageTree {
         $children = $this->getPageChildren($pageId);
         if (count($children) > 0)
         {
-            $parent_path = $this->generatePath($pageId);
+            $parentPath = $this->generatePath($pageId);
             foreach ($children as $child) {
                 // Retrieves current page name.
                 $pageQuery = $this->dataAccess->execute(
@@ -284,7 +295,7 @@ class PageTree {
                 // Updates page path.
                 $this->dataAccess->execute(
                     'UPDATE innomedia_pages_tree '.
-                    'SET page_path='.$this->dataAccess->formatText($parent_path.'/'.$pageName).' '.
+                    'SET page_path='.$this->dataAccess->formatText($parentPath.'/'.$pageName).' '.
                     'WHERE page_id='.$child
                 );
                 $this->updatePageChildrenTreePaths($child);
@@ -411,11 +422,11 @@ class PageTree {
     {
         $pages = array();
 
-        $tmp_pages = $this->getPageChildren($pageId);
-        foreach ($tmp_pages as $page) {
-            $children_pages = $this->getPageChildrenTree($page);
-            if (count($children_pages)) {
-                $pages[$page] = $children_pages;
+        $tmpPages = $this->getPageChildren($pageId);
+        foreach ($tmpPages as $page) {
+            $childrenPages = $this->getPageChildrenTree($page);
+            if (count($childrenPages)) {
+                $pages[$page] = $childrenPages;
             } else {
                 $pages[$page] = '';
             }
@@ -427,12 +438,12 @@ class PageTree {
     {
         $pages = array();
 
-        $tmp_pages = $this->getPageChildren($pageId);
-        foreach ($tmp_pages as $page) {
-            $children_pages = $this->getPageChildrenTreeParentList($page);
-            if (count($children_pages)) {
-                $moving_pages = $pages;
-                $pages = array_merge($moving_pages, $children_pages);
+        $tmpPages = $this->getPageChildren($pageId);
+        foreach ($tmpPages as $page) {
+            $childrenPages = $this->getPageChildrenTreeParentList($page);
+            if (count($childrenPages)) {
+                $movingPages = $pages;
+                $pages = array_merge($movingPages, $childrenPages);
             } else {
                 $pages[$page] = $pageId;
             }
@@ -454,7 +465,9 @@ class PageTree {
         }
 
         $query = $this->dataAccess->execute(
-            'SELECT 1 FROM innomedia_pages_tree WHERE page_id='.$this->dataAccess->formatInteger($pageId)
+            'SELECT 1 '.
+            'FROM innomedia_pages_tree '.
+            'WHERE page_id='.$this->dataAccess->formatInteger($pageId)
         );
 
         return $query->getNumberRows() > 0 ? true : false;
