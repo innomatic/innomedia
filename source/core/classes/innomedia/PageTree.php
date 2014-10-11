@@ -60,7 +60,7 @@ class PageTree {
     public function __construct()
     {
         $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
-        $this->dataAccess = $da;
+        $this->dataAccess = $this->container->getCurrentTenant()->getDataAccess();
     }
     /* }}} */
 
