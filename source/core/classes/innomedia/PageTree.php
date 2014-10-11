@@ -199,7 +199,7 @@ class PageTree {
             // Compatibility mode: handling of content pages with no location
             // in page tree.
             $pageInfo = Page::getModulePageFromId($pageId);
-            
+
             if ($pageInfo === false) {
                 // Page really doesn't exist in content pages table.
                 return false;

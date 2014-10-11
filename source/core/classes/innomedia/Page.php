@@ -24,14 +24,14 @@ class Page
 {
     /**
      * Innomedia context.
-     * 
+     *
      * @var \Innomedia\Context
      */
     protected $context;
 
     /**
      * Data access for current tenant.
-     * 
+     *
      * @var \Innomatic\Dataaccess\DataAccess
      */
     protected $domainDa;
@@ -40,30 +40,30 @@ class Page
 
     /**
      * Module name.
-     * 
+     *
      * @var string
      */
     protected $module;
 
     /**
      * Page type.
-     * 
+     *
      * @var string
      */
     protected $page;
 
     /**
      * Content page id.
-     * 
+     *
      * Not set for static pages.
-     * 
+     *
      * @var integer
      */
     protected $id;
 
     /**
      * Content page parent id.
-     * 
+     *
      * Set to 0 when the page is a child of the home page.
      * @var integer
      */
@@ -71,7 +71,7 @@ class Page
 
     /**
      * Page definition file path in web app file system.
-     * 
+     *
      * @var string
      */
     protected $pageDefFile;
@@ -92,7 +92,7 @@ class Page
 
     /**
      * Page theme to be used for rendering the page.
-     * 
+     *
      * @var string
      */
     protected $theme;
@@ -103,14 +103,14 @@ class Page
 
     /**
      * Boolean set to true when this is a content page.
-     * 
+     *
      * @var boolean
      */
     protected $requiresId = true;
 
     /**
      * Internal name for content pages.
-     * 
+     *
      * @var string
      */
     protected $name;
@@ -578,7 +578,7 @@ class Page
 
     /**
      * Add a content page in the database.
-     * 
+     *
      * @param number $parentId Parent page number. 0 = home page.
      * @return boolean
      */
@@ -592,7 +592,7 @@ class Page
             $this->domainDa->formatText($this->name).')'
         )) {
             $this->id = $id;
-            
+
             // Set the page name for the page tree path.
             $pageName = $this->parameters['title'];
 
@@ -609,7 +609,7 @@ class Page
             // Add the page to the pages tree.
             $tree = new PageTree();
             $tree->addPage($this->module, $this->page, $id, $parentId, $pageName);
-            
+
             return true;
         } else {
             return false;
@@ -645,19 +645,19 @@ class Page
             urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
             WHERE id={$this->id}"
         );
-        
+
         if (!$updated) {
             return false;
         }
 
         // Set the page name for the page tree path.
         $pageName = $this->parameters['title'];
-        
+
         // Fallback to internal page name if the page title is empty.
         if (!strlen($pageName)) {
             $pageName = $this->name;
         }
-        
+
         // Fallback to page id if the page name is still empty.
         if (!strlen($pageName)) {
             $pageName = $id;
