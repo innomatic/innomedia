@@ -305,7 +305,7 @@ class Page
             FROM innomedia_blocks
             WHERE pageid={$this->id}
             AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
-        
+
         while (!$blocksParamsQuery->eof) {
             $block = $blocksParamsQuery->getFields('block');
             $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
@@ -313,7 +313,7 @@ class Page
             $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-        
+
         foreach ($instanceBlocks as $blockDef) {
             $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->instanceBlocks[] = array(
@@ -485,8 +485,8 @@ class Page
         if ($pagesParamsQuery->getNumberRows() > 0) {
 
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                null, 
-                $pagesParamsQuery->getFields('params'), 
+                null,
+                $pagesParamsQuery->getFields('params'),
                 $this->parameters,
                 'backend'
             );
@@ -503,8 +503,8 @@ class Page
             $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
 
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                null, 
-                null, 
+                null,
+                null,
                 $this->parameters,
                 'backend'
             );
@@ -549,8 +549,8 @@ class Page
         );
 
         $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-            null, 
-            $pagesParamsQuery->getFields('params'), 
+            null,
+            $pagesParamsQuery->getFields('params'),
             $this->parameters,
             'backend'
         );
@@ -920,6 +920,37 @@ class Page
     }
     /* }}} */
 
+    /* public getModulePageFromId($pageId) {{{ */
+    /**
+     * Finds the module and page type for the given content page id.
+     *
+     * @param integer $pageId Content page id number.
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function getModulePageFromId($pageId)
+    {
+        $dataAccess = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        $pagesParamsQuery = $dataAccess->execute(
+            "SELECT module,page
+            FROM innomedia_pages
+            WHERE id = $pageId"
+        );
+
+        if ($pagesParamsQuery->getNumberRows() == 0) {
+            return false;
+        } else {
+            return [
+                'module' => $pagesParamsQuery->getFields('module'),
+                'page'   => $pagesParamsQuery->getFields('page')
+            ];
+        }
+    }
+    /* }}} */
 }
 
 ?>
