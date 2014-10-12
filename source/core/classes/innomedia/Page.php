@@ -594,7 +594,12 @@ class Page
             $this->id = $id;
 
             // Set the page name for the page tree path.
-            $pageName = $this->parameters['title'];
+            $pageName = isset($this->parameters['slug']) ? $this->parameters['slug'] : '';
+
+            // Fallback to page title if the page slug is empty.
+            if (!strlen($pageName)) {
+                $pageName = isset($this->parameters['title']) ? $this->parameters['title'] : '';
+            }
 
             // Fallback to internal page name if the page title is empty.
             if (!strlen($pageName)) {
@@ -651,7 +656,12 @@ class Page
         }
 
         // Set the page name for the page tree path.
-        $pageName = $this->parameters['title'];
+        $pageName = isset($this->parameters['slug']) ? $this->parameters['slug'] : '';
+
+        // Fallback to page title if the page slug is empty.
+        if (!strlen($pageName)) {
+            $pageName = isset($this->parameters['title']) ? $this->parameters['title'] : '';
+        }
 
         // Fallback to internal page name if the page title is empty.
         if (!strlen($pageName)) {
