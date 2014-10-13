@@ -115,8 +115,6 @@ class Page
      */
     protected $name;
 
-    protected $urlKeywords;
-
     protected $blocks = array();
 
     protected $userBlocks = array();
@@ -194,7 +192,7 @@ class Page
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
-                "SELECT blocks, params, name, urlkeywords
+                "SELECT blocks, params, name
                 FROM innomedia_pages
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
@@ -202,7 +200,6 @@ class Page
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->name           = $pagesParamsQuery->getFields('name');
-                $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
 
                 $params = json_decode($pagesParamsQuery->getFields('params'), true);
                 $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $params, $this->scope_session);
@@ -646,8 +643,7 @@ class Page
             SET
             name        =".$this->domainDa->formatText($this->name).",
             params      =".$this->domainDa->formatText(json_encode($params)).",
-            blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
-            urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
+            blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks))."
             WHERE id={$this->id}"
         );
 
@@ -935,17 +931,6 @@ class Page
     {
         $this->name = $name;
         return $this;
-    }
-
-    public function setUrlKeywords($keywords)
-    {
-        $this->urlKeywords = $keywords;
-        return $this;
-    }
-
-    public function getUrlKeywords()
-    {
-        return $this->urlKeywords;
     }
 
     public function build()
