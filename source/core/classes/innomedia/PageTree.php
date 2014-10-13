@@ -527,11 +527,12 @@ class PageTree {
             return false;
         }
 
-        // Build the result array
+        // Build the result array.
+        //
         return [
             'module'  => $pageQuery->getFields('module'),
-                'page'    => $pageQuery->getFields('page'),
-                'page_id' => $pageQuery->getFields('page_id')
+            'page'    => $pageQuery->getFields('page'),
+            'page_id' => $pageQuery->getFields('page_id')
             ];
     }
 
