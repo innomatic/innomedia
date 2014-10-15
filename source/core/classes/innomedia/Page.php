@@ -17,23 +17,63 @@ namespace Innomedia;
 /**
  *
  * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
- * @copyright Copyright 2008-2013 Innoteam Srl
+ * @copyright Copyright 2008-2014 Innoteam Srl
  * @since 1.0
  */
 class Page
 {
+    /**
+     * Innomedia context.
+     *
+     * @var \Innomedia\Context
+     */
     protected $context;
 
+    /**
+     * Data access for current tenant.
+     *
+     * @var \Innomatic\Dataaccess\DataAccess
+     */
     protected $domainDa;
 
     protected $scope_session;
 
+    /**
+     * Module name.
+     *
+     * @var string
+     */
     protected $module;
 
+    /**
+     * Page type.
+     *
+     * @var string
+     */
     protected $page;
 
+    /**
+     * Content page id.
+     *
+     * Not set for static pages.
+     *
+     * @var integer
+     */
     protected $id;
 
+    /**
+     * Content page parent id.
+     *
+     * Set to 0 when the page is a child of the home page.
+     * @var integer
+     */
+    protected $parentId = 0;
+
+    /**
+     * Page definition file path in web app file system.
+     *
+     * @var string
+     */
     protected $pageDefFile;
 
     /**
@@ -44,23 +84,36 @@ class Page
     protected $layout;
 
     /**
-     * Page parameters array
+     * Page parameters array.
      *
      * @var array
      */
     protected $parameters = array();
 
+    /**
+     * Page theme to be used for rendering the page.
+     *
+     * @var string
+     */
     protected $theme;
 
     protected $grid;
 
     protected $isValid = true;
 
+    /**
+     * Boolean set to true when this is a content page.
+     *
+     * @var boolean
+     */
     protected $requiresId = true;
 
+    /**
+     * Internal name for content pages.
+     *
+     * @var string
+     */
     protected $name;
-
-    protected $urlKeywords;
 
     protected $blocks = array();
 
@@ -139,7 +192,7 @@ class Page
 
         if ($this->id != 0) {
             $pagesParamsQuery = $this->domainDa->execute(
-                "SELECT blocks, params, name, urlkeywords
+                "SELECT blocks, params, name
                 FROM innomedia_pages
                 WHERE page=".$this->domainDa->formatText($this->module.'/'.$this->page).
                 " AND id={$this->id}"
@@ -147,7 +200,6 @@ class Page
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $this->name           = $pagesParamsQuery->getFields('name');
-                $this->urlKeywords    = $pagesParamsQuery->getFields('urlkeywords');
 
                 $params = json_decode($pagesParamsQuery->getFields('params'), true);
                 $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $params, $this->scope_session);
@@ -305,7 +357,7 @@ class Page
             FROM innomedia_blocks
             WHERE pageid={$this->id}
             AND page=".$this->domainDa->formatText($this->module.'/'.$this->page));
-        
+
         while (!$blocksParamsQuery->eof) {
             $block = $blocksParamsQuery->getFields('block');
             $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
@@ -313,7 +365,7 @@ class Page
             $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
-        
+
         foreach ($instanceBlocks as $blockDef) {
             $counter = isset($blockDef['counter']) ? $blockDef['counter'] : 1;
             $this->instanceBlocks[] = array(
@@ -485,8 +537,8 @@ class Page
         if ($pagesParamsQuery->getNumberRows() > 0) {
 
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                null, 
-                $pagesParamsQuery->getFields('params'), 
+                null,
+                $pagesParamsQuery->getFields('params'),
                 $this->parameters,
                 'backend'
             );
@@ -503,8 +555,8 @@ class Page
             $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
 
             $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                null, 
-                null, 
+                null,
+                null,
                 $this->parameters,
                 'backend'
             );
@@ -521,7 +573,13 @@ class Page
         }
     }
 
-    public function addContent()
+    /**
+     * Add a content page in the database.
+     *
+     * @param number $parentId Parent page number. 0 = home page.
+     * @return boolean
+     */
+    public function addContent($parentId = 0)
     {
         $id = $this->domainDa->getNextSequenceValue('innomedia_pages_id_seq');
 
@@ -531,6 +589,29 @@ class Page
             $this->domainDa->formatText($this->name).')'
         )) {
             $this->id = $id;
+
+            // Set the page name for the page tree path.
+            $pageName = isset($this->parameters['slug']) ? $this->parameters['slug'] : '';
+
+            // Fallback to page title if the page slug is empty.
+            if (!strlen($pageName)) {
+                $pageName = isset($this->parameters['title']) ? $this->parameters['title'] : '';
+            }
+
+            // Fallback to internal page name if the page title is empty.
+            if (!strlen($pageName)) {
+                $pageName = $this->name;
+            }
+
+            // Fallback to page id if the page name is still empty.
+            if (!strlen($pageName)) {
+                $pageName = $id;
+            }
+
+            // Add the page to the pages tree.
+            $tree = new PageTree();
+            $tree->addPage($this->module, $this->page, $id, $parentId, $pageName);
+
             return true;
         } else {
             return false;
@@ -542,6 +623,7 @@ class Page
         if ($this->id == 0) {
             return false;
         }
+
         $pagesParamsQuery = $this->domainDa->execute(
             "SELECT params
             FROM innomedia_pages
@@ -549,27 +631,69 @@ class Page
         );
 
         $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-            null, 
-            $pagesParamsQuery->getFields('params'), 
+            null,
+            $pagesParamsQuery->getFields('params'),
             $this->parameters,
             'backend'
         );
 
-        return $this->domainDa->execute(
+        // Update the page database row.
+        $updated = $this->domainDa->execute(
             "UPDATE innomedia_pages
             SET
             name        =".$this->domainDa->formatText($this->name).",
             params      =".$this->domainDa->formatText(json_encode($params)).",
-            blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks)).",
-            urlkeywords =".$this->domainDa->formatText($this->urlKeywords)."
+            blocks      =".$this->domainDa->formatText(json_encode($this->instanceBlocks))."
             WHERE id={$this->id}"
         );
+
+        if (!$updated) {
+            return false;
+        }
+
+        // Set the page name for the page tree path.
+        $pageName = isset($this->parameters['slug']) ? $this->parameters['slug'] : '';
+
+        // Fallback to page title if the page slug is empty.
+        if (!strlen($pageName)) {
+            $pageName = isset($this->parameters['title']) ? $this->parameters['title'] : '';
+        }
+
+        // Fallback to internal page name if the page title is empty.
+        if (!strlen($pageName)) {
+            $pageName = $this->name;
+        }
+
+        // Fallback to page id if the page name is still empty.
+        if (!strlen($pageName)) {
+            $pageName = $id;
+        }
+
+        // Rename the page tree path if needed.
+        $tree = new PageTree();
+        $tree->renamePage($this->id, $pageName);
     }
 
-    public function deleteContent()
+    /* public deleteContent($deleteChildren = true) {{{ */
+    /**
+     * Delete a content page from the database.
+     *
+     * @param bool $deleteChildren Set to true if the method should also delete
+     * children pages.
+     * @access public
+     * @return void
+     */
+    public function deleteContent($deleteChildren = true)
     {
         if ($this->id == 0) {
             return false;
+        }
+
+        // If the page children must also be removed, let the page tree class
+        // handle content delete action.
+        if ($deleteChildren == true) {
+            $tree = new PageTree();
+            return $tree->removePage($this->id);
         }
 
         if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
@@ -597,6 +721,7 @@ class Page
             return false;
         }
     }
+    /* }}} */
 
     public function getLayoutBlocks()
     {
@@ -735,11 +860,24 @@ class Page
 
     public function getPageUrl($fullPath = false)
     {
-        $url = $this->module.'/'.$this->page;
+        $url = '';
+
+        // If this is a content page, try to get the url from its page path.
         if (strlen($this->id)) {
-            $url .= '/'.$this->id;
+            $tree = new PageTree();
+            $url = $tree->getPagePath($this->id);
         }
 
+        // If the page path was not found, or the page is static, build the url
+        // from the module and page name.
+        if ($url === false or strlen($url) == 0) {
+            $url = $this->module.'/'.$this->page;
+            if (strlen($this->id)) {
+                $url .= '/'.$this->id;
+            }
+        }
+
+        // If $fullPath is set to true, return an absolute url.
         if ($fullPath) {
             $webAppUrl = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['webappurl'];
             if (substr($webAppUrl, -1) != '/') {
@@ -793,17 +931,6 @@ class Page
     {
         $this->name = $name;
         return $this;
-    }
-
-    public function setUrlKeywords($keywords)
-    {
-        $this->urlKeywords = $keywords;
-        return $this;
-    }
-
-    public function getUrlKeywords()
-    {
-        return $this->urlKeywords;
     }
 
     public function build()
@@ -920,6 +1047,38 @@ class Page
     }
     /* }}} */
 
+    /* public getModulePageFromId($pageId) {{{ */
+    /**
+     * Finds the module and page type for the given content page id.
+     *
+     * @param integer $pageId Content page id number.
+     * @static
+     * @access public
+     * @return array
+     */
+    public static function getModulePageFromId($pageId)
+    {
+        $dataAccess = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+            ->getCurrentDomain()
+            ->getDataAccess();
+
+        $pagesParamsQuery = $dataAccess->execute(
+            "SELECT page
+            FROM innomedia_pages
+            WHERE id = $pageId"
+        );
+
+        if ($pagesParamsQuery->getNumberRows() == 0) {
+            return false;
+        } else {
+            list($module, $page) = explode('/', $pagesParamsQuery->getFields('page'));
+            return [
+                'module' => $module,
+                'page'   => $page
+            ];
+        }
+    }
+    /* }}} */
 }
 
 ?>
