@@ -696,15 +696,18 @@ class Page
             return $tree->removePage($this->id);
         }
 
+        $innomaticContainer = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
+
         if ($this->domainDa->execute("DELETE FROM innomedia_pages WHERE id={$this->id}")) {
             $this->domainDa->execute("DELETE FROM innomedia_blocks WHERE pageid={$this->id}");
 
             // @TODO: convert the following code in the code with the use of hook
             // Start - code for delete element of menu ordering
             $app_deps = new \Innomatic\Application\ApplicationDependencies(
-                \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()
+                $innomaticContainer->getDataAccess()
             );
-            if ($app_deps->isInstalled('innomedia-menu-editor')) {
+            if ($app_deps->isInstalled('innomedia-menu-editor') && $app_deps->isEnabled('innomedia-menu-editor', $innomaticContainer->getCurrentTenant()->getDomainId())) {
+
                 //delete element from secondary menu ordering
                 $editorMenu = new \Innomedia\Menu\Editor\Menu(
                     DesktopFrontController::instance('\Innomatic\Desktop\Controller\DesktopFrontController')->session,
