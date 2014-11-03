@@ -23,15 +23,44 @@ namespace Innomedia;
  */
 class Context extends \Innomatic\Util\Singleton
 {
-
+    /**
+     * Current tenant webapp path.
+     *
+     * @var string
+     * @access protected
+     */
     protected $home;
 
+    /**
+     * Webapp request object.
+     *
+     * @var \Innomatic\Webapp\WebAppRequest
+     * @access protected
+     */
     protected $request;
 
+    /**
+     * Webapp response object.
+     *
+     * @var \Innomatic\Webapp\WebAppResponse
+     * @access protected
+     */
     protected $response;
-    // protected $user;
+
+    /**
+     * Webapp session object.
+     *
+     * @var \Innomatic\Webapp\WebAppSession
+     * @access protected
+     */
     protected $session;
 
+    /**
+     * List of handled locales.
+     *
+     * @var array
+     * @access protected
+     */
     protected $locales = array();
 
     protected $registeredAjaxCalls = array();
@@ -40,30 +69,58 @@ class Context extends \Innomatic\Util\Singleton
 
     protected $modulesClassPathsAdded = false;
 
-    public function ___construct($domainName = '')
+    /* public ___construct($tenantName = '') {{{ */
+    /**
+     * Class constructor.
+     *
+     * @param string $tenantName Internal name of the tenant.
+     * @access public
+     * @return void
+     */
+    public function ___construct($tenantName = '')
     {
-        if (!strlen($domainName)) {
-            $domainName = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId();
+        if (!strlen($tenantName)) {
+            $tenantName = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')
+                ->getCurrentTenant()
+                ->getDomainId();
         }
 
         $this->home = \Innomatic\Core\RootContainer::instance('\Innomatic\Core\RootContainer')
-                ->getHome().$domainName.'/';
+                ->getHome() . $tenantName.'/';
 
         if (!$this->modulesClassPathsAdded) {
             $this->addModulesClassPaths();
         }
     }
+    /* }}} */
 
+    /* public setHome($home) {{{ */
+    /**
+     * Sets the Innomedia context.
+     *
+     * @param string $home Context full path.
+     * @access public
+     * @return self
+     */
     public function setHome($home)
     {
         $this->home = realpath($home).'/';
         return $this;
     }
+    /* }}} */
 
+    /* public getHome() {{{ */
+    /**
+     * Gets the context home.
+     *
+     * @access public
+     * @return string
+     */
     public function getHome()
     {
         return $this->home;
     }
+    /* }}} */
 
     /* public getThemesHome() {{{ */
     /**
@@ -101,25 +158,59 @@ class Context extends \Innomatic\Util\Singleton
     }
     /* }}} */
 
+    /* public getModulesHome() {{{ */
+    /**
+     * Gets the modules home directory.
+     *
+     * @access public
+     * @return string
+     */
     public function getModulesHome()
     {
         return $this->home . 'core/modules/';
     }
+    /* }}} */
 
+    /* public getBlocksHome($module) {{{ */
+    /**
+     * Gets the blocks directory full path for the given module.
+     *
+     * @param string $module Module.
+     * @access public
+     * @return string
+     */
     public function getBlocksHome($module)
     {
         return $this->home . 'core/modules/' . $module . '/blocks/';
     }
+    /* }}} */
 
+    /* public getPagesHome($module) {{{ */
+    /**
+     * Gets the pages directory full path for the given module.
+     *
+     * @param string $module Module.
+     * @access public
+     * @return string
+     */
     public function getPagesHome($module)
     {
         return $this->home . 'core/modules/' . $module . '/pages/';
     }
+    /* }}} */
 
+    /* public getStorageHome() {{{ */
+    /**
+     * Gets the media storage directory full path.
+     *
+     * @access public
+     * @return string
+     */
     public function getStorageHome()
     {
         return $this->home . 'storage/';
     }
+    /* }}} */
 
     /**
      * Gets the webapp request object.
@@ -132,11 +223,20 @@ class Context extends \Innomatic\Util\Singleton
         return $this->request;
     }
 
+    /* public setRequest(\Innomatic\Webapp\WebAppRequest $request) {{{ */
+    /**
+     * Sets the webapp request object.
+     *
+     * @param \Innomatic\Webapp\WebAppRequest $request Webapp request.
+     * @access public
+     * @return self
+     */
     public function setRequest(\Innomatic\Webapp\WebAppRequest $request)
     {
         $this->request = $request;
         return $this;
     }
+    /* }}} */
 
     /**
      * Gets the webapp response object.
@@ -149,11 +249,20 @@ class Context extends \Innomatic\Util\Singleton
         return $this->response;
     }
 
+    /* public setResponse(\Innomatic\Webapp\WebAppResponse $response) {{{ */
+    /**
+     * Sets the webapp response object.
+     *
+     * @param \Innomatic\Webapp\WebAppResponse $response Webapp response.
+     * @access public
+     * @return self
+     */
     public function setResponse(\Innomatic\Webapp\WebAppResponse $response)
     {
         $this->response = $response;
         return $this;
     }
+    /* }}} */
 
     /* public getSession() {{{ */
     /**
@@ -167,11 +276,20 @@ class Context extends \Innomatic\Util\Singleton
     }
     /* }}} */
 
+    /* public setSession(\Innomatic\Webapp\WebAppSession $session) {{{ */
+    /**
+     * Sets the webapp session object.
+     *
+     * @param \Innomatic\Webapp\WebAppSession $session Webapp session.
+     * @access public
+     * @return self
+     */
     public function setSession(\Innomatic\Webapp\WebAppSession $session)
     {
         $this->session = $session;
         return $this;
     }
+    /* }}} */
 
     /**
      * Gets the list of allowed locales.
@@ -186,6 +304,13 @@ class Context extends \Innomatic\Util\Singleton
         return $this->locales;
     }
 
+    /* public getModulesList() {{{ */
+    /**
+     * Gets the list of all the available modules.
+     *
+     * @access public
+     * @return string
+     */
     public function getModulesList()
     {
         $list = array();
@@ -199,7 +324,15 @@ class Context extends \Innomatic\Util\Singleton
         }
         return $list;
     }
+    /* }}} */
 
+    /* public getThemesList() {{{ */
+    /**
+     * Gets the list of the available themes.
+     *
+     * @access public
+     * @return string
+     */
     public function getThemesList()
     {
         $list = array();
@@ -213,9 +346,10 @@ class Context extends \Innomatic\Util\Singleton
         }
         return $list;
     }
+    /* }}} */
 
     /**
-     * Adds modules classes to include_path
+     * Adds modules classes to PHP include_path.
      *
      * @return void
      * @since 2.0.0
@@ -231,36 +365,35 @@ class Context extends \Innomatic\Util\Singleton
     }
 
     /**
-     * Process and initializes the context.
+     * Processes and initializes the context.
      *
      * @return void
-     * @since 5.1
      */
     public function process()
     {
-        // Initialized the session
+        // Initialize the session.
         $this->session = new \Innomatic\Php\PHPSession();
         $this->session->start();
 
-        // Sets 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
-        // defined by the 'sessionLifetime' parameter in web.xml
+        // Set 'session.gc_maxlifetime' and 'session.cookie_lifetime' to the value
+        // defined by the 'sessionLifetime' parameter in web.xml.
         $lifetime = \Innomatic\Webapp\WebAppContainer::instance('\Innomatic\Webapp\WebAppContainer')->getCurrentWebApp()->getInitParameter('sessionLifetime');
         if ($lifetime !== false) {
             $this->session->setLifeTime($lifetime);
         }
 
-        // Checks if the locale has been passed as parameter
+        // Check if the locale has been passed as parameter.
         if ($this->request->parameterExists('innomedia_setlocale')) {
-            // Stores the locale into the session
+            // Store the locale into the session.
             $this->session->put('innomedia_locale', $this->request->getParameter('innomedia_setlocale'));
         }
 
-        // Retrieves the locale from the session, if set
+        // Retrieve the locale from the session, if set.
         if ($this->session->isValid('innomedia_locale')) {
             $this->locales[] = $this->session->get('innomedia_locale');
         }
 
-        // Adds the locales supported by the web agent
+        // Add the locales supported by the web agent.
         $this->locales = array_merge($this->locales, $this->request->getLocales());
     }
 

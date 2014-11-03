@@ -17,8 +17,16 @@ namespace Innomedia;
 
 class Layout
 {
+    /* public __construct() {{{ */
+    /**
+     * Class constructor
+     *
+     * @access public
+     * @return void
+     */
     public function __construct()
     {
 
     }
+    /* }}} */
 }

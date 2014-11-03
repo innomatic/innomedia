@@ -23,12 +23,36 @@ namespace Innomedia;
  */
 class Grid extends \Innomedia\Template
 {
+    /**
+     * Innomedia context object.
+     *
+     * @var \Innomedia\Context
+     * @access protected
+     */
     protected $context;
 
+    /**
+     * Innomedia page object.
+     *
+     * @var \Innomedia\Page
+     * @access protected
+     */
     protected $page;
 
+    /**
+     * Array of the page blocks.
+     *
+     * @var array
+     * @access protected
+     */
     protected $blocks;
 
+    /**
+     * Full path of the grid template file.
+     *
+     * @var string
+     * @access protected
+     */
     protected $tplFile;
 
     /* public __construct(Page $page) {{{ */
@@ -42,28 +66,46 @@ class Grid extends \Innomedia\Template
         $this->page = $page;
         $this->blocks = array();
         $this->context = Context::instance('\Innomedia\Context');
+
+        // Check if a local template file exists.
         $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.local.tpl.php';
         if (!file_exists($tpl)) {
+            // Check if a predefined template file exists.
             $tpl = $this->context->getGridsHome() . $this->page->getTheme() . '.tpl.php';
             if (!file_exists($tpl)) {
+                // Check if a local default template file exists.
                 $tpl = $this->context->getGridsHome() . 'default.local.tpl.php';
                 if (!file_exists($tpl)) {
+                    // Check if a default template file exists.
                     $tpl = $this->context->getGridsHome() . 'default.tpl.php';
                     if (!file_exists($tpl)) {
+                        // No template file found, send error.
                         $this->context->getResponse()->sendError(WebAppResponse::SC_INTERNAL_SERVER_ERROR, 'No theme grid found');
                     }
                 }
             }
         }
+
+        // Call the template constructor with the found template file.
         parent::__construct($tpl);
+
+        // Set the blocks list in the template blocks variable.
         $this->setArray('blocks', $this->blocks);
     }
     /* }}} */
 
+    /* public sortBlocks() {{{ */
+    /**
+     * Sorts the grid objects by number.
+     *
+     * @access public
+     * @return void
+     */
     public function sortBlocks()
     {
         ksort($this->blocks);
     }
+    /* }}} */
 
     /* public addBlock(Block $block, $row, $column, $position) {{{ */
     /**
@@ -78,16 +120,25 @@ class Grid extends \Innomedia\Template
      */
     public function addBlock(Block $block, $row, $column, $position)
     {
+        // Process the block and build the block HTML.
         $block->run($this->context->getRequest(), $this->context->getResponse());
-        if (! $row) {
+
+        // Set default row if not given.
+        if (!$row) {
             $row = 1;
         }
-        if (! $column) {
+
+        // Set default column it not given.
+        if (!$column) {
             $column = 1;
         }
-        if (! $position) {
+
+        // Set default position inside the cell if not given.
+        if (!$position) {
             $position = 1;
         }
+
+        // Set block name.
         $block_name = 'block_' . $row . '_' . $column . '_' . $position;
         $this->set($block_name, $block);
         $this->blocks[$row][$column][$position] = $block_name;
@@ -132,10 +183,18 @@ class Grid extends \Innomedia\Template
     }
     /* }}} */
 
+    /* public parse() {{{ */
+    /**
+     * Parses the grid template.
+     *
+     * @access public
+     * @return boolean
+     */
     public function parse()
     {
         return parent::parse();
     }
+    /* }}} */
 }
 
 
