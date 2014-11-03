@@ -36,7 +36,7 @@ class Page
      */
     protected $domainDa;
 
-    protected $scope_session;
+    protected $scopeSession;
 
     /**
      * Module name.
@@ -127,7 +127,7 @@ class Page
         $module,
         $page,
         $id = 0,
-        $scope_session = 'frontend'
+        $scopeSession = 'frontend'
     ) {
         $this->context = Context::instance('\Innomedia\Context');
 
@@ -136,7 +136,7 @@ class Page
             ->getDataAccess();
 
         // TODO Add fallback module/page as optional welcome page
-        $this->scope_session = $scope_session;
+        $this->scopeSession = $scopeSession;
         $this->module = strlen($module) ? $module : 'home';
         $this->page = strlen($page) ? $page : 'index';
         $this->id = (int)$id;
@@ -202,7 +202,7 @@ class Page
                 $this->name           = $pagesParamsQuery->getFields('name');
 
                 $params = json_decode($pagesParamsQuery->getFields('params'), true);
-                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $params, $this->scope_session);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $params, $this->scopeSession);
 
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
@@ -229,7 +229,7 @@ class Page
 
             if ($pagesParamsQuery->getNumberRows() > 0) {
                 $json_params = json_decode($pagesParamsQuery->getFields('params'), true);
-                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $json_params, $this->scope_session);
+                $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales(null, $json_params, $this->scopeSession);
                 // Parameters variable must be an array
                 if (!is_array($this->parameters)) {
                     $this->parameters = array();
@@ -246,7 +246,7 @@ class Page
         while (!$blocksParamsQuery->eof) {
             $block = $blocksParamsQuery->getFields('block');
             $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scopeSession);
             $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -312,7 +312,7 @@ class Page
         while (!$blocksParamsQuery->eof) {
             $block = $blocksParamsQuery->getFields('block');
             $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scopeSession);
             $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -361,7 +361,7 @@ class Page
         while (!$blocksParamsQuery->eof) {
             $block = $blocksParamsQuery->getFields('block');
             $json_params = json_decode($blocksParamsQuery->getFields('params'), true);
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scopeSession);
             $blockParams[$block][$blocksParamsQuery->getFields('counter')] = $params_for_lang;
             $blocksParamsQuery->moveNext();
         }
@@ -513,7 +513,7 @@ class Page
         while (!$blocksQuery->eof) {
             $block = $blocksQuery->getFields('block');
             $json_params = json_decode($blocksQuery->getFields('params'), true);
-            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scope_session);
+            $params_for_lang = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($block, $json_params, $this->scopeSession);
             $blockParams[$block][$blocksQuery->getFields('counter')] = $params_for_lang;
             $blocksQuery->moveNext();
         }
