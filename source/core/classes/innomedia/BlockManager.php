@@ -40,7 +40,6 @@ abstract class BlockManager
      */
     public function retrieve()
     {
-
         $blockQuery = $this->domainDa->execute(
             "SELECT id,params
             FROM innomedia_blocks
@@ -50,10 +49,11 @@ abstract class BlockManager
             AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
         );
 
-        if ($blockQuery->getNumberRows() > 0) {           
+        if ($blockQuery->getNumberRows() > 0) {
             $json_params = json_decode($blockQuery->getFields('params'), true);
             $this->parameters = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocales($this->blockName, $json_params, 'backend');
             $this->id = $blockQuery->getFields('id');
+
             return true;
         } else {
             return false;
@@ -64,63 +64,60 @@ abstract class BlockManager
 
     public function store()
     {
+        if (!(is_array($this->parameters) && strlen($this->blockName))) {
+            return false;
+        }
 
-        if (is_array($this->parameters) && strlen($this->blockName)) {
+        $checkQuery = $this->domainDa->execute(
+            "SELECT id, params
+            FROM innomedia_blocks
+            WHERE block = ".$this->domainDa->formatText($this->blockName)."
+            AND counter = $this->blockCounter
+            AND page ".(strlen($this->pageName) ? " = ".$this->domainDa->formatText($this->pageName) : " IS NULL")."
+            AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
+        );
 
-            $checkQuery = $this->domainDa->execute(
-                "SELECT id, params
-                FROM innomedia_blocks
-                WHERE block = ".$this->domainDa->formatText($this->blockName)."
-                AND counter = $this->blockCounter
-                AND page ".(strlen($this->pageName) ? " = ".$this->domainDa->formatText($this->pageName) : " IS NULL")."
-                AND pageid ".($this->pageId != 0 ? " = ".$this->pageId : " IS NULL")
+        $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+
+        if ($checkQuery->getNumberRows() > 0) {
+            $id = $checkQuery->getFields('id');
+            $this->id = $id;
+
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                $this->blockName,
+                $checkQuery->getFields('params'),
+                $this->parameters,
+                'backend'
             );
 
-            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+            return $this->domainDa->execute(
+                "UPDATE innomedia_blocks
+                SET params=".$this->domainDa->formatText(json_encode($params)).
+                " WHERE id=$id"
+            );
+        } else {
+            $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
+            $this->id = $id;
 
-            if ($checkQuery->getNumberRows() > 0) {
+            // $params = array();
+            // $params[$current_language] = $this->parameters;
+            $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
+                $this->blockName,
+                null,
+                $this->parameters,
+                'backend'
+            );
 
-                $id = $checkQuery->getFields('id');
-                $this->id = $id;
-                
-                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                    $this->blockName,
-                    $checkQuery->getFields('params'), 
-                    $this->parameters,
-                    'backend'
-                );
-
-                return $this->domainDa->execute(
-                    "UPDATE innomedia_blocks
-                    SET params=".$this->domainDa->formatText(json_encode($params)).
-                    " WHERE id=$id"
-                );
-
-            } else {
-                $id = $this->domainDa->getNextSequenceValue('innomedia_blocks_id_seq');
-                $this->id = $id;
-
-                // $params = array();
-                // $params[$current_language] = $this->parameters;
-                $params = \Innomedia\Locale\LocaleWebApp::getParamsDecodedByLocalesForUpdate(
-                    $this->blockName,
-                    null, 
-                    $this->parameters,
-                    'backend'
-                );
-
-                return $this->domainDa->execute(
-                    "INSERT INTO innomedia_blocks (id,block,counter,params"
-                    .(strlen($this->pageName) ? ",page" : "")
-                    .($this->pageId != 0 ? ",pageid" : "")
-                    .") VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','
-                    .$this->domainDa->formatText(json_encode($params, true))
-                    .(strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "")
-                    .($this->pageId != 0 ? ",{$this->pageId}" : "")
-                    .")"
-                );
-            }
-
+            return $this->domainDa->execute(
+                "INSERT INTO innomedia_blocks (id,block,counter,params"
+                .(strlen($this->pageName) ? ",page" : "")
+                .($this->pageId != 0 ? ",pageid" : "")
+                .") VALUES ($id, ".$this->domainDa->formattext($this->blockName).",".$this->blockCounter.','
+                .$this->domainDa->formatText(json_encode($params, true))
+                .(strlen($this->pageName) ? ",".$this->domainDa->formattext($this->pageName): "")
+                .($this->pageId != 0 ? ",{$this->pageId}" : "")
+                .")"
+            );
         }
     }
 
