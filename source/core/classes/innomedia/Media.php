@@ -10,7 +10,7 @@
  * @category  Class
  * @package   Media
  * @author    Alex Pagnoni <alex.pagnoni@innomatic.io>
- * @copyright 2008-2014 Innoteam Srl
+ * @copyright 2008-2014 Innomatic Company
  * @license   http://www.innomatic.io/license/   BSD License
  * @link      http://www.innomatic.io
  * @since     Class available since Release 1.0.0
