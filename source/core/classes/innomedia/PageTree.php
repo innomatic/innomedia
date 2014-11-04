@@ -536,6 +536,15 @@ class PageTree {
             ];
     }
 
+    /* public normalizePageName($name) {{{ */
+    /**
+     * Creates a normalized string for the page URL.
+     *
+     * @param string $name String to be normalized as a valid URL.
+     * @static
+     * @access public
+     * @return string
+     */
     public static function normalizePageName($name)
     {
         $name = trim(strtolower($name));
@@ -546,6 +555,7 @@ class PageTree {
 
         return $name;
     }
+    /* }}} */
 
     /**
      * Flushes all the in memory caches.
