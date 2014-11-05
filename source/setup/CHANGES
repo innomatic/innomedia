@@ -1,5 +1,8 @@
-2.2.0 - 2014
+2.2.0 - 2014 - "Page tree, nice URLs"
 ------------------
+NEW FEATURES:
+- Added pages tree. (Alex Pagnoni)
+- Added user defined slugs for building page URLs. (Alex Pagnoni)
 
 
 
@@ -15,7 +18,7 @@ NEW FEATURES:
 
 CHANGES:
 - Now all the setters return their object. (Alex Pagnoni)
-- Configuration files format changed from XML to YML
+- Configuration files format changed from XML to YML. (Alex Pagnoni)
 - Moved grid template inside core directory. (Alex Pagnoni)
 - Webapp directories skeleton refactory. (Alex Pagnoni)
 - Updated Innomatic dependency to 6.4.0. (Alex Pagnoni)
