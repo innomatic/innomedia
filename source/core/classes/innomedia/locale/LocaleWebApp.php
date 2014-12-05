@@ -136,13 +136,11 @@ class LocaleWebApp
      */
     public static function isTranslatedParams($params)
     {
-
         $languages = self::getListLanguagesAvailable();
         foreach ($languages as $key => $value) {
             if (!empty($params[$key]))
                 return true;
         }
-
         return false;
     }
 
@@ -176,6 +174,25 @@ class LocaleWebApp
         } 
         return $lang;
     }
+
+    /**
+     * Get the type of language block
+     * @param  array  $blockName block name
+     * @param  string $scope     scope language
+     * @return string if the block has the attribute nolocale equals true 
+     *         returns 'nolocale', otherwise it returns the current language
+     */
+    public static function getLanguageOfBlock($blockName, $scope = "frontend")
+    {
+        $context = \Innomedia\Context::instance('\Innomedia\Context');
+        list($module, $block) = explode('/', $blockName);
+        if (\Innomedia\Block::isNoLocale($context, $module, $block)) {
+            $lang = 'nolocale';
+        } else {
+            $lang = self::getCurrentLanguage($scope);
+        }
+        return $lang;
+    }   
 
     /**
      * Get parameters to json decoding them according to the language

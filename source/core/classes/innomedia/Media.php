@@ -534,7 +534,11 @@ class Media
         $fieldName    = $params['fieldname'];
 
         $default_language = \Innomedia\Locale\LocaleWebApp::getDefaultLanguage();
-        $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+        // $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+        $current_language = \Innomedia\Locale\LocaleWebApp::getLanguageOfBlock(
+            $blockModule.'/'.$blockName, 
+            'backend'
+        );
         $list_language_available = \Innomedia\Locale\LocaleWebApp::getListLanguagesAvailable();
 
         if ($current_language == $default_language) {
@@ -559,7 +563,7 @@ class Media
                         (params LIKE '%\"$current_language\":%')
                         ".($current_language == $default_language ?  "OR ($string_not_like)" : '')."
                     )";
-        
+
         $blocksQuery = $domainDa->execute($sql);
 
         $list_media = array();
@@ -637,9 +641,9 @@ class Media
 
         if (strlen($path) > 0) {
 
-            $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
-            $path .= '/'.str_replace('__', '', $current_language);
-
+            // $current_language = \Innomedia\Locale\LocaleWebApp::getCurrentLanguage('backend');
+            $folder = \Innomedia\Locale\LocaleWebApp::getLanguageOfBlock($this->blockName, 'backend');
+            $path .= '/'.str_replace('__', '', $folder);
             $path .= '/';
         }
 
