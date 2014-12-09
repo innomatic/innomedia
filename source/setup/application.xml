@@ -4,8 +4,8 @@
 	<definition>
 		<idname>innomedia</idname>
 		<release>
-			<version>2.2.0</version>
-			<date>2014/10/10</date>
+			<version>2.1.1</version>
+			<date>2014/12/09</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>InnoMedia Web Frontend Framework</description>
