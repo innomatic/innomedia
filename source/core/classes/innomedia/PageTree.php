@@ -548,10 +548,8 @@ class PageTree {
     public static function normalizePageName($name)
     {
         $name = trim(strtolower($name));
-        $name = strtr($name, ' ', '-');
-        $name = strtr($name, "'", '-');
-        $name = strtr($name, "/", '-');
-        $name = strtr($name, "\\", '-');
+        $name = str_replace([' ', "'", "/", "\\", "?", ',', '.', ':'], '-', $name);
+        $name = str_replace('--', '-', $name);
 
         return $name;
     }
