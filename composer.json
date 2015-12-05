@@ -1,0 +1,17 @@
+{
+    "name": "innomatic/innomedia",
+    "description": "Innomedia CMF for Innomatic",
+    "homepage": "http://www.innomatic.io",
+    "license": "BSD-3-Clause",
+    "type": "innomatic-legacy-application",
+    "authors": [
+        {
+            "name": "Innomatic Team",
+            "homepage": "http://www.innomatic.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "innomatic/innomatic-legacy-installer": "^1.0@alpha"
+    }
+}
